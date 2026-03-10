@@ -1,0 +1,87 @@
+<div class="product-desc-container">
+    <div class="tabs">
+        <button (click)="selectTab('description')" [class.active]="selectedTab === 'description'">Mô tả</button>
+        <button (click)="selectTab('additional')" [class.active]="selectedTab === 'additional'">Thông tin bổ sung</button>
+        <button (click)="selectTab('reviews')" [class.active]="selectedTab === 'reviews'">Đánh giá</button>
+    </div>
+
+    <div *ngIf="selectedTab === 'description'" class="tab-content">
+        <ul class="product-details">
+            <li><strong>Tên sản phẩm:</strong> {{ product.product_name || 'Sản phẩm' }}</li>
+            <li><strong>Loại sản phẩm:</strong> Đặc sản 3 miền Việt Nam</li>
+            <li><strong>Thành phần:</strong> 100% nguyên liệu tự nhiên, chọn lọc kỹ lưỡng, không chất bảo quản</li>
+            <li><strong>Khối lượng tịnh:</strong> 500g</li>
+            <li><strong>Xuất xứ:</strong> {{ product.product_dept || 'Việt Nam' }}</li>
+            <li><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</li>
+            <li><strong>Hạn sử dụng:</strong> 6 tháng kể từ ngày sản xuất</li>
+            <li><strong>Chứng nhận:</strong> Đạt tiêu chuẩn vệ sinh an toàn thực phẩm VietGAP</li>
+        </ul>
+        <div class="product-description">
+            <h4>Mô tả sản phẩm:</h4>
+            <p>{{ product.product_detail || 'Sản phẩm đặc sản với nguyên liệu chọn lọc, sản xuất thủ công theo công thức truyền thống.' }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="selectedTab === 'additional'" class="tab-content">
+        <table class="info-table">
+            <tr><th>Mã SP</th><td>{{ product._id || 'N/A' }}</td></tr>
+            <tr><th>Xuất xứ</th><td>{{ product.product_dept || 'Việt Nam' }}</td></tr>
+            <tr><th>Khối lượng</th><td>500g</td></tr>
+            <tr><th>Bảo quản</th><td>Nơi khô ráo, thoáng mát</td></tr>
+        </table>
+    </div>
+
+    <div *ngIf="selectedTab === 'reviews'" class="tab-content">
+        <div class="review-summary">
+            <div class="overall-rating">
+                <span class="rating-big">{{ getAverageRating() | number:'1.1-1' }}</span>
+                <div class="stars-row">
+                    <span *ngFor="let s of [1,2,3,4,5]" class="star-icon">★</span>
+                </div>
+                <span class="total-reviews">({{ reviews.length }} đánh giá)</span>
+            </div>
+            <div class="rating-bars">
+                <div *ngFor="let bar of ratingBars" class="bar-row">
+                    <span class="bar-label">{{ bar.stars }} sao</span>
+                    <div class="bar-track"><div class="bar-fill" [style.width.%]="bar.percent"></div></div>
+                    <span class="bar-percent">{{ bar.count }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="review-list-header">
+            <h4>Danh sách đánh giá</h4>
+            <p class="result-info">Hiển thị {{ getStartIndex() }}-{{ getEndIndex() }} trong {{ reviews.length }} kết quả</p>
+            <select [(ngModel)]="sortOrder" (ngModelChange)="applySort()" class="sort-select">
+                <option value="newest">Mới nhất</option>
+                <option value="oldest">Cũ nhất</option>
+            </select>
+        </div>
+        <div *ngFor="let review of pagedReviews" class="review-card">
+            <div class="review-header">
+                <div class="reviewer-avatar">{{ getInitials(review.user) }}</div>
+                <div class="reviewer-meta">
+                    <span class="review-user">{{ review.user }}</span>
+                    <span class="verified-badge">Đã xác thực</span>
+                </div>
+            </div>
+            <h5 class="review-title">{{ review.comment | slice:0:50 }}{{ review.comment.length > 50 ? '...' : '' }}</h5>
+            <p class="review-comment">{{ review.comment }}</p>
+            <div class="review-footer">
+                <span class="review-rating">5.0 ★</span>
+                <span class="review-time">{{ review.timestamp }}</span>
+            </div>
+        </div>
+
+        <div *ngIf="isLoggedIn; else loginPrompt" class="add-review">
+            <textarea [(ngModel)]="newComment" placeholder="Viết đánh giá của bạn"></textarea>
+            <button (click)="addReview()" class="btn btn-primary submit-review-button">Thêm đánh giá</button>
+        </div>
+        <ng-template #loginPrompt>
+            <p class="login-prompt">Vui lòng đăng nhập để thêm đánh giá.</p>
+        </ng-template>
+
+        <div class="pagination" *ngIf="totalPages > 0">
+            <button *ngFor="let page of totalPagesArray" (click)="goToPage(page)" [class.active]="currentPage === page">{{ page }}</button>
+        </div>
+    </div>
+</div>

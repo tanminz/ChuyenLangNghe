@@ -1,0 +1,27 @@
+{
+  "/products": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/user": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/orders": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/feedback": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/cart": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
