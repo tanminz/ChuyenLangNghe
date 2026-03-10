@@ -45,16 +45,16 @@ export class DashboardComponent implements OnInit {
       {
         data: [],
         label: 'Doanh thu hàng ngày',
-        borderColor: '#4CAF50',
-        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        borderColor: '#7A4726',
+        backgroundColor: 'rgba(122, 71, 38, 0.12)',
         tension: 0.4,
         fill: true
       },
       {
         data: [],
         label: 'Số đơn hàng',
-        borderColor: '#2196F3',
-        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+        borderColor: '#BA680F',
+        backgroundColor: 'rgba(186, 104, 15, 0.1)',
         tension: 0.4,
         yAxisID: 'y1'
       }
@@ -121,12 +121,17 @@ export class DashboardComponent implements OnInit {
 
 
 
+  profileName = 'Admin';
+
   constructor(
     private dashboardService: DashboardAPIService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.authService.getUserEmail().subscribe({
+      next: (email) => { this.profileName = email?.split('@')[0] || 'Admin'; }
+    });
     this.setPermissions();
     if (this.canView) {
       this.loadDashboardStats();
@@ -233,16 +238,16 @@ export class DashboardComponent implements OnInit {
         {
           data: revenueData,
           label: 'Doanh thu hàng ngày',
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          borderColor: '#7A4726',
+          backgroundColor: 'rgba(122, 71, 38, 0.12)',
           tension: 0.4,
           fill: true
         },
         {
           data: ordersData,
           label: 'Số đơn hàng',
-          borderColor: '#2196F3',
-          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+          borderColor: '#BA680F',
+          backgroundColor: 'rgba(186, 104, 15, 0.1)',
           tension: 0.4,
           yAxisID: 'y1'
         }

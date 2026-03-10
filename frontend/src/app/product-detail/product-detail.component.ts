@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 })
 export class ProductDetailComponent implements OnInit {
   @Input() product!: Product;
+  @Input() reviewCount: number = 0;
+  @Input() averageRating: number = 0;
   images: string[] = [];
   selectedImageIndex: number = 0;
   quantity: number = 1;
@@ -21,7 +23,6 @@ export class ProductDetailComponent implements OnInit {
     { label: '1kg', value: '1kg' },
   ];
   selectedSizeIndex: number = 0;
-  reviewCount: number = 0;
 
   constructor(private cartService: CartService, private router: Router) { }
 
@@ -42,9 +43,6 @@ export class ProductDetailComponent implements OnInit {
       if (this.isOutOfStock) {
         this.quantity = 0;
       }
-
-      const saved = localStorage.getItem(`reviews_${this.product.product_name}`);
-      this.reviewCount = saved ? JSON.parse(saved).length : 0;
     }
   }
 

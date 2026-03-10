@@ -68,6 +68,20 @@ body {
   color: #FFFFFF !important;
 }
 
+/* Căn chỉnh mũi tên trong nút - tránh bị lệch */
+.btn i.fa-arrow-circle-right,
+.btn-submit i.fa-arrow-circle-right,
+.link-more i.fa-arrow-circle-right,
+a.btn i.fa-arrow-circle-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+  /* Căn mũi tên ngang hàng với chữ (FontAwesome có offset mặc định) */
+  transform: translateY(1px);
+}
+
 /* Global Product Image Consistency */
 .product-image img {
   width: 100% !important;

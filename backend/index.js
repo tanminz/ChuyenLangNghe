@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 
 const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
 const client = new MongoClient(mongoUri);
-let productCollection, userCollection, orderCollection, feedbackCollection, cartCollection, blogCollection;
+let productCollection, userCollection, orderCollection, feedbackCollection, cartCollection, blogCollection, productReviewCollection;
 
 (async () => {
   try {
@@ -56,6 +56,7 @@ let productCollection, userCollection, orderCollection, feedbackCollection, cart
     feedbackCollection = database.collection("Feedback");
     cartCollection = database.collection("Cart");
     blogCollection = database.collection("Blog");
+    productReviewCollection = database.collection("ProductReview");
   } catch (err) {
     console.error("Failed to connect to MongoDB:", err);
     process.exit(1);
@@ -283,6 +284,84 @@ app.patch("/products/:id/update-stock", async (req, res) => {
     }
     res.status(200).json({ message: "Stock updated successfully" });
   } catch {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// ========== PRODUCT REVIEWS ==========
+// GET /products/:id/reviews — list reviews for a product (paginated, sort newest first)
+app.get("/products/:id/reviews", async (req, res) => {
+  const productId = req.params.id;
+  const page = parseInt(req.query.page) || 1;
+  const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+  const sortOrder = req.query.sort === 'oldest' ? 1 : -1;
+  const skip = (page - 1) * limit;
+  try {
+    if (!productReviewCollection) {
+      return res.status(200).json({ reviews: [], total: 0, page, pages: 0, averageRating: 0, ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
+    }
+    const filter = { productId };
+    const [reviews, total, agg] = await Promise.all([
+      productReviewCollection.find(filter).sort({ createdAt: sortOrder }).skip(skip).limit(limit).toArray(),
+      productReviewCollection.countDocuments(filter),
+      productReviewCollection.aggregate([
+        { $match: { productId } },
+        { $group: { _id: null, avg: { $avg: "$rating" }, counts: { $push: "$rating" } } }
+      ]).toArray()
+    ]);
+    const averageRating = agg[0] ? Math.round(agg[0].avg * 10) / 10 : 0;
+    const counts = (agg[0] && agg[0].counts) ? agg[0].counts : [];
+    const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    counts.forEach(r => {
+      const k = Math.round(Number(r));
+      if (k >= 1 && k <= 5) ratingCounts[k] = (ratingCounts[k] || 0) + 1;
+    });
+    res.status(200).json({
+      reviews,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      averageRating,
+      ratingCounts
+    });
+  } catch (err) {
+    console.error("Error fetching product reviews:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// POST /products/:id/reviews — add a review (requires login); body: { rating, comment, images?: string[] } (images as base64 data URLs)
+app.post("/products/:id/reviews", requireAuth, async (req, res) => {
+  const productId = req.params.id;
+  const { rating, comment, images } = req.body;
+  if (rating == null || rating < 1 || rating > 5) {
+    return res.status(400).json({ message: "rating must be between 1 and 5." });
+  }
+  const commentStr = typeof comment === "string" ? comment.trim() : "";
+  const imagesArr = Array.isArray(images) ? images.filter(img => typeof img === "string" && img.startsWith("data:image/")).slice(0, 5) : [];
+  try {
+    const product = await productCollection.findOne({ _id: new ObjectId(productId) });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+    const user = await userCollection.findOne({ _id: new ObjectId(req.session.userId) });
+    const userName = user?.profileName || (user?.email ? user.email.split("@")[0] : "Khách");
+    const userEmail = user?.email || "";
+    const newReview = {
+      productId,
+      userId: req.session.userId.toString(),
+      userName,
+      userEmail,
+      rating: Number(rating),
+      comment: commentStr,
+      images: imagesArr,
+      createdAt: new Date(),
+      verified: true
+    };
+    await productReviewCollection.insertOne(newReview);
+    res.status(201).json({ message: "Review submitted successfully" });
+  } catch (err) {
+    console.error("Error submitting review:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -621,6 +700,93 @@ app.delete("/cart/clear", requireAuth, async (req, res) => {
     res.status(200).json({ message: "Cart cleared" });
   } catch {
     res.status(500).json({ message: "Failed to clear cart" });
+  }
+});
+
+/** GET /orders/me - Đơn hàng của user đang đăng nhập (requireAuth) */
+app.get("/orders/me", requireAuth, async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  try {
+    const filter = { userId: req.session.userId };
+    const orders = await orderCollection
+      .aggregate([
+        { $match: filter },
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: "Product",
+            let: { itemIds: "$selectedItems._id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      "$_id",
+                      { $map: { input: "$$itemIds", as: "id", in: { { $toObjectId: { $ifNull: ["$$id", ""] } } } } }
+                    ]
+                  }
+                }
+              }
+            ],
+            as: "products"
+          }
+        },
+        {
+          $addFields: {
+            selectedItems: {
+              $map: {
+                input: "$selectedItems",
+                as: "item",
+                in: {
+                  $let: {
+                    vars: {
+                      prod: {
+                        $arrayElemAt: [
+                          {
+                            $filter: {
+                              input: "$products",
+                              cond: { $eq: ["$$this._id", { $toObjectId: { $ifNull: ["$$item._id", ""] } }] }
+                            }
+                          },
+                          0
+                        ]
+                      }
+                    },
+                    in: {
+                      $mergeObjects: [
+                        "$$item",
+                        {
+                          product_name: { $ifNull: ["$$prod.product_name", "Sản phẩm"] },
+                          image_1: "$$prod.image_1",
+                          product_dept: { $ifNull: ["$$prod.product_dept", ""] }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        { $project: { products: 0 } }
+      ])
+      .toArray();
+
+    const total = await orderCollection.countDocuments(filter);
+    res.status(200).json({
+      orders,
+      total,
+      page,
+      pages: Math.ceil(total / limit)
+    });
+  } catch (err) {
+    console.error("orders/me error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

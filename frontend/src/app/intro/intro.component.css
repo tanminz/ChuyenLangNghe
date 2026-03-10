@@ -171,13 +171,13 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
-/* Nón lá 2 bên - bự, nửa ngoài nửa trong màn hình */
+/* Trang trí 2 bên - xoay theo scroll */
 .hat-decoration {
   position: absolute;
   top: 50%;
   transform-origin: center center;
-  width: 400px;
-  height: 400px;
+  width: 480px;
+  height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,7 +187,7 @@
 }
 
 .hat-left {
-  left: -200px;
+  left: -240px;
 }
 
 .hat-left .hat-img {
@@ -197,7 +197,7 @@
 }
 
 .hat-right {
-  right: -200px;
+  right: -240px;
 }
 
 .hat-right .hat-img {

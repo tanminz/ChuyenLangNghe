@@ -7,6 +7,9 @@
 
 .blog-page {
     background-color: #fbf7f1;
+    background-image: url('/assets/bg-texture.png');
+    background-repeat: repeat;
+    background-attachment: fixed;
     min-height: 100vh;
     padding: 36px 0 60px;
 }

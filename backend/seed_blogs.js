@@ -5,135 +5,165 @@ const { MongoClient } = require('mongodb');
 const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
 const dbName = process.env.DB_NAME || "dacsan3mien";
 
+// Blog data Chuyện làng nghề – khớp với trang blog hiện tại (featuredBlog, featuredSmall, latestNews, artisanStories, craftVillageStories)
 const sampleBlogs = [
   {
-    title: '🌟 CHÈ TÂN CƯƠNG – LINH HỒN CỦA ĐẤT TRÀ THÁI NGUYÊN',
-    description: 'Vùng đất Tân Cương – nơi hội tụ khí hậu và thổ nhưỡng hoàn hảo cho cây chè. Quy trình sao chè truyền thống giúp giữ hương cốm non và vị ngọt hậu độc đáo.',
-    content: `Vùng đất Tân Cương, Thái Nguyên là nơi hội tụ những yếu tố tự nhiên tuyệt vời: độ cao lý tưởng, khí hậu mát mẻ, sương mù quanh năm và đất đỏ bazan màu mỡ. Tất cả tạo nên hương vị đặc trưng của chè Tân Cương - thứ trà được mệnh danh là "linh hồn của đất trà Việt Nam".
+    slug: 'bat-trang-700-nam',
+    title: 'Bát Tràng – 700 năm giữ nghề gốm',
+    description: 'Làng gốm Bát Tràng với bề dày lịch sử hơn 700 năm, nơi lưu giữ tinh hoa nghề gốm truyền thống Việt Nam. Từ những bàn tay nghệ nhân, mỗi sản phẩm gốm không chỉ là đồ dùng mà còn là tác phẩm nghệ thuật mang đậm văn hóa dân tộc.',
+    content: `Làng gốm Bát Tràng (Gia Lâm, Hà Nội) là một trong những làng nghề truyền thống lâu đời nhất Việt Nam, với bề dày lịch sử hơn 700 năm. Từ những bàn tay tài hoa của nghệ nhân, mỗi sản phẩm gốm Bát Tràng không chỉ là đồ dùng mà còn là tác phẩm nghệ thuật mang đậm văn hóa dân tộc.
 
-Quy trình sao chè truyền thống được truyền từ đời này sang đời khác, giúp giữ trọn hương thơm cốm non, vị ngọt thanh và màu nước trong vắt. Mỗi búp chè non được hái vào sáng sớm khi còn đọng sương, sau đó qua công đoạn sao rang tỉ mỉ trên chảo gang nóng.
+Gốm Bát Tràng nổi tiếng với men ngọc, men nâu, men lam, men rạn... mỗi loại đều thể hiện tinh hoa của nghề gốm Việt. Quy trình làm gốm truyền thống gồm chuốt gốm, trang trí, tráng men, nung lò – mỗi bước đều đòi hỏi sự tỉ mỉ và kinh nghiệm lâu năm.
 
-Chè Tân Cương không chỉ là thức uống mà còn là nét văn hóa, là niềm tự hào của người dân Thái Nguyên. Khi thưởng thức, bạn sẽ cảm nhận được hương vị núi rừng Tây Bắc trong từng ngụm trà.`,
-    image: '',
+Ngày nay Bát Tràng vừa giữ nghề truyền thống vừa đổi mới, thu hút du khách và kết nối sản phẩm ra thị trường trong nước và quốc tế. Bát Tràng – 700 năm giữ nghề, là niềm tự hào của làng nghề Việt Nam.`,
+    image: '/assets/blog-featured-middle.png',
+    author: 'Admin',
+    published: true,
+    createdAt: new Date('2022-06-25'),
+    updatedAt: new Date('2022-06-25')
+  },
+  {
+    slug: 'tu-dat-thanh-hinh',
+    title: 'Từ đất thành hình',
+    description: 'Hành trình từ những nắm đất sét thô sơ đến những tác phẩm gốm tinh xảo, câu chuyện về sự sáng tạo và bền bỉ của người thợ làng nghề.',
+    content: `Từ đất thành hình là câu chuyện về hành trình biến đổi kỳ diệu – từ những nắm đất sét thô sơ qua bàn tay nghệ nhân trở thành những tác phẩm gốm tinh xảo. Đây không chỉ là quá trình vật lý mà còn là sự gửi gắm tâm hồn, văn hóa vào từng sản phẩm.
+
+Người thợ gốm phải hiểu đất, chọn đất, nhào nặn và tạo hình với sự kiên nhẫn. Mỗi chi tiết trang trí, mỗi nét men đều thể hiện bản sắc làng nghề. Từ đất thành hình – đó chính là nghệ thuật và sự sáng tạo không ngừng của con người.`,
+    image: '/assets/blog-image-39254299-ecd3-4e35-9639-800f9dfc1d57.png',
+    author: 'Admin',
+    published: true,
+    createdAt: new Date('2004-03-15'),
+    updatedAt: new Date('2004-03-15')
+  },
+  {
+    slug: 'giu-nghe-hay-giu-ky-uc',
+    title: 'Giữ nghề hay giữ ký ức?',
+    description: 'Giữa nhịp sống hiện đại, nhiều nghệ nhân vẫn chọn ở lại với lò gốm, khung cửi, bàn đục. Với họ, giữ nghề không chỉ là mưu sinh...',
+    content: `Giữa nhịp sống hiện đại hối hả, nhiều nghệ nhân vẫn chọn ở lại với lò gốm, khung cửi, bàn đục. Với họ, giữ nghề không chỉ là mưu sinh mà còn là gìn giữ ký ức, bản sắc của cha ông.
+
+Câu hỏi "giữ nghề hay giữ ký ức?" đặt ra nhiều suy ngẫm. Nghề truyền thống mang trong mình cả lịch sử, văn hóa và tình cảm. Mỗi sản phẩm thủ công là cầu nối giữa quá khứ và hiện tại. Giữ nghề chính là giữ ký ức – và ngược lại.`,
+    image: '/assets/blog-image-620cef72-fb04-41e6-bbc1-a88d625d7383.png',
+    author: 'Admin',
+    published: true,
+    createdAt: new Date('2021-10-15'),
+    updatedAt: new Date('2021-10-15')
+  },
+  {
+    slug: 'khong-hoan-hao',
+    title: 'Không hoàn hảo mới là thủ công',
+    description: 'Khác với sản xuất công nghiệp, mỗi sản phẩm thủ công có thể có một sai lệch nhỏ. Nhưng chính sự khác biệt đó tạo nên giá trị...',
+    content: `Khác với sản xuất công nghiệp hàng loạt, mỗi sản phẩm thủ công có thể có một sai lệch nhỏ, một nét không đều. Nhưng chính sự "không hoàn hảo" đó mới tạo nên giá trị đích thực của đồ thủ công.
+
+Mỗi chiếc bát, chiếc nón, tấm lụa đều mang dấu ấn riêng của người làm. Không có hai sản phẩm giống hệt nhau – đó là vẻ đẹp của nghề truyền thống. Không hoàn hảo mới là thủ công – sự chân thật, độc đáo mà máy móc không thể tạo ra.`,
+    image: '/assets/blog-image-d14c99d8-0624-4fbf-95a2-b214ee73c150.png',
     author: 'Admin',
     published: true,
     createdAt: new Date('2025-01-15'),
     updatedAt: new Date('2025-01-15')
   },
   {
-    title: '🐟 MẮM CÁ LINH CÀ MAU – HƯƠNG VỊ MÙA NƯỚC NỔI MIỀN TÂY',
-    description: 'Khi mùa nước nổi tràn về, người dân háo hức đón mùa cá linh – "lộc trời ban" của vùng sông nước. Mắm cá linh Cà Mau mang trọn hương vị đồng quê và bản sắc miền Tây.',
-    content: `Mỗi năm, khi mùa nước nổi về, đồng bằng sông Cửu Long lại nhộn nhịp mùa cá linh. Loài cá nhỏ xinh này xuất hiện từ tháng 9 đến tháng 4 âm lịch, khi nước lũ từ thượng nguồn tràn về, mang theo phù sa và dinh dưỡng.
+    slug: 'mot-doi-mot-nghe',
+    title: 'Một đời - Một nghề',
+    description: 'Có những người dành trọn cả cuộc đời cho một công việc duy nhất. Nghề truyền thống với họ không chỉ là kỹ năng, mà là...',
+    content: `Có những người dành trọn cả cuộc đời cho một công việc duy nhất – làm gốm, dệt lụa, đan nón, sơn mài... Nghề truyền thống với họ không chỉ là kỹ năng, mà là đam mê, là lẽ sống.
 
-Cá linh có thịt ngọt, mềm, ít xương, rất thích hợp để làm mắm. Người dân Cà Mau có bí quyết ướp mắm riêng: cá tươi được rửa sạch, pha muối vừa phải, ủ trong chum từ 3-6 tháng. Mắm cá linh ngon phải có màu vàng óng, trong vắt, mùi thơm đặc trưng, vị ngọt thanh không tanh.
-
-Mắm cá linh thường được dùng để nấu canh chua, kho thịt, hoặc chấm với rau sống và bánh tráng. Đây là món ăn gắn liền với văn hóa ẩm thực Nam Bộ, thể hiện sự hòa quyện giữa con người và thiên nhiên.`,
-    image: '',
+Một đời một nghề – sự bền bỉ ấy đã tạo nên những nghệ nhân tài hoa, những bậc thầy của làng nghề. Họ truyền nghề cho thế hệ sau, giữ lửa cho di sản văn hóa. Mỗi bàn tay nhăn nheo, mỗi vết chai sạn đều kể câu chuyện về tình yêu nghề.`,
+    image: '/assets/blog-image-e2d67ab0-8b2b-4698-a2b8-e46f77692467.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-14'),
-    updatedAt: new Date('2025-01-14')
+    createdAt: new Date('2022-01-15'),
+    updatedAt: new Date('2022-01-15')
   },
   {
-    title: '🐟 CÁ CƠM SẤY GIÒN NGHỆ AN – VỊ BIỂN MẶN MÀ, GIÒN TAN',
-    description: 'Đặc sản tuyệt vời từ biển Cửa Lò. Từng con cá cơm nhỏ, qua công nghệ chế biến hiện đại, trở thành món ăn giòn tan, đậm vị và đầy dinh dưỡng.',
-    content: `Biển Cửa Lò, Nghệ An không chỉ nổi tiếng với cảnh đẹp mà còn là nơi có nguồn cá cơm tươi ngon. Cá cơm là loài cá biển nhỏ, giàu protein và omega-3, rất tốt cho sức khỏe.
+    slug: 'doi-tay-nhuom-mau',
+    title: 'Đôi tay nhuộm màu thời gian',
+    description: 'Ở Vạn Phúc bà Lê Thị Hòa vẫn kiên trì ngồi bên khung cửi. Bàn tay bà đã quen với nhịp đều đặn suốt ba thập kỷ.',
+    content: `Ở làng lụa Vạn Phúc (Hà Đông, Hà Nội), bà Lê Thị Hòa vẫn kiên trì ngồi bên khung cửi mỗi ngày. Bàn tay bà đã quen với nhịp đều đặn suốt ba thập kỷ – đưa thoi, dệt từng sợi tơ thành những tấm lụa mềm mại.
 
-Quy trình chế biến cá cơm sấy giòn đòi hỏi sự tỉ mỉ: cá tươi được rửa sạch, ướp gia vị vừa phải, sau đó sấy khô ở nhiệt độ thích hợp để giữ nguyên dinh dưỡng và độ giòn. Sản phẩm hoàn thiện có màu vàng nâu đẹp mắt, mùi thơm hấp dẫn.
-
-Cá cơm sấy giòn có thể ăn ngay hoặc chiên giòn, thích hợp làm món nhắm với cơm nóng, cháo, hoặc món nhậu. Đây là món quà tuyệt vời từ biển Nghệ An, mang đến hương vị đặc trưng của vùng biển Bắc Trung Bộ.`,
-    image: '',
+Đôi tay nhuộm màu thời gian – màu của thuốc nhuộm, của sự cần mẫn. Câu chuyện về đôi bàn tay gắn bó với nghề qua năm tháng, về sự kiên trì và tình yêu với nghề dệt lụa truyền thống. Mỗi tấm lụa Vạn Phúc đều mang hơi ấm của đôi tay ấy.`,
+    image: '/assets/blog-image-a816a0d3-3229-4753-a8c7-7e7baab88866.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-13'),
-    updatedAt: new Date('2025-01-13')
+    createdAt: new Date('2026-01-15'),
+    updatedAt: new Date('2026-01-15')
   },
   {
-    title: '🏝️ NƯỚC MẮM PHAN THIẾT – HƯƠNG VỊ ĐẬM ĐÀ TỪ BIỂN',
-    description: 'Biểu tượng của nghề biển lâu đời hơn 300 năm. Hương thơm nồng đậm, vị mặn mòi hòa quyện cùng vị ngọt hậu đặc trưng.',
-    content: `Nước mắm Phan Thiết là niềm tự hào của Bình Thuận, với lịch sử phát triển hơn 300 năm. Vùng biển Phan Thiết có nguồn cá cơm tươi ngon, kết hợp với khí hậu nắng gió lý tưởng, tạo nên sản phẩm nước mắm đặc biệt.
+    slug: 'gom-chu-dau',
+    title: 'Gốm Chu Đậu - Hành trình trở lại',
+    description: 'Hành trình phục hưng dòng gốm Chu Đậu từ quá khứ, từ những mảnh vỡ khảo cổ đến những tác phẩm làm sống lại thương hiệu gốm cổ.',
+    content: `Gốm Chu Đậu (Hải Dương) từng là thương hiệu gốm nổi tiếng thế kỷ 15-17, xuất khẩu sang nhiều nước. Sau hàng trăm năm thất truyền, hành trình phục hưng dòng gốm Chu Đậu bắt đầu từ những mảnh vỡ khảo cổ.
 
-Quy trình làm nước mắm truyền thống đòi hỏi sự kiên nhẫn: cá tươi được ướp muối theo tỷ lệ 3:1, ủ trong thùng gỗ từ 12-18 tháng. Trong thời gian này, cá lên men tự nhiên, tạo nên nước mắm có màu hổ phách trong vắt, mùi thơm đặc trưng.
-
-Nước mắm Phan Thiết đạt chuẩn khi có độ đạm từ 30-40 độ, màu nâu đỏ đẹp, vị mặn mòi hòa quyện cùng vị ngọt thanh. Đây là gia vị không thể thiếu trong bữa ăn của người Việt, là "linh hồn" của nhiều món ăn truyền thống.`,
-    image: '',
+Các nghệ nhân đã nghiên cứu, khôi phục kỹ thuật, men màu, kiểu dáng. Gốm Chu Đậu với men lam, hoa văn tinh xảo đang dần trở lại. Hành trình trở lại – đó là nỗ lực gìn giữ và phát huy di sản gốm cổ Việt Nam.`,
+    image: '/assets/blog-image-dfb21c3a-e65c-472b-baea-7e6635dd2f22.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-12'),
-    updatedAt: new Date('2025-01-12')
+    createdAt: new Date('2026-01-10'),
+    updatedAt: new Date('2026-01-10')
   },
   {
-    title: '🍯 MẬT ONG MẪU SƠN – GIỌT NGỌT TINH KHIẾT TỪ ĐỈNH NÚI',
-    description: 'Trên độ cao hơn 1.000 mét của dãy Mẫu Sơn, nơi sương mù bao phủ quanh năm, những đàn ong rừng tạo nên mật ong quý hiếm.',
-    content: `Mẫu Sơn, Lạng Sơn là dãy núi cao với khí hậu mát mẻ quanh năm, nơi có hệ sinh thái rừng phong phú. Đây là môi trường lý tưởng cho ong rừng sinh sống và làm tổ.
+    slug: 'son-mai-tuong-binh-hiep',
+    title: 'Sơn mài Tương Bình Hiệp - Lớp màu của thời gian',
+    description: 'Gia đình ông giữ lửa tại Tương Bình Hiệp đã ba đời làm sơn mài. Ông kể rằng để hoàn thành một tác phẩm, phải mài đến hàng chục lớp...',
+    content: `Làng sơn mài Tương Bình Hiệp (Bình Dương) nổi tiếng với nghề sơn mài truyền thống. Gia đình ông giữ lửa tại đây đã ba đời làm sơn mài. Ông kể rằng để hoàn thành một tác phẩm, phải quét sơn và mài đến hàng chục lớp.
 
-Mật ong Mẫu Sơn được ong rừng thu thập từ hoa các loại thảo mộc quý hiếm mọc trên núi cao. Người dân bản địa theo truyền thống hái mật ong rừng một cách bền vững, chỉ lấy phần thừa mà ong không cần.
-
-Mật ong Mẫu Sơn có màu vàng nâu đậm, độ đặc cao, vị ngọt thanh không gắt. Sản phẩm giàu vitamin, khoáng chất và enzym tự nhiên, rất tốt cho sức khỏe. Đặc biệt, mật ong này có hương thơm đặc trưng của hoa rừng núi cao, khác biệt hoàn toàn với mật ong nuôi thông thường.`,
-    image: '',
+Lớp sơn mài chồng lớp qua năm tháng, tạo nên độ sâu, độ bóng và vẻ đẹp độc đáo. Mỗi lớp màu ẩn hiện qua lớp mài thể hiện sự công phu. Sơn mài Tương Bình Hiệp – lớp màu của thời gian, là tinh hoa nghề sơn mài Việt Nam.`,
+    image: '/assets/blog-image-e96eec76-0d78-44b8-881d-fd40494c5794.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-11'),
-    updatedAt: new Date('2025-01-11')
+    createdAt: new Date('2025-12-15'),
+    updatedAt: new Date('2025-12-15')
   },
   {
-    title: '☕ CÀ PHÊ BUÔN MA THUỘT – HƯƠNG VỊ TÂY NGUYÊN ĐẬM ĐÀ',
-    description: 'Vùng đất đỏ bazan Tây Nguyên, nơi sinh ra những hạt cà phê chất lượng cao nhất Việt Nam. Cà phê Buôn Ma Thuột - niềm tự hào của đất Tây Nguyên.',
-    content: `Buôn Ma Thuột, Đắk Lắk được mệnh danh là "thủ đô cà phê Việt Nam" với diện tích trồng cà phê lớn nhất cả nước. Đất đỏ bazan màu mỡ, khí hậu nhiệt đới gió mùa và độ cao 500-800m so với mực nước biển tạo nên điều kiện lý tưởng cho cây cà phê.
+    slug: 'hanh-trinh-non-la',
+    title: 'Hành trình của một chiếc nón lá',
+    description: 'Từ lá đến nón, hành trình của nghề truyền thống. Mỗi chiếc nón lá đều kể câu chuyện về bàn tay khéo léo của người thợ.',
+    content: `Từ lá cọ, lá dừa đến chiếc nón lá hoàn chỉnh – đó là hành trình của nghề truyền thống. Các làng nón như Chuông (Hà Tây), Tây Hồ (Huế) vẫn giữ cách làm thủ công: chọn lá, là lá, khâu từng mũi kim.
 
-Cà phê Robusta Buôn Ma Thuột có hương vị đậm đà, đắng nhẹ, hậu vị ngọt thanh và hàm lượng caffein cao. Người dân Tây Nguyên có cách rang và pha cà phê truyền thống riêng biệt, tạo nên hương vị đặc trưng không lẫn với bất kỳ vùng nào.
-
-Một ly cà phê Buôn Ma Thuột rang mộc, pha phin chậm rãi, thưởng thức cùng đá lạnh hoặc sữa đặc - đó là trải nghiệm văn hóa cà phê đích thực của Việt Nam. Cà phê không chỉ là thức uống mà còn là biểu tượng văn hóa, là niềm tự hào của người dân Tây Nguyên.`,
-    image: '',
+Mỗi chiếc nón lá đều kể câu chuyện về bàn tay khéo léo, về sự kiên nhẫn của người thợ. Hành trình của một chiếc nón – cũng là hành trình của văn hóa Việt, từ làng quê đến khắp nơi trên thế giới.`,
+    image: '/assets/blog-image-63db5e9d-dc5b-4be4-be13-79c739fbdd73.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-10'),
-    updatedAt: new Date('2025-01-10')
+    createdAt: new Date('2025-12-10'),
+    updatedAt: new Date('2025-12-10')
   },
   {
-    title: '🍶 RƯỢU NGÔ NA HANG – HƯƠNG MEN LÁ CỦA NÚI RỪNG TUYÊN QUANG',
-    description: 'Ở vùng núi Na Hang, rượu không chỉ là thức uống mà còn là linh hồn văn hóa người Tày và Dao. Rượu ngô được nấu từ ngô bản địa và men lá với 20 loại thảo mộc quý.',
-    content: `Na Hang, Tuyên Quang là vùng núi cao với hệ sinh thái rừng nguyên sinh phong phú. Người dân các dân tộc Tày, Dao, Mông nơi đây có truyền thống nấu rượu men lá từ hàng trăm năm trước.
+    slug: 'nguoi-giu-lua-lo-gom',
+    title: 'Người giữ lửa lò gốm',
+    description: 'Tại Bát Tràng, nghệ nhân Trần Minh đã gắn bó với lò gốm hơn 40 năm. Ông nói rằng làm gốm không chỉ là tạo hình mà là hiểu...',
+    content: `Tại làng gốm Bát Tràng, nghệ nhân Trần Minh đã gắn bó với lò gốm hơn 40 năm. Ông nói rằng làm gốm không chỉ là tạo hình mà là hiểu đất, hiểu lửa, hiểu từng giai đoạn nung.
 
-Nguyên liệu chính là ngô bản địa được trồng trên nương rẫy, kết hợp với men lá được làm từ hơn 20 loại thảo mộc quý như lá gừng, lá sa nhân, lá dong... Quy trình làm men rất công phu, được truyền từ đời này sang đời khác.
-
-Rượu ngô Na Hang có độ cồn vừa phải (25-30 độ), màu vàng trong, hương thơm dịu nhẹ của thảo mộc hòa quyện cùng mùi ngô thơm. Vị ngọt thanh, không gắt, uống vào rất dễ chịu. Rượu ngô thường được dùng trong các dịp lễ, tết, đám cưới, là món quà quý giá thể hiện sự hiếu khách của người dân vùng cao.
-
-Đặc biệt, rượu ngô Na Hang được uống theo kiểu "uống cạn" - một nét văn hóa độc đáo của các dân tộc Tây Bắc, thể hiện tình nghĩa và sự gắn kết cộng đồng.`,
-    image: '',
+Người giữ lửa lò gốm – nhiệm vụ quan trọng nhất. Nhiệt độ, thời gian nung quyết định chất lượng từng mẻ gốm. Ông truyền nghề cho con cháu, giữ ngọn lửa không bao giờ tắt. Mỗi lò gốm cháy đỏ là một câu chuyện về sự tận tâm với nghề.`,
+    image: '/assets/blog-image-14fcb103-5442-4f5b-b41a-40179560049d.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-09'),
-    updatedAt: new Date('2025-01-09')
+    createdAt: new Date('2025-08-15'),
+    updatedAt: new Date('2025-08-15')
   },
   {
-    title: '🧧 SET QUÀ TẾT 3 MIỀN – TINH HOA ẨM THỰC VIỆT NAM',
-    description: 'Tết đến xuân về, món quà tặng từ Bắc chí Nam, hội tụ tinh hoa ẩm thực 3 miền Bắc - Trung - Nam trong một set quà ý nghĩa.',
-    content: `Tết Nguyên Đán là dịp lễ quan trọng nhất của người Việt. Việc biếu tặng quà Tết thể hiện tình cảm, sự quan tâm và lời chúc phúc tốt đẹp. Set quà Tết 3 miền được thiết kế để mang đến trọn vẹn hương vị đặc sản từ Bắc chí Nam.
+    slug: 'tro-ve-de-tiep-noi',
+    title: 'Trở về để tiếp nối',
+    description: 'Nhiều người về làng từ thành phố học tập, nay quay về mở xưởng nhỏ tại quê nhà, tiếp nối nghề truyền thống của gia đình.',
+    content: `Nhiều bạn trẻ rời làng lên thành phố học tập, làm việc. Nhưng rồi họ chọn quay về – mở xưởng nhỏ tại quê nhà, tiếp nối nghề truyền thống của gia đình.
 
-**Đặc sản miền Bắc:**
-- Chè Tân Cương Thái Nguyên
-- Bánh đậu xanh Hải Dương
-- Mật ong Mẫu Sơn Lạng Sơn
-
-**Đặc sản miền Trung:**
-- Nước mắm Phan Thiết
-- Cà phê Buôn Ma Thuột
-- Cá cơm sấy giòn Nghệ An
-
-**Đặc sản miền Nam:**
-- Mắm cá linh Cà Mau
-- Kẹo dừa Bến Tre
-- Bánh tráng trộn Tây Ninh
-
-Mỗi sản phẩm đều được tuyển chọn kỹ lưỡng, đảm bảo chất lượng và nguồn gốc rõ ràng. Bao bì được thiết kế tinh tế, sang trọng, thích hợp làm quà biếu doanh nghiệp, người thân, bạn bè trong dịp Tết Nguyên Đán.
-
-Set quà Tết 3 miền không chỉ là món quà vật chất mà còn là cách kết nối tình cảm, chia sẻ hương vị văn hóa Việt Nam qua những món ăn truyền thống.`,
-    image: '',
+Trở về để tiếp nối – đó là sự lựa chọn của thế hệ mới, mang kiến thức hiện đại để bảo tồn và phát triển nghề truyền thống. Họ kết nối làng nghề với thị trường, đưa sản phẩm thủ công đến gần hơn với người tiêu dùng. Hy vọng mới cho làng nghề Việt Nam.`,
+    image: '/assets/blog-image-53f5fb1b-b202-4137-9a5c-cd716fba7ee8.png',
     author: 'Admin',
     published: true,
-    createdAt: new Date('2025-01-08'),
-    updatedAt: new Date('2025-01-08')
+    createdAt: new Date('2025-07-15'),
+    updatedAt: new Date('2025-07-15')
+  },
+  {
+    slug: 'giua-lang-va-pho',
+    title: 'Giữa làng và phố',
+    description: 'Làng nghề năm nay không còn khép kín. Sản phẩm thủ công đang bước vào không gian hiện đại, kết nối truyền thống với nhiều...',
+    content: `Làng nghề năm nay không còn khép kín như trước. Sản phẩm thủ công đang bước vào không gian hiện đại – cửa hàng, triển lãm, sàn thương mại điện tử – kết nối truyền thống với nhiều đối tượng khách hàng hơn.
+
+Giữa làng và phố – ranh giới đang được xóa mờ. Nghệ nhân vừa giữ cách làm truyền thống vừa học cách tiếp cận thị trường. Sản phẩm làng nghề không còn chỉ bán tại chợ quê mà có mặt ở các thành phố lớn, xuất khẩu ra nước ngoài.`,
+    image: '/assets/blog-image-99c9a690-24cd-4c18-b4b8-4d99a47a28a3.png',
+    author: 'Admin',
+    published: true,
+    createdAt: new Date('2025-12-20'),
+    updatedAt: new Date('2025-12-20')
   }
 ];
 
@@ -152,25 +182,33 @@ async function seedBlogs() {
     const existingCount = await blogCollection.countDocuments();
     console.log(`\nCurrent number of blogs: ${existingCount}`);
     
+    const forceReseed = process.argv.includes('--force') || process.argv.includes('-f');
+
     if (existingCount > 0) {
-      const readline = require('readline').createInterface({
-        input: process.stdin,
-        output: process.stdout
-      });
-      
-      const answer = await new Promise(resolve => {
-        readline.question('\nDatabase already has blogs. Do you want to:\n1. Add more sample blogs\n2. Clear and reseed\n3. Cancel\nYour choice (1/2/3): ', resolve);
-      });
-      
-      readline.close();
-      
-      if (answer === '2') {
-        console.log('\nClearing existing blogs...');
+      if (forceReseed) {
+        console.log('\n--force: Clearing existing blogs...');
         await blogCollection.deleteMany({});
         console.log('Cleared!');
-      } else if (answer === '3') {
-        console.log('\nOperation cancelled.');
-        return;
+      } else {
+        const readline = require('readline').createInterface({
+          input: process.stdin,
+          output: process.stdout
+        });
+
+        const answer = await new Promise(resolve => {
+          readline.question('\nDatabase already has blogs. Do you want to:\n1. Add more sample blogs\n2. Clear and reseed\n3. Cancel\nYour choice (1/2/3): ', resolve);
+        });
+
+        readline.close();
+
+        if (answer === '2') {
+          console.log('\nClearing existing blogs...');
+          await blogCollection.deleteMany({});
+          console.log('Cleared!');
+        } else if (answer === '3') {
+          console.log('\nOperation cancelled.');
+          return;
+        }
       }
     }
     

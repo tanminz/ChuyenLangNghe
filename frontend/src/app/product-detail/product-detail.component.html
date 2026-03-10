@@ -16,7 +16,7 @@
   </div>
 
   <div class="product-info">
-    <p class="product-category">{{ product.product_dept || 'Đặc sản 3 miền' }}</p>
+    <p class="product-category">{{ product.product_dept || 'Làng nghề' }}</p>
     <div class="product-title-row">
       <h1>{{ product.product_name || 'Sản phẩm' }}</h1>
       <span [ngClass]="{ 'in-stock': product.stocked_quantity > 0, 'out-of-stock': product.stocked_quantity === 0 }">
@@ -25,10 +25,10 @@
     </div>
 
     <div class="rating-row">
-      <span class="rating-value-num">{{ product.rating | number:'1.1-1' }}</span>
+      <span class="rating-value-num">{{ (averageRating || product.rating) | number:'1.1-1' }}</span>
       <div class="rating">
         <div *ngFor="let star of [1, 2, 3, 4, 5]" class="star" (mouseenter)="onStarHover()" (mouseleave)="onStarLeave()">
-          <div class="star-full" [ngStyle]="{ width: getStarFillPercentage(product.rating, star) + '%' }"></div>
+          <div class="star-full" [ngStyle]="{ width: getStarFillPercentage(averageRating || product.rating, star) + '%' }"></div>
         </div>
       </div>
       <span class="review-count">({{ reviewCount }} đánh giá)</span>
@@ -65,7 +65,7 @@
 
     <div class="product-meta">
       <p><strong>Mã SP:</strong> {{ product._id || 'N/A' }}</p>
-      <p><strong>Nhãn:</strong> Đặc sản, {{ product.product_dept || 'Việt Nam' }}</p>
+      <p><strong>Nhãn:</strong> Làng nghề, {{ product.product_dept || 'Việt Nam' }}</p>
     </div>
 
     <div class="share-row">

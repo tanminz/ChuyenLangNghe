@@ -1,7 +1,10 @@
 /* Trang chủ - Figma Design Exact Match */
 .home {
     position: relative;
-    background: #FFFAF1;
+    background-color: #FFFAF1;
+    background-image: url('/assets/bg-texture.png');
+    background-repeat: repeat;
+    background-attachment: fixed;
     color: #310002;
     width: 100%;
     overflow-x: hidden;
@@ -834,6 +837,11 @@
 .btn i {
     width: 25px;
     height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
 /* SCROLL TO TOP */

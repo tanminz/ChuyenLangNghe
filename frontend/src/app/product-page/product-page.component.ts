@@ -11,6 +11,8 @@ import { Product } from '../../interface/Product';
 export class ProductPageComponent implements OnInit {
   product: Product | undefined;
   errorMessage: string = '';
+  reviewCount: number = 0;
+  averageRating: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,6 +24,7 @@ export class ProductPageComponent implements OnInit {
       const productId = params.get('id');
       if (productId) {
         this.loadProduct(productId);
+        this.loadReviewStats(productId);
       }
     });
   }
@@ -36,5 +39,21 @@ export class ProductPageComponent implements OnInit {
         this.errorMessage = "Không thể tải chi tiết sản phẩm. Vui lòng thử lại sau.";
       }
     });
+  }
+
+  loadReviewStats(productId: string): void {
+    this.productService.getProductReviews(productId, 1, 1).subscribe({
+      next: (data) => {
+        this.reviewCount = data.total;
+        this.averageRating = data.averageRating;
+      },
+      error: () => { this.reviewCount = 0; this.averageRating = 0; }
+    });
+  }
+
+  onReviewAdded(): void {
+    if (this.product?._id) {
+      this.loadReviewStats(this.product._id);
+    }
   }
 }

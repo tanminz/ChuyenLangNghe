@@ -1,6 +1,9 @@
 .contact-page {
   font-family: 'Manrope', sans-serif;
-  background: #fbf7f1;
+  background-color: #fbf7f1;
+  background-image: url('/assets/bg-texture.png');
+  background-repeat: repeat;
+  background-attachment: fixed;
   color: #310002;
 }
 
@@ -114,6 +117,11 @@
 
 .btn-submit i {
   font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 /* Contact info box */

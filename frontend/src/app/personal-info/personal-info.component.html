@@ -127,4 +127,40 @@
       </div>
     </div>
   </div>
+
+  <!-- Lịch sử mua hàng -->
+  <div class="purchase-history-section">
+    <h2 class="purchase-history-title">
+      <i class="far fa-clock" aria-hidden="true"></i>
+      Lịch sử mua hàng
+    </h2>
+    <div class="purchase-history-card">
+      <div *ngIf="orderLoading" class="purchase-loading">Đang tải...</div>
+      <div *ngIf="!orderLoading && purchaseHistory.length === 0" class="purchase-empty">Chưa có đơn hàng nào.</div>
+      <div *ngIf="!orderLoading && purchaseHistory.length > 0" class="purchase-list">
+        <div *ngFor="let entry of purchaseHistory" class="purchase-item">
+          <div class="purchase-item-image">
+            <img [src]="entry.item.image_1 || '/assets/Mẫu.jpg'" [alt]="entry.item.product_name">
+            <span class="purchase-brand">Chuyện Làng Nghề</span>
+          </div>
+          <div class="purchase-item-info">
+            <h3 class="purchase-item-name">{{ entry.item.product_name || 'Sản phẩm' }}</h3>
+            <p class="purchase-item-category">Phân loại {{ entry.item.product_dept || 'Chung' }}</p>
+            <p class="purchase-item-qty">Số lượng: {{ entry.item.quantity }}</p>
+          </div>
+          <div class="purchase-item-price">{{ formatPrice(entry.item.unit_price) }}</div>
+          <div class="purchase-item-actions">
+            <button type="button" class="btn-purchase-action btn-buy-again" (click)="buyAgain(entry)">Mua lại</button>
+            <button type="button" class="btn-purchase-action btn-detail" (click)="goToProductDetail(entry)">Chi tiết</button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!orderLoading && orderPages > 1" class="purchase-pagination">
+        <span class="pagination-label">Trang</span>
+        <button *ngFor="let p of orderPageNumbers" type="button"
+          class="pagination-btn" [class.active]="orderPage === p"
+          (click)="goToOrderPage(p)">{{ p }}</button>
+      </div>
+    </div>
+  </div>
 </div>

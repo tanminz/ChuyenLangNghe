@@ -115,6 +115,7 @@
   font-size: 0.8125rem;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
   cursor: pointer;
+  transform: none !important;
 }
 
 .add-to-cart:hover {

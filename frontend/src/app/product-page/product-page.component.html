@@ -17,8 +17,15 @@
 
     <ng-container *ngIf="product; else loading">
       <div class="product-card">
-        <app-product-detail [product]="product"></app-product-detail>
-        <app-product-desc [product]="product"></app-product-desc>
+        <app-product-detail
+          [product]="product"
+          [reviewCount]="reviewCount"
+          [averageRating]="averageRating">
+        </app-product-detail>
+        <app-product-desc
+          [product]="product"
+          (reviewAdded)="onReviewAdded()">
+        </app-product-desc>
       </div>
       <app-related-product *ngIf="product._id && product.product_detail" [currentProductId]="product._id || ''"
         [currentProductDescription]="product.product_detail || ''">

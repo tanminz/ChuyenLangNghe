@@ -26,11 +26,11 @@ export class ProductCatalogComponent implements OnInit {
   promoBestSeller: boolean = false;
   promoDiscount: boolean = false;
   availabilityFilter: string = '';
-  /** Khoảng giá (thanh kéo) - đơn vị VND */
+  /** Khoảng giá (thanh kéo) - đơn vị VND, 0 đến 5 triệu */
   priceMinRange: number = 0;
-  priceMaxRange: number = 0;
+  priceMaxRange: number = 5000000;
   priceMinValue: number = 0;
-  priceMaxValue: number = 0;
+  priceMaxValue: number = 5000000;
   get priceRangeStep(): number {
     const range = this.priceMaxRange - this.priceMinRange;
     if (range <= 0) return 1000;
@@ -133,14 +133,11 @@ export class ProductCatalogComponent implements OnInit {
         this.provinces = [...new Set(this.products.map(p => p.product_dept).filter(dept => dept && dept.trim()))].sort();
         this.filteredProvinces = [...this.provinces];
         console.log('🏛️ Available provinces:', this.provinces);
-        const prices = this.products.map(p => p.unit_price).filter(v => v != null && v >= 0);
-        if (prices.length) {
-          this.priceMinRange = Math.floor(Math.min(...prices));
-          this.priceMaxRange = Math.ceil(Math.max(...prices));
-          if (this.priceMinValue === 0 && this.priceMaxValue === 0) {
-            this.priceMinValue = this.priceMinRange;
-            this.priceMaxValue = this.priceMaxRange;
-          }
+        this.priceMinRange = 0;
+        this.priceMaxRange = 5000000;
+        if (this.priceMinValue === 0 && this.priceMaxValue === 0) {
+          this.priceMinValue = 0;
+          this.priceMaxValue = 5000000;
         }
         this.applyFilter(this.selectedCategory);
         if (this.searchQuery) {

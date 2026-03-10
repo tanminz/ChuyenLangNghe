@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserAPIService } from '../user-api.service';
+import { OrderAPIService } from '../order-api.service';
+import { CartService } from '../services/cart.service';
 import { User } from '../../interface/User';
 import { DateService } from '../services/date.service';
 
@@ -22,9 +25,19 @@ export class PersonalInfoComponent implements OnInit {
   days: number[] = [];
   years: number[] = [];
 
+  purchaseHistory: { order: any; item: any }[] = [];
+  orderPage = 1;
+  orderPages = 0;
+  orderTotal = 0;
+  orderLimit = 10;
+  orderLoading = false;
+
   constructor(
     private userAPIService: UserAPIService,
-    private dateService: DateService
+    private dateService: DateService,
+    private orderAPIService: OrderAPIService,
+    private cartService: CartService,
+    private router: Router
   ) { }
 
   private cloneUser(user: Partial<User>): Partial<User> {
@@ -37,6 +50,7 @@ export class PersonalInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserInfo();
+    this.loadPurchaseHistory();
     this.months = this.dateService.getMonths();
     this.days = this.dateService.getDays();
     this.years = this.dateService.getYears();
@@ -146,5 +160,55 @@ export class PersonalInfoComponent implements OnInit {
   removeAvatar(): void {
     this.avatarPreview = null;
     (this.personalInfo as any).avatar = '';
+  }
+
+  loadPurchaseHistory(): void {
+    this.orderLoading = true;
+    this.orderAPIService.getMyOrders(this.orderPage, this.orderLimit).subscribe({
+      next: (res) => {
+        this.orderTotal = res.total;
+        this.orderPages = res.pages;
+        const items: { order: any; item: any }[] = [];
+        (res.orders || []).forEach((order: any) => {
+          (order.selectedItems || []).forEach((item: any) => {
+            items.push({ order, item });
+          });
+        });
+        this.purchaseHistory = items;
+        this.orderLoading = false;
+      },
+      error: () => {
+        this.orderLoading = false;
+      }
+    });
+  }
+
+  get orderPageNumbers(): number[] {
+    return Array.from({ length: this.orderPages }, (_, i) => i + 1);
+  }
+
+  goToOrderPage(p: number): void {
+    if (p < 1 || p > this.orderPages) return;
+    this.orderPage = p;
+    this.loadPurchaseHistory();
+  }
+
+  formatPrice(price: number): string {
+    return (price ?? 0).toLocaleString('vi-VN') + ' VND';
+  }
+
+  buyAgain(entry: { order: any; item: any }): void {
+    const id = entry.item._id;
+    const qty = entry.item.quantity || 1;
+    const unitPrice = entry.item.unit_price || 0;
+    const name = entry.item.product_name || 'Sản phẩm';
+    const img = entry.item.image_1 || '';
+    this.cartService.addToCart(id, qty, unitPrice, name, img, 999);
+    this.router.navigate(['/cart']);
+  }
+
+  goToProductDetail(entry: { order: any; item: any }): void {
+    const id = entry.item._id;
+    this.router.navigate(['/product', id]);
   }
 }

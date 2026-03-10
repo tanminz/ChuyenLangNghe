@@ -12,7 +12,10 @@
 
 .catalog-page {
   min-height: 100vh;
-  background: var(--catalog-bg);
+  background-color: var(--catalog-bg);
+  background-image: url('/assets/bg-texture.png');
+  background-repeat: repeat;
+  background-attachment: fixed;
 }
 
 .catalog-page .container {
@@ -107,29 +110,35 @@
   margin: 0;
 }
 
-.filter-option {
+/* Override global button - chữ luôn rõ, không chìm */
+.catalog-sidebar .filter-option {
   display: block;
   width: 100%;
   text-align: left;
   padding: 0.45rem 0.65rem;
   font-size: 0.875rem;
-  color: var(--catalog-text);
-  background: transparent;
+  color: #2d2d2d !important;
+  background: transparent !important;
   border: 1px solid transparent;
   border-radius: 2px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.filter-option:hover {
-  background: var(--catalog-sidebar-bg);
-  color: var(--catalog-text);
+.catalog-sidebar .filter-option:hover {
+  background: #e8e4df !important;
+  color: #2d2d2d !important;
 }
 
-.filter-option.active {
-  background: var(--catalog-primary);
-  color: #fff;
-  border-color: var(--catalog-primary);
+.catalog-sidebar .filter-option.active {
+  background: #7A4726 !important;
+  color: #ffffff !important;
+  border-color: #7A4726;
+}
+
+.catalog-sidebar .filter-option.active:hover {
+  background: #5e3419 !important;
+  color: #ffffff !important;
 }
 
 /* Đánh giá: sao SVG rõ ràng, không cartoon */
@@ -192,18 +201,19 @@
   border-color: var(--catalog-primary);
 }
 
-/* Thanh kéo giá */
+/* Thanh kéo giá - phong cách chuyên nghiệp, tối giản */
 .price-range-display {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--catalog-text);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.02em;
 }
 
 .price-range-sliders {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .price-range-row {
@@ -216,32 +226,69 @@
   font-size: 0.75rem;
   color: var(--catalog-text-muted);
   min-width: 2.5rem;
+  font-weight: 500;
 }
 
 .price-range-input {
   flex: 1;
-  height: 6px;
+  height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--catalog-border);
-  border-radius: 0;
+  background: #e5e2de;
+  border-radius: 2px;
+  cursor: pointer;
 }
 
+.price-range-input:focus {
+  outline: none;
+}
+
+/* Track - thanh trượt nền */
+.price-range-input::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #e5e2de;
+  border-radius: 2px;
+}
+
+.price-range-input::-moz-range-track {
+  height: 4px;
+  background: #e5e2de;
+  border-radius: 2px;
+}
+
+/* Thumb - núm kéo nâu, nổi bật trên thanh xám */
 .price-range-input::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  background: var(--catalog-primary);
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  background: #7A4726;
   border: none;
+  border-radius: 2px;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(49, 0, 2, 0.2);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.price-range-input::-webkit-slider-thumb:hover {
+  background: #5e3419;
+  box-shadow: 0 2px 6px rgba(122, 71, 38, 0.3);
 }
 
 .price-range-input::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  background: var(--catalog-primary);
+  width: 16px;
+  height: 16px;
+  background: #7A4726;
   border: none;
+  border-radius: 2px;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(49, 0, 2, 0.2);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.price-range-input::-moz-range-thumb:hover {
+  background: #5e3419;
+  box-shadow: 0 2px 6px rgba(122, 71, 38, 0.3);
 }
 
 /* Province search */

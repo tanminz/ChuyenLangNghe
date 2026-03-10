@@ -192,4 +192,60 @@ export class ProductAPIService {
       })
       .pipe(catchError(this.handleError));
   }
+
+  /** Get reviews for a product (paginated). */
+  getProductReviews(
+    productId: string,
+    page: number = 1,
+    limit: number = 10,
+    sort: 'newest' | 'oldest' = 'newest'
+  ): Observable<{
+    reviews: ProductReview[];
+    total: number;
+    page: number;
+    pages: number;
+    averageRating: number;
+    ratingCounts: { [key: number]: number };
+  }> {
+    return this._http
+      .get<{
+        reviews: ProductReview[];
+        total: number;
+        page: number;
+        pages: number;
+        averageRating: number;
+        ratingCounts: { [key: number]: number };
+      }>(`${this.apiUrl}/${productId}/reviews`, {
+        headers: this.getHeaders(),
+        params: { page: String(page), limit: String(limit), sort },
+        withCredentials: true
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Submit a review for a product (requires login). */
+  submitReview(
+    productId: string,
+    payload: { rating: number; comment: string; images?: string[] }
+  ): Observable<{ message: string }> {
+    return this._http
+      .post<{ message: string }>(`${this.apiUrl}/${productId}/reviews`, payload, {
+        headers: this.getHeaders(),
+        withCredentials: true
+      })
+      .pipe(catchError(this.handleError));
+  }
+}
+
+export interface ProductReview {
+  _id?: string;
+  productId: string;
+  userId?: string;
+  userName: string;
+  userEmail?: string;
+  rating: number;
+  comment: string;
+  images?: string[];
+  createdAt: string | Date;
+  verified?: boolean;
 }

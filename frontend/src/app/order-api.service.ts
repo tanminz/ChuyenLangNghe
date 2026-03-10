@@ -164,6 +164,17 @@ export class OrderAPIService {
       .pipe(catchError(this.handleError));
   }
 
+  /** Đơn hàng của user đang đăng nhập */
+  getMyOrders(page: number = 1, limit: number = 10): Observable<{ orders: any[]; total: number; page: number; pages: number }> {
+    return this.http
+      .get<{ orders: any[]; total: number; page: number; pages: number }>(`${this.apiUrl}/me`, {
+        headers: this.getHeaders(),
+        withCredentials: true,
+        params: { page: page.toString(), limit: limit.toString() }
+      })
+      .pipe(catchError(this.handleError));
+  }
+
   updateProductStock(productId: string, quantity: number): Observable<any> {
     if (!productId || typeof productId !== 'string') {
       return throwError(() => new Error('Invalid productId.'));
