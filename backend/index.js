@@ -727,7 +727,7 @@ app.get("/orders/me", requireAuth, async (req, res) => {
                   $expr: {
                     $in: [
                       "$_id",
-                      { $map: { input: "$$itemIds", as: "id", in: { { $toObjectId: { $ifNull: ["$$id", ""] } } } } }
+                      { $map: { input: "$$itemIds", as: "id", in: { $toObjectId: { $ifNull: ["$$id", ""] } } } }
                     ]
                   }
                 }
