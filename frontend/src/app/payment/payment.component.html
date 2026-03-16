@@ -125,7 +125,11 @@
                     <hr>
                     <div class="d-flex justify-content-between">
                         <span>Tổng tiền hàng:</span>
-                        <span>{{ totalPrice | currency: 'VND' }}</span>
+                        <span>{{ subtotalPrice | currency: 'VND' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between" *ngIf="discountAmount > 0">
+                        <span>Giảm giá ({{ couponCode }}):</span>
+                        <span>-{{ discountAmount | currency: 'VND' }}</span>
                     </div>
                     <div class="d-flex justify-content-between">
                         <span>Phí vận chuyển:</span>

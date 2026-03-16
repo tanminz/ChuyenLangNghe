@@ -67,9 +67,10 @@ export class ProductAPIService {
     page: number = 1,
     limit: number = 10,
     dept: string = '',
-    type: string = ''
+    type: string = '',
+    includeImages: 'primary' | 'all' = 'primary'
   ): Observable<{ products: Product[]; total: number; page: number; pages: number }> {
-    const params: any = { page, limit };
+    const params: any = { page, limit, includeImages };
     if (dept) {
       params.dept = dept;
     }
@@ -94,7 +95,7 @@ export class ProductAPIService {
 
   getProductsByCategory(category: string): Observable<Product[]> {
     return this._http
-      .get<Product[]>(`${this.apiUrl}?dept=${category}`, {
+      .get<Product[]>(`${this.apiUrl}?dept=${category}&includeImages=primary`, {
         headers: this.getHeaders()
       })
       .pipe(retry(3), catchError(this.handleError));

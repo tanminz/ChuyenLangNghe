@@ -51,93 +51,23 @@
   <section class="home-section products">
     <div class="home-container">
       <h2 class="section-title">SẢN PHẨM</h2>
-      <div class="product-grid">
-        <!-- Row 1 -->
-        <div class="product-row">
-          <article class="product-card">
+      <div class="product-grid" *ngIf="!isProductsLoading && featuredProducts.length > 0">
+        <div class="product-row" *ngFor="let row of getProductRows()">
+          <article class="product-card" *ngFor="let product of row" (click)="goToProduct(product._id)">
             <div class="product-image">
-              <img src="assets/New web images/hv14-01_binh_bo_o__15x26x9cm__-_luc__1__68fd0d9c394848ed80a710efe31caf82_master.jpg" alt="Bình bồ ô" />
+              <img [src]="product.image_1 || 'assets/Mẫu.jpg'" [alt]="product.product_name" />
             </div>
             <div class="product-body">
-              <h3>Bình bồ ô men lục</h3>
-              <span class="product-price">890.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/hv12-01_binh_nguoi_may_don_sac__20x18x11cm__-_luc_facb07fa77ea4b6bbd30a8fe7eb391ef_master.jpg" alt="Bình người mây" />
-            </div>
-            <div class="product-body">
-              <h3>Bình người mây đơn sắc</h3>
-              <span class="product-price">980.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/hv11-01_binh_hoa_qua__19x18x12cm__-_luc__1__7f60de9c5ec44300ae5fd9c5aebf1045_master.jpg" alt="Bình hoa quả" />
-            </div>
-            <div class="product-body">
-              <h3>Bình hoa quả men lục</h3>
-              <span class="product-price">1.250.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/upload_c0ad555c4266460ca6aaad7b34a6b6db_master.png" alt="Rổ tre" />
-            </div>
-            <div class="product-body">
-              <h3>Bộ rổ tre đan</h3>
-              <span class="product-price">420.000đ</span>
-            </div>
-          </article>
-        </div>
-
-        <!-- Row 2 -->
-        <div class="product-row">
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/upload_c0ad555c4266460ca6aaad7b34a6b6db_master.png" alt="Rổ tre" />
-            </div>
-            <div class="product-body">
-              <h3>Rổ tre tròn</h3>
-              <span class="product-price">350.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/upload_c0ad555c4266460ca6aaad7b34a6b6db_master.png" alt="Rổ tre" />
-            </div>
-            <div class="product-body">
-              <h3>Rổ tre vuông</h3>
-              <span class="product-price">380.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/upload_c0ad555c4266460ca6aaad7b34a6b6db_master.png" alt="Rổ tre" />
-            </div>
-            <div class="product-body">
-              <h3>Giỏ tre cao</h3>
-              <span class="product-price">450.000đ</span>
-            </div>
-          </article>
-
-          <article class="product-card">
-            <div class="product-image">
-              <img src="assets/New web images/upload_c0ad555c4266460ca6aaad7b34a6b6db_master.png" alt="Rổ tre" />
-            </div>
-            <div class="product-body">
-              <h3>Mẹt tre đan</h3>
-              <span class="product-price">320.000đ</span>
+              <h3>{{ product.product_name }}</h3>
+              <span class="product-price">{{ product.unit_price | currency:'VND':'symbol':'1.0-0' }}</span>
             </div>
           </article>
         </div>
       </div>
+
+      <p class="section-description" *ngIf="!isProductsLoading && featuredProducts.length === 0">
+        Chưa có sản phẩm thật để hiển thị trên trang chủ.
+      </p>
 
       <div style="text-align: center; margin-top: 50px;">
         <a class="btn btn-outline-primary" routerLink="/catalog">

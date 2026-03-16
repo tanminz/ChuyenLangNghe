@@ -80,7 +80,7 @@ export class ProductManagementComponent implements OnInit {
       return;
     }
     this.loading = true;
-    this.productService.getProducts(this.currentPage, this.pageSize, this.filterDept).subscribe({
+    this.productService.getProducts(this.currentPage, this.pageSize, this.filterDept, this.filterType, 'all').subscribe({
       next: (data) => {
         this.products = data.products;
         this.totalProducts = data.total;

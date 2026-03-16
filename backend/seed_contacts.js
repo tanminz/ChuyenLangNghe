@@ -139,5 +139,11 @@ async function seedContacts() {
   }
 }
 
-seedContacts();
+if (require.main === module) {
+  seedContacts();
+}
 
+module.exports = {
+  sampleContacts,
+  seedContacts
+};

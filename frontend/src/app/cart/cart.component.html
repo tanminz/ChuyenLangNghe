@@ -50,6 +50,10 @@
                         <span>Tổng tiền hàng</span>
                         <span>{{ totalSelectedPrice | currency: 'VND' }}</span>
                     </div>
+                    <div class="summary-row" *ngIf="discountAmount > 0">
+                        <span>Giảm giá ({{ appliedCouponCode }})</span>
+                        <span>-{{ discountAmount | currency: 'VND' }}</span>
+                    </div>
                     <div class="summary-row">
                         <span>Phí vận chuyển</span>
                         <span class="free">Miễn phí</span>
@@ -57,16 +61,19 @@
                     <hr class="summary-divider" />
                     <div class="summary-row summary-total">
                         <span>Thành tiền</span>
-                        <span>{{ totalSelectedPrice | currency: 'VND' }}</span>
+                        <span>{{ finalTotal | currency: 'VND' }}</span>
                     </div>
                     <button type="button" class="btn-checkout" (click)="proceedToCheckout()">Thanh toán</button>
                 </div>
                 <div class="coupon-card">
                     <h4 class="coupon-title">Mã ưu đãi</h4>
                     <div class="coupon-input-wrap">
-                        <input type="text" placeholder="Nhập mã ưu đãi" />
-                        <button type="button" class="btn-coupon">Áp dụng</button>
+                        <input type="text" placeholder="Nhập mã ưu đãi" [(ngModel)]="couponCode" />
+                        <button type="button" class="btn-coupon" (click)="applyCoupon()" [disabled]="applyingCoupon">
+                            {{ applyingCoupon ? 'Đang áp dụng...' : 'Áp dụng' }}
+                        </button>
                     </div>
+                    <small *ngIf="couponMessage">{{ couponMessage }}</small>
                 </div>
             </aside>
         </div>

@@ -233,5 +233,11 @@ async function seedBlogs() {
   }
 }
 
-seedBlogs();
+if (require.main === module) {
+  seedBlogs();
+}
 
+module.exports = {
+  sampleBlogs,
+  seedBlogs
+};

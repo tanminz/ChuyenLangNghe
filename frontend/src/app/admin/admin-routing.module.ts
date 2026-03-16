@@ -8,6 +8,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { BlogManagementComponent } from './blog-management/blog-management.component';
 import { ContactManagementComponent } from './contact-management/contact-management.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { CouponManagementComponent } from './coupon-management/coupon-management.component';
 import { AuthGuard } from '../guards/auth.guard';
 
 const routes: Routes = [
@@ -39,6 +40,11 @@ const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         data: { title: 'Chức năng/Biểu đồ' }
+      },
+      {
+        path: 'coupon-adm',
+        component: CouponManagementComponent,
+        data: { title: 'Chức năng/Mã giảm giá' }
       }
     ]
   },

@@ -13,6 +13,9 @@ import { OrderAPIService } from '../order-api.service';
 })
 export class PaymentComponent implements OnInit {
   selectedItems: CartItem[] = [];
+  subtotalPrice: number = 0;
+  discountAmount: number = 0;
+  couponCode: string = '';
   totalPrice: number = 0;
   paymentMethod: string = '';
   provinces: any[] = [];
@@ -47,12 +50,18 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedItems = this.cartService.getSelectedItems();
+    const appliedCoupon = this.cartService.getAppliedCoupon();
+    if (appliedCoupon) {
+      this.couponCode = appliedCoupon.code;
+      this.discountAmount = appliedCoupon.discountAmount;
+    }
     this.calculateTotalPrice();
     this.loadProvinces();
   }
 
   calculateTotalPrice(): void {
-    this.totalPrice = this.selectedItems.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
+    this.subtotalPrice = this.selectedItems.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
+    this.totalPrice = Math.max(this.subtotalPrice - this.discountAmount, 0);
   }
 
   placeOrder(): void {
@@ -115,6 +124,8 @@ export class PaymentComponent implements OnInit {
     const orderData = {
       selectedItems: orderedItems,
       totalPrice: this.totalPrice,
+      couponCode: this.couponCode || null,
+      couponDiscount: this.discountAmount || 0,
       paymentMethod: this.paymentForm.value.paymentMethod,
       shippingAddress: {
         firstName: this.paymentForm.value.firstName,
@@ -135,6 +146,7 @@ export class PaymentComponent implements OnInit {
         alert('Đơn hàng của bạn đã được đặt thành công!\n\nĐể tránh mất tiền vào tay kẻ lừa đảo mạo danh Shipper, bạn tuyệt đối\nKHÔNG chuyển khoản cho Shipper khi chưa nhận hàng\nKHÔNG nhấn vào đường dẫn (Link) lạ của Shipper gửi');
         this.cartService.removeOrderedItems(orderedItems.map(item => item._id));
         this.cartService.clearSelectedItems();
+        this.cartService.clearAppliedCoupon();
         this.router.navigate(['/']);
       },
       error: (err) => {

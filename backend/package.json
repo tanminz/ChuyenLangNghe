@@ -4,6 +4,12 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "dev": "nodemon index.js",
+    "db:create": "node create_db.js",
+    "db:seed:blogs": "node seed_blogs.js",
+    "db:seed:contacts": "node seed_contacts.js",
+    "db:check": "node checkMongo.js",
+    "test:smoke": "node smoke_test_all_endpoints.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:blogs": "node seed_blogs.js"
   },

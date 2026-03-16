@@ -28,10 +28,10 @@ export class MainpageComponent implements OnInit, OnDestroy {
   recentActivities: RecentActivity[] = [];
   private allActivities: RecentActivity[] = [];
   dashboardStats = [
-    { label: 'Đơn hàng hôm nay', value: '128', trend: '+12% so với hôm qua' },
-    { label: 'Doanh thu tuần này', value: '₫1.2 tỷ', trend: '+8% so với tuần trước' },
-    { label: 'Khách hàng mới', value: '56', trend: '+14% trong 7 ngày' },
-    { label: 'Sản phẩm đang bán', value: '412', trend: 'Ổn định' }
+    { label: 'Tổng đơn hàng', value: '...', trend: '' },
+    { label: 'Tổng doanh thu', value: '...', trend: '' },
+    { label: 'Khách hàng', value: '...', trend: '' },
+    { label: 'Sản phẩm', value: '...', trend: '' }
   ];
   loadingActivities = false;
   activitiesError: string | null = null;
@@ -59,6 +59,7 @@ export class MainpageComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.add(profileSubscription);
+    this.loadDashboardOverview();
     this.loadRecentActivities();
   }
 
@@ -141,6 +142,68 @@ export class MainpageComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.add(activitiesSubscription);
+  }
+
+  private loadDashboardOverview(): void {
+    const statsSubscription = this.dashboardService.getDashboardStats().subscribe({
+      next: (response) => {
+        const overview = response?.overview || {};
+        const lowStockCount = Array.isArray(response?.lowStockProducts) ? response.lowStockProducts.length : 0;
+
+        this.dashboardStats = [
+          {
+            label: 'Tổng đơn hàng',
+            value: this.formatNumber(overview.totalOrders || 0),
+            trend: this.buildTrendText(overview.ordersGrowth, 'so với 7 ngày trước')
+          },
+          {
+            label: 'Tổng doanh thu',
+            value: this.formatCurrency(overview.totalRevenue || 0),
+            trend: this.buildTrendText(overview.revenueGrowth, 'so với 7 ngày trước')
+          },
+          {
+            label: 'Khách hàng',
+            value: this.formatNumber(overview.totalUsers || 0),
+            trend: `Liên hệ mới: ${this.formatNumber(overview.newContacts || 0)}`
+          },
+          {
+            label: 'Sản phẩm',
+            value: this.formatNumber(overview.totalProducts || 0),
+            trend: `Sắp hết hàng: ${this.formatNumber(lowStockCount)}`
+          }
+        ];
+      },
+      error: () => {
+        this.dashboardStats = [
+          { label: 'Tổng đơn hàng', value: '0', trend: '' },
+          { label: 'Tổng doanh thu', value: this.formatCurrency(0), trend: '' },
+          { label: 'Khách hàng', value: '0', trend: '' },
+          { label: 'Sản phẩm', value: '0', trend: '' }
+        ];
+      }
+    });
+
+    this.subscriptions.add(statsSubscription);
+  }
+
+  private formatNumber(value: number): string {
+    return new Intl.NumberFormat('vi-VN').format(value || 0);
+  }
+
+  private formatCurrency(value: number): string {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      maximumFractionDigits: 0
+    }).format(value || 0);
+  }
+
+  private buildTrendText(growth: number, suffix: string): string {
+    if (typeof growth !== 'number' || Number.isNaN(growth)) {
+      return '';
+    }
+    const sign = growth > 0 ? '+' : '';
+    return `${sign}${growth.toFixed(1)}% ${suffix}`;
   }
 
   private applyActivityFilter(): void {

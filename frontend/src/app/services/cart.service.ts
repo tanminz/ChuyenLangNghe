@@ -20,6 +20,7 @@ export class CartService {
   cartItemsCount$ = this.cartItemsCount.asObservable();
 
   private selectedItems: (CartItem & { product_name: string; image_1: string; stocked_quantity: number })[] = [];
+  private appliedCoupon: { code: string; discountAmount: number } | null = null;
   private isUserLoggedIn = false;
 
   constructor(
@@ -195,6 +196,7 @@ export class CartService {
       this.updateCartCount([]);
     }
     this.clearSelectedItems();
+    this.clearAppliedCoupon();
   }
 
   private loadCartFromDatabase(): void {
@@ -263,6 +265,36 @@ export class CartService {
   clearSelectedItems(): void {
     this.selectedItems = [];
     localStorage.removeItem(this.selectedItemsKey);
+  }
+
+  setAppliedCoupon(coupon: { code: string; discountAmount: number } | null): void {
+    this.appliedCoupon = coupon;
+    if (coupon) {
+      localStorage.setItem('appliedCoupon', JSON.stringify(coupon));
+    } else {
+      localStorage.removeItem('appliedCoupon');
+    }
+  }
+
+  getAppliedCoupon(): { code: string; discountAmount: number } | null {
+    if (this.appliedCoupon) return this.appliedCoupon;
+    const raw = localStorage.getItem('appliedCoupon');
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed?.code && typeof parsed?.discountAmount === 'number') {
+        this.appliedCoupon = parsed;
+        return parsed;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  clearAppliedCoupon(): void {
+    this.appliedCoupon = null;
+    localStorage.removeItem('appliedCoupon');
   }
 
   saveSingleProductForCheckout(

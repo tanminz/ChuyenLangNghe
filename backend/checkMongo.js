@@ -1,12 +1,13 @@
 const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
 async function checkMongoDB() {
-  const client = new MongoClient('mongodb://localhost:27017');
+  const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017');
   try {
     await client.connect();
     console.log('✅ Connected to MongoDB');
     
-    const db = client.db('dacsan3mien');
+    const db = client.db(process.env.DB_NAME || 'dacsan3mien');
     
     // List all collections
     const collections = await db.listCollections().toArray();

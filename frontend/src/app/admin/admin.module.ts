@@ -23,6 +23,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { BlogManagementComponent } from './blog-management/blog-management.component';
 import { ContactManagementComponent } from './contact-management/contact-management.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { CouponManagementComponent } from './coupon-management/coupon-management.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     UserManagementComponent,
     BlogManagementComponent,
     ContactManagementComponent,
-    DashboardComponent
+    DashboardComponent,
+    CouponManagementComponent
   ],
   imports: [
     CommonModule,

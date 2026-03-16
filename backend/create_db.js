@@ -1,20 +1,19 @@
 /**
- * Script tạo Database dacsan3mien với các Collection giống DB cũ
+ * Tạo DB backend, khong seed product mock.
  * Chạy: node create_db.js
- * 
- * Collections: Product, User, Order, Feedback, Cart, Blog
- * Dữ liệu mẫu: User (từ EYECONIC.User.json), Blog, Feedback
  */
-
 require('dotenv').config();
 const { MongoClient, ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
+const { sampleBlogs } = require('./seed_blogs');
+const { sampleContacts } = require('./seed_contacts');
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
-const dbName = process.env.DB_NAME || 'chuyenlangnghe';
+const dbName = process.env.DB_NAME || 'dacsan3mien';
+const COLLECTIONS = ['Product', 'User', 'Order', 'Feedback', 'Cart', 'Blog', 'ProductReview', 'Coupon'];
 
-// Chuyển $oid sang ObjectId
 function convertIds(obj) {
   if (Array.isArray(obj)) return obj.map(convertIds);
   if (obj && typeof obj === 'object') {
@@ -31,110 +30,135 @@ function convertIds(obj) {
   return obj;
 }
 
-// Sample Blogs (từ seed_blogs.js)
-const sampleBlogs = [
-  {
-    title: '🌟 CHÈ TÂN CƯƠNG – LINH HỒN CỦA ĐẤT TRÀ THÁI NGUYÊN',
-    description: 'Vùng đất Tân Cương – nơi hội tụ khí hậu và thổ nhưỡng hoàn hảo cho cây chè.',
-    content: 'Vùng đất Tân Cương, Thái Nguyên là nơi hội tụ những yếu tố tự nhiên tuyệt vời...',
-    image: '',
-    author: 'Admin',
-    published: true,
-    createdAt: new Date('2025-01-15'),
-    updatedAt: new Date('2025-01-15')
-  },
-  {
-    title: '🐟 MẮM CÁ LINH CÀ MAU – HƯƠNG VỊ MÙA NƯỚC NỔI MIỀN TÂY',
-    description: 'Khi mùa nước nổi tràn về, người dân háo hức đón mùa cá linh.',
-    content: 'Mỗi năm, khi mùa nước nổi về, đồng bằng sông Cửu Long lại nhộn nhịp mùa cá linh...',
-    image: '',
-    author: 'Admin',
-    published: true,
-    createdAt: new Date('2025-01-14'),
-    updatedAt: new Date('2025-01-14')
-  },
-  {
-    title: '☕ CÀ PHÊ BUÔN MA THUỘT – HƯƠNG VỊ TÂY NGUYÊN',
-    description: 'Vùng đất đỏ bazan Tây Nguyên, nơi sinh ra những hạt cà phê chất lượng cao.',
-    content: 'Buôn Ma Thuột được mệnh danh là thủ đô cà phê Việt Nam...',
-    image: '',
-    author: 'Admin',
-    published: true,
-    createdAt: new Date('2025-01-10'),
-    updatedAt: new Date('2025-01-10')
-  }
-];
+async function buildFallbackUsers() {
+  const password = await bcrypt.hash('112233', 10);
+  return [
+    {
+      profileName: 'Admin',
+      email: 'admin@uel.edu.vn',
+      password,
+      role: 'admin',
+      action: 'edit all',
+      avatar: '',
+      memberPoints: 0,
+      memberTier: 'Member'
+    },
+    {
+      profileName: 'User',
+      email: 'user@uel.edu.vn',
+      password,
+      role: 'user',
+      action: 'just view',
+      avatar: '',
+      memberPoints: 0,
+      memberTier: 'Member'
+    }
+  ];
+}
 
-// Sample Feedback (từ seed_contacts.js)
-const sampleFeedback = [
-  { fullName: 'Nguyễn Văn An', email: 'nguyenvanan@gmail.com', phone: '0901234567', message: 'Xin chào, tôi muốn hỏi về đặc sản chè Tân Cương.', status: 'new', submittedAt: new Date() },
-  { fullName: 'Trần Thị Bình', email: 'tranthib@yahoo.com', phone: '0912345678', message: 'Cho tôi hỏi về set quà Tết 3 miền.', status: 'read', submittedAt: new Date() }
-];
-
-const COLLECTIONS = ['Product', 'User', 'Order', 'Feedback', 'Cart', 'Blog'];
+function normalizeObjectId(value) {
+  if (value instanceof ObjectId) return value;
+  if (ObjectId.isValid(value)) return new ObjectId(value);
+  return new ObjectId();
+}
 
 async function createDatabase() {
   const client = new MongoClient(mongoUri);
-  
+
   try {
-    console.log('Đang kết nối MongoDB...');
+    console.log('Dang ket noi MongoDB...');
     await client.connect();
-    console.log('✅ Kết nối thành công!\n');
+    console.log('Ket noi thanh cong.\n');
 
     const db = client.db(dbName);
 
-    // 1. Tạo các collection (drop nếu đã tồn tại để tạo mới)
-    console.log('📁 Tạo các Collection:');
+    console.log('Tao collections:');
     for (const colName of COLLECTIONS) {
-      const collections = await db.listCollections({ name: colName }).toArray();
-      if (collections.length > 0) {
+      const exists = await db.listCollections({ name: colName }).toArray();
+      if (exists.length > 0) {
         await db.collection(colName).drop();
-        console.log(`   - ${colName}: đã xóa và tạo lại`);
+        console.log(`- ${colName}: da xoa va tao lai`);
       }
       await db.createCollection(colName);
-      console.log(`   - ${colName}: ✓`);
+      console.log(`- ${colName}: OK`);
     }
 
-    // 2. Import User từ EYECONIC.User.json
     const userJsonPath = path.join(__dirname, 'EYECONIC.User.json');
+    let users = [];
+
     if (fs.existsSync(userJsonPath)) {
       const userData = JSON.parse(fs.readFileSync(userJsonPath, 'utf-8'));
-      const users = convertIds(userData);
-      await db.collection('User').insertMany(users);
-      console.log(`\n👤 Đã import ${users.length} user từ EYECONIC.User.json`);
-      console.log('   Tài khoản: admin@uel.edu.vn / user@uel.edu.vn | Mật khẩu: 112233');
+      users = convertIds(userData);
+      console.log(`\nImport user tu EYECONIC.User.json: ${users.length}`);
     } else {
-      console.log('\n⚠ Không tìm thấy EYECONIC.User.json, bỏ qua import User');
+      users = await buildFallbackUsers();
+      console.log('\nKhong tim thay EYECONIC.User.json -> dung user mock mac dinh');
     }
 
-    // 3. Seed Blog
+    const userInsertResult = await db.collection('User').insertMany(users);
     await db.collection('Blog').insertMany(sampleBlogs);
-    console.log(`\n📝 Đã thêm ${sampleBlogs.length} blog mẫu`);
+    await db.collection('Feedback').insertMany(sampleContacts);
 
-    // 4. Seed Feedback
-    await db.collection('Feedback').insertMany(sampleFeedback);
-    console.log(`\n📬 Đã thêm ${sampleFeedback.length} feedback mẫu`);
+    const adminIndex = Math.max(users.findIndex((u) => u.email === 'admin@uel.edu.vn'), 0);
+    const adminUser = users[adminIndex] || users[0];
+    const adminUserId = normalizeObjectId(adminUser?._id || userInsertResult.insertedIds[adminIndex]);
 
-    // 5. Product, Order, Cart - để trống (thêm qua app)
-    console.log('\n📦 Product, Order, Cart: để trống (thêm dữ liệu qua website)');
+    const now = new Date();
 
-    console.log('\n✅ Hoàn tất! Database "' + dbName + '" đã sẵn sàng.');
-    console.log('\nChạy backend: node index.js');
-    console.log('Chạy frontend: ng serve (trong thư mục frontend)\n');
+    await db.collection('Coupon').insertMany([
+      {
+        code: 'SALE10',
+        description: 'Giảm 10% cho toàn bộ giỏ hàng',
+        type: 'percentage',
+        percentageOff: 10,
+        minItems: null,
+        discountAmount: null,
+        usageLimit: 1000,
+        usedCount: 0,
+        isActive: true,
+        validFrom: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        validTo: new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000),
+        createdAt: now,
+        updatedAt: now,
+        createdBy: adminUserId
+      },
+      {
+        code: 'MUA3GIAM50K',
+        description: 'Mua từ 3 món giảm 50.000đ',
+        type: 'item_threshold_amount',
+        percentageOff: null,
+        minItems: 3,
+        discountAmount: 50000,
+        usageLimit: 1000,
+        usedCount: 0,
+        isActive: true,
+        validFrom: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        validTo: new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000),
+        createdAt: now,
+        updatedAt: now,
+        createdBy: adminUserId
+      }
+    ]);
 
+    console.log(`\nSeed xong: User(${users.length}), Blog(${sampleBlogs.length}), Feedback(${sampleContacts.length}), Coupon(2)`);
+    console.log('Product/Order/Cart/ProductReview khong seed mock. Hay import du lieu that sau khi tao DB.');
+    console.log(`Collections de trong: Product(0), Order(0), Cart(0), ProductReview(0).`);
+    console.log(`\nDB san sang: ${dbName}`);
+    console.log('Tai khoan mac dinh (neu dung fallback): admin@uel.edu.vn / user@uel.edu.vn - mat khau 112233\n');
   } catch (err) {
-    console.error('\n❌ Lỗi:', err.message);
+    console.error('\nLoi:', err.message);
     if (err.message.includes('ECONNREFUSED')) {
-      console.log('   → Kiểm tra MongoDB đã chạy chưa: mongosh mongodb://127.0.0.1:27017');
-    }
-    if (err.message.includes('Authentication failed')) {
-      console.log('   → Tạo file .env với MONGODB_URI=mongodb://127.0.0.1:27017 (không auth)');
+      console.log('-> Kiem tra MongoDB da chay chua.');
     }
     process.exit(1);
   } finally {
     await client.close();
-    console.log('Đã đóng kết nối MongoDB.');
+    console.log('Da dong ket noi MongoDB.');
   }
 }
 
-createDatabase();
+if (require.main === module) {
+  createDatabase();
+}
+
+module.exports = { createDatabase };
