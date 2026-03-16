@@ -33,7 +33,8 @@ export class ProductPageComponent implements OnInit {
     this.product = undefined;
     this.errorMessage = '';
 
-    this.productService.getProductById(productId).subscribe({
+    // Use cached detail so revisiting the same product is instant
+    this.productService.getProductByIdCached(productId).subscribe({
       next: (data) => this.product = data,
       error: (err) => {
         this.errorMessage = "Không thể tải chi tiết sản phẩm. Vui lòng thử lại sau.";

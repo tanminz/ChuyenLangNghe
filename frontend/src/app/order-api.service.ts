@@ -75,6 +75,8 @@ export class OrderAPIService {
     selectedItems: { _id: string; quantity: number; unit_price: number }[];
     totalPrice: number;
     paymentMethod: string;
+    shippingFee?: number;
+    shippingMethod?: string;
     shippingAddress: {
       firstName: string;
       lastName: string;
@@ -86,6 +88,9 @@ export class OrderAPIService {
       email: string;
       phone: string;
       additionalNotes?: string;
+      provinceCode?: string;
+      districtCode?: string;
+      wardCode?: string;
     };
   }): Observable<{ orderId: string; message: string }> {
     if (!Array.isArray(orderData.selectedItems) || orderData.selectedItems.length === 0) {
@@ -158,6 +163,30 @@ export class OrderAPIService {
   getOrderHistory(userId: string): Observable<Order[]> {
     return this.http
       .get<Order[]>(`${this.apiUrl}/history/${userId}`, {
+        headers: this.getHeaders(),
+        withCredentials: true
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Địa chỉ giao hàng từ đơn hàng gần nhất (để tự điền cho lần mua sau) */
+  getLastShippingAddress(): Observable<{
+    firstName: string;
+    lastName: string;
+    address: string;
+    province: string;
+    district: string;
+    ward: string;
+    email: string;
+    phone: string;
+    additionalNotes?: string;
+    provinceCode?: string;
+    districtCode?: string;
+    wardCode?: string;
+    company?: string;
+  } | null> {
+    return this.http
+      .get<any>(`${this.apiUrl}/me/last-address`, {
         headers: this.getHeaders(),
         withCredentials: true
       })

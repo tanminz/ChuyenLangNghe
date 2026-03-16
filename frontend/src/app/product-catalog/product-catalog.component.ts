@@ -39,9 +39,13 @@ export class ProductCatalogComponent implements OnInit {
     return 100000;
   }
   
-  // Pagination properties
+  // Pagination: 1 trang = 5 hàng sản phẩm (grid 3 cột → 15 sản phẩm/trang)
+  readonly rowsPerPage: number = 5;
+  readonly colsPerRow: number = 3;
+  get itemsPerPage(): number {
+    return this.rowsPerPage * this.colsPerRow;
+  }
   currentPage: number = 1;
-  itemsPerPage: number = 36;
   totalPages: number = 0;
   totalItems: number = 0;
   
@@ -98,7 +102,9 @@ export class ProductCatalogComponent implements OnInit {
 
   loadProducts(): void {
     this.isLoading = true;
-    this.productService.getProducts(1, 100).subscribe({
+    // Use cached list so when navigating back from product page
+    // the catalog appears instantly without re-fetching.
+    this.productService.getProductsCachedForCatalog(100).subscribe({
       next: (data) => {
         console.log('🔍 API Response Debug:', {
           totalProducts: data.products.length,

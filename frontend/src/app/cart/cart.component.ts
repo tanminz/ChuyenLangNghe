@@ -125,7 +125,11 @@ export class CartComponent implements OnInit {
       }));
 
     if (selectedItemsList.length > 0) {
-      this.cartService.saveSelectedItems(selectedItemsList);
+      const itemsWithQuantity = selectedItemsList.map((item) => ({
+        ...item,
+        quantity: item.tempQuantity ?? item.quantity ?? 1
+      }));
+      this.cartService.saveSelectedItems(itemsWithQuantity);
       if (this.appliedCouponCode && this.discountAmount > 0) {
         this.cartService.setAppliedCoupon({
           code: this.appliedCouponCode,

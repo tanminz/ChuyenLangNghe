@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { ProductAPIService } from '../product-api.service';
 import { Product } from '../../interface/Product';
 
@@ -8,12 +8,18 @@ import { Product } from '../../interface/Product';
   styleUrls: ['./related-product.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class RelatedProductComponent implements OnInit {
+export class RelatedProductComponent implements OnInit, AfterViewInit {
   @Input() currentProductId: string = '';
   @Input() currentProductDescription: string = '';
   @Input() currentProductDept: string = '';
   relatedProducts: Product[] = [];
   maxRelatedProducts: number = 10;
+
+  @ViewChild('carouselEl') carouselEl?: ElementRef<HTMLDivElement>;
+  canScrollLeft = false;
+  canScrollRight = false;
+
+  private readonly scrollStep = 320;
 
   constructor(private productService: ProductAPIService) { }
 
@@ -54,7 +60,36 @@ export class RelatedProductComponent implements OnInit {
         newProduct.checkIfNew();
         return newProduct;
       });
+      setTimeout(() => this.updateScrollState(), 100);
     });
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.updateScrollState(), 0);
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateScrollState();
+  }
+
+  updateScrollState(): void {
+    const el = this.carouselEl?.nativeElement;
+    if (!el) return;
+    this.canScrollLeft = el.scrollLeft > 0;
+    this.canScrollRight = el.scrollLeft < el.scrollWidth - el.clientWidth - 2;
+  }
+
+  scrollRelated(direction: 'left' | 'right'): void {
+    const el = this.carouselEl?.nativeElement;
+    if (!el) return;
+    const delta = direction === 'left' ? -this.scrollStep : this.scrollStep;
+    el.scrollBy({ left: delta, behavior: 'smooth' });
+    setTimeout(() => this.updateScrollState(), 300);
+  }
+
+  onCarouselScroll(): void {
+    this.updateScrollState();
   }
 
   calculateSimilarity(desc1: string, desc2: string, dept1: string, dept2: string): number {

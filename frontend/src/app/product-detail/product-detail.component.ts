@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CartService } from '../services/cart.service';
+import { CartFlyAnimationService } from '../services/cart-fly-animation.service';
 import { Product } from '../../interface/Product';
 import { Router } from '@angular/router';
 
@@ -24,7 +25,11 @@ export class ProductDetailComponent implements OnInit {
   ];
   selectedSizeIndex: number = 0;
 
-  constructor(private cartService: CartService, private router: Router) { }
+  constructor(
+    private cartService: CartService,
+    private router: Router,
+    private cartFly: CartFlyAnimationService
+  ) { }
 
   ngOnInit(): void {
     if (this.product) {
@@ -128,6 +133,10 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(event: Event): void {
     event.stopPropagation();
+    const rect = this.cartFly.getImageRectFromEvent(event);
+    if (rect && this.product.image_1) {
+      this.cartFly.flyToCart(this.product.image_1, rect);
+    }
     this.cartService.addToCart(
       this.product._id,
       this.quantity,

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, retry, throwError } from 'rxjs';
+import { catchError, Observable, retry, throwError, of, tap } from 'rxjs';
 import { Product } from '../interface/Product';
 
 @Injectable({
@@ -9,6 +9,13 @@ import { Product } from '../interface/Product';
 export class ProductAPIService {
   private apiUrl = '/products';
   private token: string | null = null;
+
+  /** Simple in-memory cache for product list and product details */
+  private productsCache: Product[] | null = null;
+  private productsCacheTimestamp = 0;
+  private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+  private productDetailCache = new Map<string, Product>();
 
   constructor(private _http: HttpClient) {
     this.token = this.getToken();
@@ -85,12 +92,54 @@ export class ProductAPIService {
       .pipe(retry(3), catchError(this.handleError));
   }
 
+  /**
+   * Cached version of getProducts for the main catalog:
+   * we always fetch page 1 with a large limit once, then serve from memory.
+   */
+  getProductsCachedForCatalog(limit: number = 100): Observable<{ products: Product[]; total: number; page: number; pages: number }> {
+    const now = Date.now();
+    const isFresh = this.productsCache && (now - this.productsCacheTimestamp) < this.CACHE_TTL_MS;
+
+    if (isFresh) {
+      return of({
+        products: this.productsCache!,
+        total: this.productsCache!.length,
+        page: 1,
+        pages: 1
+      });
+    }
+
+    return this.getProducts(1, limit).pipe(
+      tap(res => {
+        this.productsCache = res.products;
+        this.productsCacheTimestamp = now;
+      })
+    );
+  }
+
   getProductById(id: string): Observable<Product> {
     return this._http
       .get<Product>(`${this.apiUrl}/${id}`, {
         headers: this.getHeaders()
       })
       .pipe(retry(3), catchError(this.handleError));
+  }
+
+  /**
+   * Cached product detail by id – avoids refetching when user navigates
+   * back and forth between catalog and product page.
+   */
+  getProductByIdCached(id: string): Observable<Product> {
+    const cached = this.productDetailCache.get(id);
+    if (cached) {
+      return of(cached);
+    }
+
+    return this.getProductById(id).pipe(
+      tap(product => {
+        this.productDetailCache.set(id, product);
+      })
+    );
   }
 
   getProductsByCategory(category: string): Observable<Product[]> {

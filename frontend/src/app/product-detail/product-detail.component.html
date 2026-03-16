@@ -41,14 +41,6 @@
 
     <p class="product-desc-brief">{{ product.product_detail || 'Nguyên liệu chọn lọc 100% tự nhiên, sản xuất thủ công theo công thức truyền thống. Đảm bảo an toàn vệ sinh thực phẩm, hương vị đậm đà chuẩn vị vùng miền.' }}</p>
 
-    <div *ngIf="sizeOptions.length" class="size-section">
-      <label class="size-label">Khối lượng:</label>
-      <div class="size-buttons">
-        <button *ngFor="let opt of sizeOptions; let i = index" (click)="selectSize(i)"
-          [class.selected]="i === selectedSizeIndex" [disabled]="isOutOfStock">{{ opt.label }}</button>
-      </div>
-    </div>
-
     <div class="purchase-row">
       <div class="quantity-selector">
         <button type="button" (click)="decreaseQuantity()" [disabled]="isOutOfStock">−</button>
@@ -63,16 +55,5 @@
       </div>
     </div>
 
-    <div class="product-meta">
-      <p><strong>Mã SP:</strong> {{ product._id || 'N/A' }}</p>
-      <p><strong>Nhãn:</strong> Làng nghề, {{ product.product_dept || 'Việt Nam' }}</p>
-    </div>
-
-    <div class="share-row">
-      <span>Chia sẻ:</span>
-      <a href="#" class="share-icon" aria-label="Facebook">f</a>
-      <a href="#" class="share-icon" aria-label="Twitter">𝕏</a>
-      <a href="#" class="share-icon" aria-label="Zalo">Z</a>
-    </div>
   </div>
 </div>

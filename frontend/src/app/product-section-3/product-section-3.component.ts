@@ -4,6 +4,7 @@ import { ProductAPIService } from '../product-api.service';
 import { Product } from '../../interface/Product';
 import { CartService } from '../services/cart.service';
 import { AuthService } from '../services/auth.service';
+import { CartFlyAnimationService } from '../services/cart-fly-animation.service';
 
 @Component({
   selector: 'app-product-section-3',
@@ -23,7 +24,8 @@ export class ProductSection3Component implements OnInit {
     private router: Router,
     private _service: ProductAPIService,
     private cartService: CartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cartFly: CartFlyAnimationService
   ) { }
 
   ngOnInit(): void {
@@ -74,23 +76,26 @@ export class ProductSection3Component implements OnInit {
 
   addToCart(event: Event, product: Product): void {
     event.stopPropagation();
-    if (product) {
-      this.cartService.addToCart(
-        product._id,
-        1,
-        product.unit_price,
-        product.product_name,
-        product.image_1,
-        product.stocked_quantity
-      );
+    if (!product) return;
+    const rect = this.cartFly.getImageRectFromEvent(event);
+    if (rect && product.image_1) {
+      this.cartFly.flyToCart(product.image_1, rect);
     }
+    this.cartService.addToCart(
+      product._id,
+      1,
+      product.unit_price,
+      product.product_name,
+      product.image_1,
+      product.stocked_quantity
+    );
   }
 
   shareOnFacebook(event: Event, product: Product): void {
     event.stopPropagation();
     const productUrl = `${window.location.origin}/product/${product._id}`;
-    const quote = `Check out this amazing product: ${product.product_name}! It's available for just ${product.unit_price.toLocaleString()} VND.`;
-    const hashtag = '#AmazingProduct #ĐẶC SẢN 3 MIỀN #BeĐẶC SẢN 3 MIỀN';
+    const quote = `Chia sẻ một sản phẩm thủ công từ Chuyện Làng Nghề: ${product.product_name}.`;
+    const hashtag = '#ChuyenLangNghe #DoThuCong #LangNgheTruyenThong';
     
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}&quote=${encodeURIComponent(quote)}&hashtag=${encodeURIComponent(hashtag)}`;
     window.open(url, '_blank');

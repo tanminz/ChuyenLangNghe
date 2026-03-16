@@ -106,6 +106,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Hình crafted by hand & poster bên dưới khung lọc -->
+      <div class="sidebar-crafted-image">
+        <img src="assets/catalog-sidebar-crafted.png" alt="Crafted by hand - rooted in nature" />
+      </div>
+      <div class="sidebar-crafted-image">
+        <img src="assets/catalog-sidebar-wineclay.png" alt="Wine & Clay workshop" />
+      </div>
+      <div class="sidebar-crafted-image">
+        <img src="assets/catalog-sidebar-basket.png" alt="Handmade basket" />
+      </div>
     </aside>
 
     <!-- Right: main content -->
@@ -123,6 +134,18 @@
             <button type="button" class="clear-all" (click)="clearAllFilters()">Xóa tất cả</button>
           </div>
         </div>
+      </div>
+
+      <!-- Intro video: full width under filter/topbar -->
+      <div class="catalog-video-wrap">
+        <video
+          class="catalog-video"
+          src="assets/catalog-intro-video.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+        ></video>
       </div>
 
       <div *ngIf="isLoading" class="loading-state">
