@@ -117,31 +117,34 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadHomeProducts(): void {
+    this.isProductsLoading = true;
     this.productService.getProductsCachedForCatalog(100).subscribe({
       next: data => {
-        const all = data.products.map(p => new Product(
-          p._id,
-          p.product_name,
-          p.product_detail,
-          p.stocked_quantity,
-          p.unit_price,
-          p.discount,
-          p.createdAt,
-          p.image_1,
-          p.image_2,
-          p.image_3,
-          p.image_4,
-          p.image_5,
-          p.product_dept,
-          p.rating,
-          p.isNew,
+        const all = (data.products || []).map((p: any) => new Product(
+          p._id ?? '',
+          p.product_name ?? '',
+          p.product_detail ?? '',
+          p.stocked_quantity ?? 0,
+          p.unit_price ?? 0,
+          p.discount ?? 0,
+          p.createdAt ?? '',
+          p.image_1 ?? '',
+          p.image_2 ?? '',
+          p.image_3 ?? '',
+          p.image_4 ?? '',
+          p.image_5 ?? '',
+          p.product_dept ?? '',
+          p.rating ?? 0,
+          p.isNew ?? false,
           p.type || 'food'
         ));
         all.forEach(prod => prod.checkIfNew());
         this.homeProducts = all.slice(0, 8);
+        this.isProductsLoading = false;
       },
       error: () => {
         this.homeProducts = [];
+        this.isProductsLoading = false;
       }
     });
   }

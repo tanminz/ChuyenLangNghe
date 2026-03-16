@@ -21,12 +21,16 @@ interface SavedAddress {
   additionalNotes?: string;
 }
 
+/** Placeholder khi không có ảnh sản phẩm (data URL). */
+const PAYMENT_PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%23f0f0f0" width="120" height="120"/%3E%3Ctext x="60" y="65" text-anchor="middle" fill="%23999" font-size="11" font-family="sans-serif"%3ENo image%3C/text%3E%3C/svg%3E';
+
 @Component({
   selector: 'app-payment',
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
 export class PaymentComponent implements OnInit {
+  readonly placeholderImage = PAYMENT_PLACEHOLDER_IMAGE;
   selectedItems: any[] = [];
   totalPrice: number = 0;
   subtotalPrice: number = 0;

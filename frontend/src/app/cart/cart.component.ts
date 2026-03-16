@@ -9,7 +9,11 @@ import { CouponAPIService } from '../coupon-api.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
 })
+/** Placeholder khi không có ảnh (data URL, không phụ thuộc file assets). */
+const CART_PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%23f0f0f0" width="120" height="120"/%3E%3Ctext x="60" y="65" text-anchor="middle" fill="%23999" font-size="11" font-family="sans-serif"%3ENo image%3C/text%3E%3C/svg%3E';
+
 export class CartComponent implements OnInit {
+  readonly placeholderImage = CART_PLACEHOLDER_IMAGE;
   cartItems: (CartItem & {
     isSelected: boolean;
     tempQuantity: number;
@@ -40,7 +44,7 @@ export class CartComponent implements OnInit {
       this.cartItems = items.map((item) => ({
         ...item,
         product_name: item.product_name || 'Queentin',
-        image_1: item.image_1 || 'assets/default-image.png',
+        image_1: item.image_1 || CART_PLACEHOLDER_IMAGE,
         isSelected: true,
         tempQuantity: Math.min(item.quantity, item.stocked_quantity || item.quantity),
       }));

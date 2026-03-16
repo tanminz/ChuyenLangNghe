@@ -44,9 +44,24 @@ export class CartService {
     return compressedItems ? JSON.parse(decompressFromUTF16(compressedItems)) : [];
   }
 
+  /** Chuẩn bị bản copy an toàn để lưu storage: không lưu ảnh base64 (data URL) để tránh vượt giới hạn 5MB. */
+  private toStorageSafeCartItems(
+    items: (CartItem & { product_name: string; image_1: string; stocked_quantity: number })[]
+  ): (CartItem & { product_name: string; image_1: string; stocked_quantity: number })[] {
+    return items.map((item) => {
+      const img = item.image_1 || '';
+      const isDataUrl = img.startsWith('data:');
+      return {
+        ...item,
+        image_1: isDataUrl ? '' : img,
+      };
+    });
+  }
+
   private saveCartItemsToSessionStorage(cartItems: (CartItem & { product_name: string; image_1: string; stocked_quantity: number })[]): void {
     try {
-      const serializedData = JSON.stringify(cartItems);
+      const safeItems = this.toStorageSafeCartItems(cartItems);
+      const serializedData = JSON.stringify(safeItems);
       const compressedData = compressToUTF16(serializedData);
       if (compressedData.length > 5000000) {
         alert('Không thể lưu giỏ hàng vì dữ liệu quá lớn.');
@@ -191,7 +206,7 @@ export class CartService {
         )
         .subscribe();
     } else {
-      localStorage.removeItem(this.cartKey);
+      sessionStorage.removeItem(this.cartKey);
       this.cartItems.next([]);
       this.updateCartCount([]);
     }
@@ -207,7 +222,7 @@ export class CartService {
           const mappedItems = cartItems.map((item) => ({
             ...item,
             product_name: item.product_name || 'Tên sản phẩm',
-            image_1: item.image_1 || 'default-image.jpg',
+            image_1: item.image_1 || '',
             stocked_quantity: item.stocked_quantity ?? 0,
           }));
 
@@ -240,7 +255,8 @@ export class CartService {
   }
 
   saveSelectedItems(selectedItems: (CartItem & { product_name: string; image_1: string; stocked_quantity: number })[]): void {
-    const serializedData = JSON.stringify(selectedItems);
+    const safeItems = this.toStorageSafeCartItems(selectedItems);
+    const serializedData = JSON.stringify(safeItems);
     const compressedData = compressToUTF16(serializedData);
 
     if (compressedData.length > 5000000) {

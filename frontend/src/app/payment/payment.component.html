@@ -116,7 +116,7 @@
             <div class="cart-items">
               <div *ngFor="let item of selectedItems" class="cart-item">
                 <div class="cart-item-image">
-                  <img [src]="item.image_1 || 'assets/default-image.png'" [alt]="item.product_name" />
+                  <img [src]="item.image_1 || placeholderImage" [alt]="item.product_name" />
                 </div>
                 <div class="cart-item-info">
                   <span class="cart-item-name">{{ item.product_name }}</span>

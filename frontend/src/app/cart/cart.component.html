@@ -10,7 +10,7 @@
                         <input type="checkbox" [(ngModel)]="item.isSelected" (ngModelChange)="onItemSelectChange()" />
                     </label>
                     <div class="cart-item-image-wrap">
-                        <img [src]="item.image_1 || 'assets/default-image.png'" alt="{{ item.product_name || 'Sản phẩm' }}" />
+                        <img [src]="item.image_1 || placeholderImage" alt="{{ item.product_name || 'Sản phẩm' }}" />
                     </div>
                     <div class="cart-item-body">
                         <h3 class="cart-item-name">{{ item.product_name || 'Sản phẩm' }}</h3>

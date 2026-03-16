@@ -51,7 +51,8 @@
   <section class="home-section products js-reveal" data-reveal-id="products" [ngClass]="{ 'reveal': sectionRevealed['products'] }">
     <div class="home-container">
       <h2 class="section-title reveal-el">SẢN PHẨM</h2>
-      <div class="product-grid" *ngIf="homeProducts && homeProducts.length">
+      <p class="section-description" *ngIf="isProductsLoading">Đang tải sản phẩm...</p>
+      <div class="product-grid" *ngIf="!isProductsLoading && homeProducts && homeProducts.length">
         <div class="product-row" *ngFor="let row of getProductRows()">
           <article
             class="product-card reveal-el reveal-stagger"
@@ -70,8 +71,8 @@
         </div>
       </div>
 
-      <p class="section-description" *ngIf="homeProducts && homeProducts.length === 0">
-        Chưa có sản phẩm thật để hiển thị trên trang chủ.
+      <p class="section-description" *ngIf="!isProductsLoading && homeProducts.length === 0">
+        Chưa có sản phẩm để hiển thị. Hãy chạy backend và đảm bảo database có dữ liệu sản phẩm.
       </p>
 
       <div style="text-align: center; margin-top: 50px;">
