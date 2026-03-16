@@ -1,5 +1,5 @@
 Giới thiệu
-Chào mừng bạn đến với dự án website Đặc Sản 3 Miền được xây dựng bằng Angular Framework kết nối đến MongoDB. Dự án bao gồm một backend Node.js sử dụng MongoDB làm cơ sở dữ liệu và một frontend được xây dựng bằng Angular. Các file JSON được dùng để import dữ liệu cấu hình hệ thống.
+Chào mừng bạn đến với dự án website Chuyện Làng Nghề được xây dựng bằng Angular Framework kết nối đến MongoDB. Dự án bao gồm một backend Node.js sử dụng MongoDB làm cơ sở dữ liệu và một frontend được xây dựng bằng Angular. Các file JSON được dùng để import dữ liệu cấu hình hệ thống.
 
 Thông tin đăng nhập
 *Tài khoản admin của website: admin@uel.edu.vn
