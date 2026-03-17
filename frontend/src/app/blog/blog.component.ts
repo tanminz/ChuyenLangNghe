@@ -111,7 +111,7 @@ export class BlogComponent implements OnInit {
 
   private mapApiBlogToItem(b: any): BlogDisplayItem {
     return {
-      id: (b._id || b.id || '').toString(),
+      id: (b.slug || b._id || b.id || '').toString(),
       title: b.title || '',
       image: b.image || '',
       date: this.formatBlogDate(b.updatedAt || b.createdAt),
@@ -201,11 +201,11 @@ export class BlogComponent implements OnInit {
   viewBlogDetail(blogId: string): void {
     // Scroll to top then navigate
     window.scrollTo(0, 0);
-    this.activeBlog = blogId;
+    this.router.navigate(['/blog'], { queryParams: { id: blogId } });
   }
 
   showBlogList(): void {
-    this.activeBlog = null;
+    this.router.navigate(['/blog']);
     window.scrollTo(0, 0);
   }
 
