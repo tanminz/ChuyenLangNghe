@@ -44,8 +44,8 @@ app.use(session({
   }
 }));
 
-// Serve uploaded images (product images, etc.)
-app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
+// Serve uploaded images (product images, etc.) – thư mục trùng với nơi routes + migrate ghi file
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 app.use('/products', productsRoutes);
 app.use('/user', usersRoutes);
