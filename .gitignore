@@ -30,3 +30,6 @@ desktop.ini
 # Large files (>100MB GitHub limit)
 frontend/src/assets/banner-uhd.mp4
 frontend/src/assets/aboutdecor2.png
+
+# Uploaded files (runtime)
+backend/src/public/uploads/

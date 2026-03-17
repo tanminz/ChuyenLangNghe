@@ -1,7 +1,9 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
+const path = require('path');
 const { getCollections } = require('../config/database');
 const { requireAuth, requireAdmin, requireRoleAction } = require('../middlewares/auth');
+const { persistProductImageMaybe } = require('../utils/image-storage');
 
 const router = express.Router();
 
@@ -102,13 +104,7 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl', 'account 
     return res.status(400).json({ message: 'discount must be between 0 and 1.' });
   }
 
-  const images = [image_1, image_2, image_3, image_4, image_5].filter(Boolean);
-  for (const img of images) {
-    if (typeof img !== 'string' || !img.startsWith('data:image/')) {
-      return res.status(400).json({ message: 'Invalid image format. Must be Base64.' });
-    }
-  }
-
+  const now = new Date();
   const newProduct = {
     product_name,
     product_detail: product_detail || '',
@@ -118,8 +114,8 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl', 'account 
     product_dept: product_dept || '',
     type: type || 'food',
     rating: rating || 4,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: now,
+    updatedAt: now,
     image_1: image_1 || '',
     image_2: image_2 || '',
     image_3: image_3 || '',
@@ -129,7 +125,26 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl', 'account 
 
   try {
     const result = await productCollection.insertOne(newProduct);
-    return res.status(201).json({ message: 'Product added successfully', productId: result.insertedId });
+    const productId = result.insertedId;
+
+    const uploadDirAbs = path.join(__dirname, '..', 'public', 'uploads', 'products');
+    const fields = ['image_1', 'image_2', 'image_3', 'image_4', 'image_5'];
+    const updates = {};
+
+    for (const field of fields) {
+      const persisted = persistProductImageMaybe(newProduct[field], { productId, field, uploadDirAbs });
+      if (persisted === null) {
+        return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
+      }
+      updates[field] = persisted;
+    }
+
+    await productCollection.updateOne(
+      { _id: productId },
+      { $set: { ...updates, updatedAt: new Date() } }
+    );
+
+    return res.status(201).json({ message: 'Product added successfully', productId });
   } catch {
     return res.status(500).json({ message: 'Failed to add product' });
   }
@@ -139,24 +154,35 @@ router.patch('/:id', requireRoleAction('admin', ['edit all', 'sales ctrl', 'acco
   const { productCollection } = getCollections();
   const { image_1, image_2, image_3, image_4, image_5, ...updateData } = req.body;
 
-  const images = [image_1, image_2, image_3, image_4, image_5];
-  for (const img of images) {
-    if (img && (typeof img !== 'string' || !img.startsWith('data:image/'))) {
-      return res.status(400).json({ message: 'Invalid image format. Must be Base64.' });
-    }
-  }
-
-  const updatedImages = {
-    image_1: image_1 || '',
-    image_2: image_2 || '',
-    image_3: image_3 || '',
-    image_4: image_4 || '',
-    image_5: image_5 || ''
-  };
-
   try {
+    const productId = new ObjectId(req.params.id);
+    const existing = await productCollection.findOne({ _id: productId }, { projection: { image_1: 1, image_2: 1, image_3: 1, image_4: 1, image_5: 1 } });
+    if (!existing) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const uploadDirAbs = path.join(__dirname, '..', 'public', 'uploads', 'products');
+    const incoming = { image_1, image_2, image_3, image_4, image_5 };
+    const updatedImages = {};
+    const fields = ['image_1', 'image_2', 'image_3', 'image_4', 'image_5'];
+
+    for (const field of fields) {
+      if (!(field in incoming)) continue;
+      const val = incoming[field];
+      if (val === undefined) continue;
+      if (val === null || val === '') {
+        updatedImages[field] = '';
+        continue;
+      }
+      const persisted = persistProductImageMaybe(val, { productId: existing._id, field, uploadDirAbs });
+      if (persisted === null) {
+        return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
+      }
+      updatedImages[field] = persisted;
+    }
+
     const result = await productCollection.updateOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: productId },
       { $set: { ...updateData, ...updatedImages, updatedAt: new Date() } }
     );
 

@@ -4,14 +4,14 @@ import { CartItem } from '../../interface/Cart';
 import { Router } from '@angular/router';
 import { CouponAPIService } from '../coupon-api.service';
 
+/** Placeholder khi không có ảnh (data URL, không phụ thuộc file assets). */
+const CART_PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%23f0f0f0" width="120" height="120"/%3E%3Ctext x="60" y="65" text-anchor="middle" fill="%23999" font-size="11" font-family="sans-serif"%3ENo image%3C/text%3E%3C/svg%3E';
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
 })
-/** Placeholder khi không có ảnh (data URL, không phụ thuộc file assets). */
-const CART_PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect fill="%23f0f0f0" width="120" height="120"/%3E%3Ctext x="60" y="65" text-anchor="middle" fill="%23999" font-size="11" font-family="sans-serif"%3ENo image%3C/text%3E%3C/svg%3E';
-
 export class CartComponent implements OnInit {
   readonly placeholderImage = CART_PLACEHOLDER_IMAGE;
   cartItems: (CartItem & {
