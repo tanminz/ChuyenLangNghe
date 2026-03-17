@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BlogAPIService } from '../blog-api.service';
+
+export interface BlogDisplayItem {
+  id: string;
+  title: string;
+  image: string;
+  date: string;
+  desc?: string;
+  fullContent?: string;
+  description?: string;
+}
 
 @Component({
   selector: 'app-blog',
@@ -8,6 +19,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class BlogComponent implements OnInit {
   activeBlog: string | null = null;
+  /** Blog đang xem (khi mở bằng id từ API, có thể từ getBlogById) */
+  activeBlogDetail: BlogDisplayItem | null = null;
+  loading = true;
+  /** Danh sách blog từ API (ảnh + nội dung đúng theo admin) */
+  apiBlogs: BlogDisplayItem[] = [];
 
   featuredBlog = {
     id: 'bat-trang-700-nam',
@@ -77,16 +93,103 @@ export class BlogComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private blogApi: BlogAPIService
+  ) {}
+
+  private formatBlogDate(d: string | Date | undefined): string {
+    if (!d) return '';
+    const date = typeof d === 'string' ? new Date(d) : d;
+    if (isNaN(date.getTime())) return '';
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `ngày ${day} tháng ${month}, ${year}`;
+  }
+
+  private mapApiBlogToItem(b: any): BlogDisplayItem {
+    return {
+      id: (b._id || b.id || '').toString(),
+      title: b.title || '',
+      image: b.image || '',
+      date: this.formatBlogDate(b.updatedAt || b.createdAt),
+      desc: b.description || '',
+      fullContent: b.content || b.fullContent || '',
+      description: b.description || ''
+    };
+  }
+
+  private loadBlogsFromAPI(): void {
+    this.blogApi.getBlogs(1, 50).subscribe({
+      next: (res: { blogs?: any[] }) => {
+        const list = res.blogs || [];
+        this.apiBlogs = list.map((b: any) => this.mapApiBlogToItem(b));
+        if (this.apiBlogs.length > 0) {
+          this.featuredBlog = {
+            id: this.apiBlogs[0].id,
+            title: this.apiBlogs[0].title,
+            description: this.apiBlogs[0].desc || this.apiBlogs[0].description || '',
+            image: this.apiBlogs[0].image,
+            date: this.apiBlogs[0].date,
+            fullContent: this.apiBlogs[0].fullContent || ''
+          };
+          this.featuredSmall = this.apiBlogs.slice(1, 5);
+          this.latestNews = this.apiBlogs.slice(5, 9);
+          this.artisanStories = this.apiBlogs.slice(9, 13);
+          this.craftVillageStories = this.apiBlogs.slice(13, 17);
+        }
+        this.loading = false;
+        this.resolveActiveBlogDetail();
+      },
+      error: () => {
+        this.loading = false;
+        this.resolveActiveBlogDetail();
+      }
+    });
+  }
+
+  activeBlogDetailLoading = false;
+
+  /** Khi có ?id=, lấy bài từ apiBlogs hoặc gọi getBlogById để hiển thị đúng ảnh/nội dung admin đã chỉnh */
+  private resolveActiveBlogDetail(): void {
+    if (!this.activeBlog) {
+      this.activeBlogDetail = null;
+      this.activeBlogDetailLoading = false;
+      return;
+    }
+    const fromList = this.apiBlogs.find(b => b.id === this.activeBlog);
+    if (fromList) {
+      this.activeBlogDetail = fromList;
+      this.activeBlogDetailLoading = false;
+      return;
+    }
+    this.activeBlogDetailLoading = true;
+    this.activeBlogDetail = null;
+    this.blogApi.getBlogById(this.activeBlog).subscribe({
+      next: (b: any) => {
+        this.activeBlogDetail = this.mapApiBlogToItem(b);
+        this.activeBlogDetailLoading = false;
+      },
+      error: () => {
+        this.activeBlogDetail = null;
+        this.activeBlogDetailLoading = false;
+      }
+    });
+  }
 
   ngOnInit(): void {
+    this.loadBlogsFromAPI();
     this.route.queryParamMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.activeBlog = id;
         window.scrollTo(0, 0);
+        this.resolveActiveBlogDetail();
       } else {
         this.activeBlog = null;
+        this.activeBlogDetail = null;
       }
     });
   }
@@ -106,29 +209,41 @@ export class BlogComponent implements OnInit {
     window.scrollTo(0, 0);
   }
 
-  /** Related posts for current detail view (3 items max) – from featured + latest + artisan + craft, deduped by id */
+  /** Related posts for current detail view (3 items max) – ưu tiên từ API để đúng ảnh admin */
   getRelatedPosts(): { id: string; title: string; image: string; date: string }[] {
     if (!this.activeBlog) return [];
-    const featured = { id: this.featuredBlog.id, title: this.featuredBlog.title, image: this.featuredBlog.image, date: this.featuredBlog.date };
-    const all: { id: string; title: string; image: string; date: string }[] = [
-      featured,
-      ...this.featuredSmall,
-      ...this.latestNews,
-      ...this.artisanStories,
-      ...this.craftVillageStories
-    ];
+    const all = this.apiBlogs.length > 0
+      ? this.apiBlogs
+      : [
+          { id: this.featuredBlog.id, title: this.featuredBlog.title, image: this.featuredBlog.image, date: this.featuredBlog.date },
+          ...this.featuredSmall,
+          ...this.latestNews,
+          ...this.artisanStories,
+          ...this.craftVillageStories
+        ];
     const seen = new Set<string>();
-    const unique = all.filter(b => {
+    const unique = all.filter((b: { id: string }) => {
       if (seen.has(b.id)) return false;
       seen.add(b.id);
       return true;
     });
-    return unique.filter(b => b.id !== this.activeBlog).slice(0, 3);
+    return unique.filter((b: { id: string }) => b.id !== this.activeBlog).slice(0, 3);
   }
 
-  /** Get blog item for new craft-village ids (featured, latest, artisan, craft) */
+  /** Bài đang xem: ưu tiên activeBlogDetail (từ API) để đúng ảnh/nội dung admin đã chỉnh */
   getActiveBlogItem(): { title: string; image: string; date: string; desc?: string; fullContent?: string } | null {
     if (!this.activeBlog) return null;
+    if (this.activeBlogDetail) {
+      return {
+        title: this.activeBlogDetail.title,
+        image: this.activeBlogDetail.image,
+        date: this.activeBlogDetail.date,
+        desc: this.activeBlogDetail.desc || this.activeBlogDetail.description,
+        fullContent: this.activeBlogDetail.fullContent
+      };
+    }
+    const fromApi = this.apiBlogs.find(b => b.id === this.activeBlog);
+    if (fromApi) return { ...fromApi, desc: fromApi.desc || fromApi.description };
     if (this.featuredBlog.id === this.activeBlog) {
       return { title: this.featuredBlog.title, image: this.featuredBlog.image, date: this.featuredBlog.date, desc: this.featuredBlog.description, fullContent: (this.featuredBlog as any).fullContent };
     }

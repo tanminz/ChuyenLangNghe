@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb');
 const path = require('path');
 const { getCollections } = require('../config/database');
 const { requireAuth, requireAdmin, requireRoleAction } = require('../middlewares/auth');
-const { persistProductImageMaybe } = require('../utils/image-storage');
+const { persistImageMaybe } = require('../utils/image-storage');
 
 const router = express.Router();
 
@@ -132,7 +132,7 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl', 'account 
     const updates = {};
 
     for (const field of fields) {
-      const persisted = persistProductImageMaybe(newProduct[field], { productId, field, uploadDirAbs });
+      const persisted = persistImageMaybe(newProduct[field], { ownerId: productId, field, uploadDirAbs, publicUrlBase: '/uploads/products' });
       if (persisted === null) {
         return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
       }
@@ -174,7 +174,7 @@ router.patch('/:id', requireRoleAction('admin', ['edit all', 'sales ctrl', 'acco
         updatedImages[field] = '';
         continue;
       }
-      const persisted = persistProductImageMaybe(val, { productId: existing._id, field, uploadDirAbs });
+      const persisted = persistImageMaybe(val, { ownerId: existing._id, field, uploadDirAbs, publicUrlBase: '/uploads/products' });
       if (persisted === null) {
         return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
       }

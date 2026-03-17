@@ -1,5 +1,6 @@
 <div class="blog-page" *ngIf="!activeBlog">
-    <div class="blog-container">
+    <p class="text-center py-4" *ngIf="loading">Đang tải tin tức...</p>
+    <div class="blog-container" *ngIf="!loading">
         <section class="blog-featured-section blog-featured-three-col">
             <div class="featured-small-col side-column">
                 <h3 class="side-column-title">Tin nổi bật</h3>
@@ -74,8 +75,9 @@
 
     <div class="blog-detail-layout">
       <div class="blog-detail-main">
+        <p class="text-center py-4" *ngIf="activeBlogDetailLoading">Đang tải bài viết...</p>
         <!-- Generic detail for new craft-village blogs -->
-        <div *ngIf="getActiveBlogItem() as blog" class="blog-detail">
+        <div *ngIf="!activeBlogDetailLoading && getActiveBlogItem() as blog" class="blog-detail">
             <button class="btn-back mb-4" (click)="showBlogList()">← Quay lại danh sách</button>
             <h1>{{ blog.title }}</h1>
             <p class="blog-meta"><i class="far fa-calendar-alt me-2"></i>{{ blog.date }}</p>

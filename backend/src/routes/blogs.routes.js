@@ -1,7 +1,10 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
+const path = require('path');
 const { getCollections } = require('../config/database');
 const { requireRoleAction } = require('../middlewares/auth');
+const { persistImageMaybe } = require('../utils/image-storage');
+const { slugify } = require('../utils/slug');
 
 const router = express.Router();
 
@@ -53,8 +56,12 @@ router.get('/admin/list', requireRoleAction('admin', ['edit all', 'sales ctrl', 
 
 router.get('/:id', async (req, res) => {
   const { blogCollection } = getCollections();
+  const idOrSlug = req.params.id;
+  const isObjectId = /^[a-fA-F0-9]{24}$/.test(idOrSlug);
   try {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(req.params.id) });
+    const blog = isObjectId
+      ? await blogCollection.findOne({ _id: new ObjectId(idOrSlug) })
+      : await blogCollection.findOne({ slug: idOrSlug });
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
@@ -66,28 +73,41 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (req, res) => {
   const { blogCollection } = getCollections();
-  const { title, description, content, image, author, published } = req.body;
+  const { title, description, content, image, author, published, slug } = req.body;
 
   if (!title || !content) {
     return res.status(400).json({ message: 'Title and content are required.' });
   }
-  if (image && (typeof image !== 'string' || !image.startsWith('data:image/'))) {
-    return res.status(400).json({ message: 'Invalid image format. Must be Base64.' });
-  }
 
   try {
+    const now = new Date();
+    const slugValue = (typeof slug === 'string' && slug.trim()) ? slugify(slug) : slugify(title);
     const result = await blogCollection.insertOne({
       title,
       description: description || '',
       content,
       image: image || '',
+      slug: slugValue || null,
       author: author || 'Admin',
       published: published !== undefined ? published : true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: now,
+      updatedAt: now
     });
 
-    return res.status(201).json({ message: 'Blog created successfully', blogId: result.insertedId });
+    const blogId = result.insertedId;
+    const uploadDirAbs = path.join(__dirname, '..', 'public', 'uploads', 'blogs');
+    const persisted = persistImageMaybe(image || '', { ownerId: blogId, field: 'image', uploadDirAbs, publicUrlBase: '/uploads/blogs' });
+    if (persisted === null) {
+      return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
+    }
+    if (persisted !== (image || '')) {
+      await blogCollection.updateOne(
+        { _id: blogId },
+        { $set: { image: persisted, updatedAt: new Date() } }
+      );
+    }
+
+    return res.status(201).json({ message: 'Blog created successfully', blogId });
   } catch {
     return res.status(500).json({ message: 'Failed to create blog' });
   }
@@ -95,16 +115,40 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (
 
 router.patch('/:id', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (req, res) => {
   const { blogCollection } = getCollections();
-  const { image, ...updateData } = req.body;
-
-  if (image && (typeof image !== 'string' || !image.startsWith('data:image/'))) {
-    return res.status(400).json({ message: 'Invalid image format. Must be Base64.' });
-  }
+  const { image, title, slug, ...updateData } = req.body;
 
   try {
+    const blogId = new ObjectId(req.params.id);
+    const existing = await blogCollection.findOne({ _id: blogId }, { projection: { slug: 1 } });
+    if (!existing) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    const setData = { ...updateData };
+    if (typeof title === 'string') setData.title = title;
+    if (typeof slug === 'string' && slug.trim()) {
+      setData.slug = slugify(slug);
+    } else if (typeof title === 'string' && !existing.slug) {
+      // only auto-generate slug when missing
+      setData.slug = slugify(title);
+    }
+
+    if (image !== undefined) {
+      if (!image) {
+        setData.image = '';
+      } else {
+        const uploadDirAbs = path.join(__dirname, '..', 'public', 'uploads', 'blogs');
+        const persisted = persistImageMaybe(image, { ownerId: blogId, field: 'image', uploadDirAbs, publicUrlBase: '/uploads/blogs' });
+        if (persisted === null) {
+          return res.status(400).json({ message: 'Invalid image format. Must be a data:image/* base64 or a URL.' });
+        }
+        setData.image = persisted;
+      }
+    }
+
     const result = await blogCollection.updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: { ...updateData, ...(image && { image }), updatedAt: new Date() } }
+      { _id: blogId },
+      { $set: { ...setData, updatedAt: new Date() } }
     );
 
     if (result.modifiedCount === 0) {

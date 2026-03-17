@@ -13,7 +13,7 @@ require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const path = require('path');
 
-const { persistProductImageMaybe } = require('./src/utils/image-storage');
+const { persistImageMaybe } = require('./src/utils/image-storage');
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
 const dbName = process.env.DB_NAME || 'dacsan3mien';
@@ -42,7 +42,7 @@ async function migrate() {
       for (const field of fields) {
         const val = doc[field];
         if (typeof val === 'string' && val.startsWith('data:image/')) {
-          const persisted = persistProductImageMaybe(val, { productId: doc._id, field, uploadDirAbs });
+          const persisted = persistImageMaybe(val, { ownerId: doc._id, field, uploadDirAbs, publicUrlBase: '/uploads/products' });
           if (persisted) {
             updates[field] = persisted;
           }

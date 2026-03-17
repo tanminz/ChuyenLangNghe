@@ -26,7 +26,7 @@ function isLikelyUrl(str) {
  * If image is a data URL, persist it as a file and return a URL path.
  * If already a URL (or empty), returns as-is.
  */
-function persistProductImageMaybe(dataOrUrl, { productId, field, uploadDirAbs, publicUrlBase = '/uploads/products' }) {
+function persistImageMaybe(dataOrUrl, { ownerId, field, uploadDirAbs, publicUrlBase }) {
   if (!dataOrUrl) return '';
   if (typeof dataOrUrl !== 'string') return '';
   if (isLikelyUrl(dataOrUrl)) return dataOrUrl;
@@ -38,7 +38,7 @@ function persistProductImageMaybe(dataOrUrl, { productId, field, uploadDirAbs, p
   }
 
   ensureDirSync(uploadDirAbs);
-  const fileName = `${String(productId)}-${field}-${Date.now()}.${parsed.ext || 'png'}`;
+  const fileName = `${String(ownerId)}-${field}-${Date.now()}.${parsed.ext || 'png'}`;
   const absPath = path.join(uploadDirAbs, fileName);
   const buf = Buffer.from(parsed.base64, 'base64');
   fs.writeFileSync(absPath, buf);
@@ -48,6 +48,6 @@ function persistProductImageMaybe(dataOrUrl, { productId, field, uploadDirAbs, p
 module.exports = {
   ensureDirSync,
   parseDataImage,
-  persistProductImageMaybe,
+  persistImageMaybe,
 };
 
