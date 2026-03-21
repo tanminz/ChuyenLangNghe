@@ -16,7 +16,7 @@ const path = require('path');
 const { persistImageMaybe } = require('./src/utils/image-storage');
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
-const dbName = process.env.DB_NAME || 'dacsan3mien';
+const dbName = process.env.DB_NAME || 'chuyenlangnghe';
 
 async function migrate() {
   const client = new MongoClient(mongoUri);

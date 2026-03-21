@@ -31,7 +31,8 @@ Chạy lệnh sau:
 
 *Cấu hình MongoDB
 Trong file backend/.env, thiết lập chuỗi kết nối MongoDB phù hợp với môi trường của bạn. Ví dụ:
-MONGO_URI=mongodb://localhost:27017/DACSAN3MIEN
+MONGODB_URI=mongodb://127.0.0.1:27017
+DB_NAME=chuyenlangnghe
 JWT_SECRET=<tuy_chon>
 Nếu sử dụng MongoDB Atlas, thay localhost bằng URI của Atlas.
 

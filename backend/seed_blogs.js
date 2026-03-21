@@ -3,7 +3,7 @@ require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
 const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
-const dbName = process.env.DB_NAME || "dacsan3mien";
+const dbName = process.env.DB_NAME || "chuyenlangnghe";
 
 // Blog data Chuyện làng nghề – khớp với trang blog hiện tại (featuredBlog, featuredSmall, latestNews, artisanStories, craftVillageStories)
 const sampleBlogs = [

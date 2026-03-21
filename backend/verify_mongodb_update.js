@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Cấu hình kết nối MongoDB
 const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
-const dbName = process.env.DB_NAME || "dacsan3mien";
+const dbName = process.env.DB_NAME || "chuyenlangnghe";
 const collectionName = "Product";
 
 async function verifyMongoDBUpdate() {

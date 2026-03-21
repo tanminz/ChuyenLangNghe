@@ -39,5 +39,5 @@ Default DB env:
 
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017
-DB_NAME=dacsan3mien
+DB_NAME=chuyenlangnghe
 ```
