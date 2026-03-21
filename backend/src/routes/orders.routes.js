@@ -350,9 +350,7 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
     const headerLogoPath = path.join(repoRoot, 'frontend', 'src', 'assets', 'New web images', 'logowebfinal.png');
     const logoCandidates = [
       process.env.INVOICE_LOGO_PATH && String(process.env.INVOICE_LOGO_PATH).trim(),
-      headerLogoPath,
-      path.join(__dirname, '..', 'assets', 'invoice-logo.png'),
-      path.join(__dirname, '..', 'assets', 'invoice-logo.jpg')
+      headerLogoPath
     ].filter(Boolean);
 
     let logoDrawn = false;
