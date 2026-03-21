@@ -22,7 +22,8 @@
                 <div class="col-md-6 mb-3">
                     <label for="type" class="form-label">Loại sản phẩm</label>
                     <select id="type" formControlName="type" class="form-control">
-                        <option value="nen">Nến</option>
+                        <option value="lich">Lịch</option>
+                        <option value="tuong">Tượng</option>
                         <option value="tre_may">Tre mây</option>
                         <option value="gom_su">Gốm sứ</option>
                     </select>
@@ -133,7 +134,8 @@
                     <label class="form-label">Lọc theo loại</label>
                     <select class="form-control" [(ngModel)]="filterType" (change)="applyTypeFilter(filterType)">
                         <option value="">Tất cả loại</option>
-                        <option value="nen">Nến</option>
+                        <option value="lich">Lịch</option>
+                        <option value="tuong">Tượng</option>
                         <option value="tre_may">Tre mây</option>
                         <option value="gom_su">Gốm sứ</option>
                     </select>

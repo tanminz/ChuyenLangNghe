@@ -113,15 +113,16 @@
   color: #310002;
   font-weight: 600;
   font-size: 0.8125rem;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
   cursor: pointer;
-  transform: none !important;
 }
 
 .add-to-cart:hover {
   background: #7A4726;
   color: #fff;
   border-color: #7A4726;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(122, 71, 38, 0.25);
 }
 
 .add-to-cart:active {

@@ -120,9 +120,12 @@
                 </div>
                 <div class="cart-item-info">
                   <span class="cart-item-name">{{ item.product_name }}</span>
-                  <span class="cart-item-variant" *ngIf="item.product_dept">Phân loại: {{ item.product_dept }}</span>
-                  <span class="cart-item-variant" *ngIf="!item.product_dept">Phân loại: Tiêu chuẩn</span>
-                  <span class="cart-item-qty">Số lượng: {{ item.quantity || item.tempQuantity || 1 }}</span>
+                  <span class="cart-item-meta">
+                    <span class="cart-item-variant" *ngIf="item.product_dept">{{ item.product_dept }}</span>
+                    <span class="cart-item-variant" *ngIf="!item.product_dept">Tiêu chuẩn</span>
+                    <span class="cart-item-sep"> · </span>
+                    <span class="cart-item-qty">SL: {{ item.quantity || item.tempQuantity || 1 }}</span>
+                  </span>
                   <span class="cart-item-price">{{ ((item.unit_price || 0) * (item.quantity || item.tempQuantity || 1)) | currency:'VND' }}</span>
                 </div>
               </div>

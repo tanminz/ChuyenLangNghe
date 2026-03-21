@@ -19,11 +19,13 @@ import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryMethodsComponent } from './delivery-methods/delivery-methods.component';
 import { HowToBuyComponent } from './how-to-buy/how-to-buy.component';
 import { AuthGuard } from './guards/auth.guard';
+import { VisionMisionComponent } from './vision-mision/vision-mision.component';
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
   { path: 'contact', component: ContactFaqComponent },
   { path: 'about', component: IntroComponent },
+  { path: 'vision-mision', component: VisionMisionComponent },
   { path: 'history', component: HistoryComponent },
   { path: 'delivery', component: DeliveryComponent },
   { path: 'delivery-methods', component: DeliveryMethodsComponent },

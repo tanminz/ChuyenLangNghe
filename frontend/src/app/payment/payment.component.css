@@ -27,17 +27,19 @@
   grid-column: 1;
   grid-row: 1;
   align-self: start;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #7a4726;
   text-decoration: none;
   margin-bottom: 0.75rem;
-  padding-left: 0;
-  transition: color 0.2s;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
 }
 
 .back-to-cart:hover {
   color: #5e3419;
+  background: rgba(122, 71, 38, 0.08);
 }
 
 .checkout-layout {
@@ -77,10 +79,13 @@
 }
 
 .section-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.875rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #310002;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(122, 71, 38, 0.25);
+  letter-spacing: 0.02em;
 }
 
 /* Địa chỉ đã lưu */
@@ -138,21 +143,25 @@
 }
 
 .btn-icon {
-  background: none;
+  background: rgba(122, 71, 38, 0.06);
   border: none;
-  padding: 0.25rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
   cursor: pointer;
-  color: #888;
+  color: #6b5b52;
   font-size: 0.8rem;
-  transition: color 0.2s;
+  transition: color 0.2s, background 0.2s, transform 0.15s;
 }
 
 .btn-icon:hover {
   color: #7a4726;
+  background: rgba(122, 71, 38, 0.12);
+  transform: translateY(-1px);
 }
 
 .btn-icon.btn-delete:hover {
   color: #c0392b;
+  background: rgba(192, 57, 43, 0.08);
 }
 
 /* Form grid */
@@ -236,16 +245,19 @@
 .btn-update-address {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
+  font-weight: 600;
   background: #7a4726;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
 .btn-update-address:hover {
   background: #5e3419;
+  box-shadow: 0 2px 8px rgba(122, 71, 38, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Phương thức vận chuyển */
@@ -264,7 +276,7 @@
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 1px 5px rgba(122, 71, 38, 0.08);
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
   flex: 1;
   min-width: 140px;
 }
@@ -274,6 +286,10 @@
   border-color: rgba(122, 71, 38, 0.6);
   background: #fdfbf7;
   box-shadow: 0 2px 10px rgba(122, 71, 38, 0.12);
+}
+
+.shipping-option:hover {
+  transform: translateY(-1px);
 }
 
 .shipping-option input {
@@ -361,26 +377,37 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.35rem;
+  justify-content: space-between;
 }
 
 .cart-item-name {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #333;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #310002;
+  line-height: 1.35;
+  display: block;
+}
+
+.cart-item-meta {
+  font-size: 0.8rem;
+  color: #6b5b52;
   line-height: 1.3;
 }
 
 .cart-item-variant,
 .cart-item-qty {
-  font-size: 0.8rem;
-  color: #666;
+  font-size: inherit;
+}
+
+.cart-item-sep {
+  opacity: 0.6;
 }
 
 .cart-item-price {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #7a4726;
   margin-top: 0.15rem;
 }
 
@@ -434,7 +461,7 @@
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 1px 5px rgba(122, 71, 38, 0.08);
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
 .payment-option:hover,
@@ -442,6 +469,10 @@
   border-color: rgba(122, 71, 38, 0.6);
   background: #fdfbf7;
   box-shadow: 0 2px 10px rgba(122, 71, 38, 0.12);
+}
+
+.payment-option:hover {
+  transform: translateY(-1px);
 }
 
 .payment-option input {
@@ -462,15 +493,18 @@
   width: 100%;
   padding: 0.9rem 1.25rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   background: #7a4726;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 0.02em;
 }
 
 .btn-submit:hover {
   background: #5e3419;
+  box-shadow: 0 4px 14px rgba(122, 71, 38, 0.35);
+  transform: translateY(-1px);
 }

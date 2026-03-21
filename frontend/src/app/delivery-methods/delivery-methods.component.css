@@ -1,34 +1,31 @@
 .delivery-methods-page {
-  background-color: #f9f5ee;
+  background-color: #FFFAF1;
   min-height: 100vh;
   padding-bottom: 60px;
+  padding-top: 107px;
 }
 
 .hero-section {
-  background: linear-gradient(135deg, rgba(49, 0, 0, 0.8), rgba(129, 0, 0, 0.85)), url('/assets/aboutanh2.jpg');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  padding: 90px 20px 70px;
+  background-color: #7A4726;
+  padding: 48px 24px 40px;
   text-align: center;
-  color: #fdf8f2;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  color: #fff;
 }
 
 .hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
 .hero-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
   line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .container {
@@ -38,20 +35,20 @@
 }
 
 .methods-section {
-  margin-top: -50px;
+  margin-top: -36px;
   background-color: #fff;
-  border-radius: 24px;
-  padding: 50px 40px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 40px 36px;
+  box-shadow: 0 4px 20px rgba(49, 0, 2, 0.08);
+  border: 1px solid rgba(122, 71, 38, 0.2);
 }
 
 .section-title {
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: #630000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #310002;
   text-align: center;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
+  margin-bottom: 24px;
 }
 
 .section-intro {
@@ -69,44 +66,39 @@
 }
 
 .method-card {
-  background: linear-gradient(145deg, rgba(238, 235, 221, 0.85), rgba(248, 236, 224, 0.95));
-  border-radius: 20px;
-  padding: 32px 26px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 28px 24px;
   position: relative;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(129, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(49, 0, 2, 0.06);
+  border: 1px solid rgba(122, 71, 38, 0.2);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: box-shadow 0.2s;
 }
 
 .method-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 18px 36px rgba(129, 0, 0, 0.18);
+  box-shadow: 0 4px 20px rgba(122, 71, 38, 0.1);
 }
 
 .method-number {
   position: absolute;
-  top: -18px;
+  top: -14px;
   left: 20px;
-  background: linear-gradient(135deg, #ffb347, #ff5f6d);
+  background-color: #7A4726;
   color: #fff;
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  box-shadow: 0 8px 18px rgba(255, 95, 109, 0.3);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  border-radius: 8px;
 }
 
 .method-title {
-  margin-top: 10px;
-  font-size: 1.35rem;
+  margin-top: 8px;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #400000;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: #310002;
 }
 
 .method-card p {
@@ -121,60 +113,47 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
+  background-color: #F5F0E8;
+  border-radius: 8px;
   padding: 12px 14px;
-  border: 1px dashed rgba(129, 0, 0, 0.35);
+  border: 1px solid rgba(122, 71, 38, 0.2);
 }
 
 .address-icon {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff5f6d, #ffc371);
-  box-shadow: 0 0 0 4px rgba(255, 95, 109, 0.2);
-  position: relative;
-}
-
-.address-icon::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #fff;
+  background-color: #7A4726;
 }
 
 .address-text {
   font-weight: 600;
-  color: #630000;
+  color: #310002;
   line-height: 1.5;
 }
 
 .packaging-section {
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
 .packaging-card {
-  background: linear-gradient(135deg, rgba(99, 0, 0, 0.88), rgba(129, 0, 0, 0.92));
-  border-radius: 24px;
-  padding: 40px 36px;
-  color: #fdf8f2;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+  background-color: #7A4726;
+  border-radius: 12px;
+  padding: 32px 36px;
+  color: #fff;
 }
 
 .packaging-card .section-title {
-  color: #ffd8b8;
-  margin-bottom: 24px;
+  color: #fff;
+  margin-bottom: 20px;
 }
 
 .packaging-card p {
-  font-size: 1.08rem;
-  line-height: 1.9;
-  margin-bottom: 18px;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 14px;
   text-align: justify;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 @media (max-width: 992px) {
@@ -193,20 +172,16 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 70px 16px 60px;
+    padding: 36px 16px 32px;
   }
 
   .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
   }
 
   .methods-section {
-    margin-top: -40px;
-    padding: 32px 20px;
+    margin-top: -32px;
+    padding: 28px 20px;
   }
 
   .method-grid {
@@ -214,26 +189,22 @@
   }
 
   .method-card {
-    padding: 28px 22px;
+    padding: 24px 20px;
   }
 }
 
 @media (max-width: 576px) {
   .hero-title {
-    font-size: 1.8rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
+    font-size: 1.35rem;
   }
 
   .packaging-card {
-    padding: 32px 24px;
+    padding: 28px 20px;
   }
 
   .packaging-card p,
   .method-card p,
   .section-intro {
-    font-size: 0.98rem;
+    font-size: 0.95rem;
   }
 }

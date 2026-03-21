@@ -6,16 +6,19 @@
   </div>
 
   <div *ngIf="selectedTab === 'description'" class="tab-content">
-    <div class="product-description">
-      <h4>Về sản phẩm</h4>
+    <section class="product-description">
+      <h4 class="section-heading">Về sản phẩm</h4>
       <p class="description-text">{{ product?.product_detail || 'Sản phẩm làng nghề được tạo nên bởi bàn tay nghệ nhân, giữ trọn tinh hoa thủ công truyền thống Việt Nam. Mỗi tác phẩm đều mang theo câu chuyện của làng nghề và nét độc đáo riêng.' }}</p>
-    </div>
-    <ul class="product-details">
-      <li><strong>Tên sản phẩm:</strong> {{ product?.product_name || 'Sản phẩm' }}</li>
-      <li><strong>Loại:</strong> Sản phẩm làng nghề, thủ công truyền thống</li>
-      <li><strong>Xuất xứ:</strong> {{ product?.product_dept || 'Việt Nam' }}</li>
-      <li><strong>Đặc điểm:</strong> Làm thủ công, mỗi sản phẩm có nét độc đáo riêng</li>
-    </ul>
+    </section>
+    <section class="product-details-section">
+      <h4 class="section-heading">Thông tin chi tiết</h4>
+      <ul class="product-details">
+        <li><strong>Tên sản phẩm:</strong> {{ product?.product_name || 'Sản phẩm' }}</li>
+        <li><strong>Loại:</strong> Sản phẩm làng nghề, thủ công truyền thống</li>
+        <li><strong>Xuất xứ:</strong> {{ product?.product_dept || 'Việt Nam' }}</li>
+        <li><strong>Đặc điểm:</strong> Làm thủ công, mỗi sản phẩm có nét độc đáo riêng</li>
+      </ul>
+    </section>
   </div>
 
   <div *ngIf="selectedTab === 'additional'" class="tab-content">

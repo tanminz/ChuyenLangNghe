@@ -1,35 +1,31 @@
 .privacy-page {
-  background-color: #f8f4ec;
+  background-color: #FFFAF1;
   min-height: 100vh;
   padding-bottom: 60px;
-  color: #210b0b;
+  color: #310002;
+  padding-top: 107px;
 }
 
 .hero-section {
-  background: linear-gradient(135deg, rgba(58, 0, 0, 0.85), rgba(129, 0, 0, 0.92)), url('/assets/aboutanh5.jpg');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  padding: 90px 20px 70px;
+  background-color: #7A4726;
+  padding: 48px 24px 40px;
   text-align: center;
-  color: #fdf8f2;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  color: #fff;
 }
 
 .hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: 1.4px;
-  margin-bottom: 12px;
-  text-transform: uppercase;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
 .hero-subtitle {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  max-width: 720px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 640px;
   margin: 0 auto;
-  color: #fff5ea;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .privacy-container {
@@ -39,21 +35,20 @@
 }
 
 .privacy-section {
-  margin-top: -50px;
+  margin-top: -36px;
   background-color: #ffffff;
-  border-radius: 28px;
-  padding: 48px 44px;
-  box-shadow: 0 22px 50px rgba(27, 23, 23, 0.14);
-  border: 1px solid rgba(255, 204, 170, 0.45);
+  border-radius: 12px;
+  padding: 40px 36px;
+  box-shadow: 0 4px 20px rgba(49, 0, 2, 0.08);
+  border: 1px solid rgba(122, 71, 38, 0.2);
 }
 
 .privacy-card {
-  background: linear-gradient(145deg, rgba(238, 235, 221, 0.9), rgba(248, 236, 224, 0.98));
-  border-radius: 22px;
-  padding: 32px 30px;
-  border: 1px solid rgba(129, 0, 0, 0.12);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 28px 26px;
+  border: 1px solid rgba(122, 71, 38, 0.2);
+  transition: box-shadow 0.2s;
 }
 
 .privacy-card + .privacy-card {
@@ -61,8 +56,7 @@
 }
 
 .privacy-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 36px rgba(129, 0, 0, 0.18);
+  box-shadow: 0 4px 16px rgba(122, 71, 38, 0.12);
 }
 
 .card-header {
@@ -76,29 +70,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffb347, #ff5f6d);
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background-color: #7A4726;
   color: #fff;
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  box-shadow: 0 10px 18px rgba(255, 95, 109, 0.25);
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .privacy-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #400000;
+  color: #310002;
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
 }
 
 .card-description {
-  font-size: 1.02rem;
-  color: #6b2b2b;
+  font-size: 0.98rem;
+  color: #5a4a47;
   margin-top: 6px;
 }
 
@@ -126,28 +116,26 @@
   content: '';
   position: absolute;
   left: 0;
-  top: 11px;
-  width: 10px;
-  height: 10px;
+  top: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ffb347, #ff5f6d);
-  box-shadow: 0 0 0 4px rgba(255, 181, 95, 0.25);
+  background-color: #7A4726;
 }
 
 .info-box {
   margin-top: 18px;
-  background: rgba(99, 0, 0, 0.08);
-  border-left: 4px solid #810000;
-  border-radius: 16px;
+  background-color: #F5F0E8;
+  border-left: 4px solid #7A4726;
+  border-radius: 8px;
   padding: 18px 20px;
-  color: #4b0404;
+  color: #310002;
 }
 
 .info-title {
   font-weight: 700;
   margin-bottom: 6px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  color: #310002;
 }
 
 @media (max-width: 1024px) {
@@ -162,24 +150,20 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 70px 16px 60px;
+    padding: 36px 16px 32px;
   }
 
   .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.05rem;
+    font-size: 1.5rem;
   }
 
   .privacy-section {
-    margin-top: -40px;
-    padding: 32px 22px;
+    margin-top: -32px;
+    padding: 28px 20px;
   }
 
   .privacy-card {
-    padding: 28px 22px;
+    padding: 24px 20px;
   }
 
   .card-header {
@@ -190,15 +174,11 @@
 
 @media (max-width: 576px) {
   .hero-title {
-    font-size: 1.8rem;
-  }
-
-  .hero-subtitle {
-    font-size: 0.98rem;
+    font-size: 1.35rem;
   }
 
   .privacy-card p,
   .privacy-card li {
-    font-size: 0.98rem;
+    font-size: 0.95rem;
   }
 }

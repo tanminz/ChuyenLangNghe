@@ -94,7 +94,8 @@ export class ProductCatalogComponent implements OnInit {
   initializeCategories(): void {
     this.categories = [
       { name: 'Tất cả', image: '/assets/Mẫu.jpg', filterKey: 'Tất cả' },
-      { name: 'Nến', image: '/assets/Mẫu.jpg', filterKey: 'Nến' },
+      { name: 'Lịch', image: '/assets/Mẫu.jpg', filterKey: 'Lịch' },
+      { name: 'Tượng', image: '/assets/Mẫu.jpg', filterKey: 'Tượng' },
       { name: 'Tre mây', image: '/assets/Mẫu.jpg', filterKey: 'Tre mây' },
       { name: 'Gốm sứ', image: '/assets/Mẫu.jpg', filterKey: 'Gốm sứ' },
     ];
@@ -173,7 +174,8 @@ export class ProductCatalogComponent implements OnInit {
     } else {
       // Map category names to type values
       const categoryToTypeMap: { [key: string]: string } = {
-        'Nến': 'nen',
+        'Lịch': 'lich',
+        'Tượng': 'tuong',
         'Tre mây': 'tre_may',
         'Gốm sứ': 'gom_su'
       };
@@ -447,7 +449,8 @@ export class ProductCatalogComponent implements OnInit {
   applyCategoryFilter(categoryType: string): void {
     // Map category types to category names
     const categoryTypeMap: { [key: string]: string } = {
-      'nen': 'Nến',
+      'lich': 'Lịch',
+      'tuong': 'Tượng',
       'tre_may': 'Tre mây',
       'gom_su': 'Gốm sứ'
     };
