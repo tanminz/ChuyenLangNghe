@@ -345,16 +345,21 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
       doc.font(fontPath);
     }
 
+    // Logo hóa đơn: ưu tiên env → logo header web → file trong backend/src/assets
+    const repoRoot = path.join(__dirname, '..', '..', '..');
+    const headerLogoPath = path.join(repoRoot, 'frontend', 'src', 'assets', 'New web images', 'logowebfinal.png');
     const logoCandidates = [
-      path.join(process.cwd(), 'Logo.png'),
-      path.join(process.cwd(), 'logo.png')
-    ];
+      process.env.INVOICE_LOGO_PATH && String(process.env.INVOICE_LOGO_PATH).trim(),
+      headerLogoPath,
+      path.join(__dirname, '..', 'assets', 'invoice-logo.png'),
+      path.join(__dirname, '..', 'assets', 'invoice-logo.jpg')
+    ].filter(Boolean);
 
     let logoDrawn = false;
     for (const logoPath of logoCandidates) {
       if (fs.existsSync(logoPath)) {
         try {
-          doc.image(logoPath, 50, 30, { width: 100 });
+          doc.image(logoPath, 50, 28, { fit: [120, 48] });
           logoDrawn = true;
           break;
         } catch {
@@ -364,10 +369,11 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
     }
 
     if (!logoDrawn) {
-      doc.fontSize(16).text('LOGO', 50, 30);
+      doc.fontSize(14).fillColor('#7A4726').text('Chuyen Lang Nghe', 50, 38);
+      doc.fillColor('#000000');
     }
 
-    doc.fontSize(20).text('Hoa don ban hang', 150, 50, { align: 'center' });
+    doc.fontSize(20).text('Chuyen Lang Nghe - Hoa don ban hang', 50, 90, { align: 'center', width: 495 });
     doc.moveDown();
 
     doc.fontSize(12)

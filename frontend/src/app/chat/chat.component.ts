@@ -93,7 +93,7 @@ export class ChatComponent {
     }
     
     if (message.includes('liên hệ') || message.includes('hotline') || message.includes('điện thoại')) {
-      return 'Bạn có thể liên hệ với chúng tôi qua:\n📞 Hotline: 1900-xxxx\n📧 Email: info@dacsan3mien.com\n💬 Chat trực tiếp như này\n🌐 Website: dacsan3mien.com';
+      return 'Bạn có thể liên hệ với chúng tôi qua:\n📞 Hotline: 1900-xxxx\n📧 Email: info@chuyenlangnghe.vn\n💬 Chat trực tiếp như này\n🌐 Website: chuyenlangnghe.vn';
     }
     
     if (message.includes('cảm ơn') || message.includes('thank')) {

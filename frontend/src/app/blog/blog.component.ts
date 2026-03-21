@@ -7,8 +7,9 @@ export interface BlogDisplayItem {
   title: string;
   image: string;
   date: string;
-  desc?: string;
-  fullContent?: string;
+  /** Luôn là chuỗi (có thể rỗng) để khớp template & các mảng tin */
+  desc: string;
+  fullContent: string;
   description?: string;
 }
 
