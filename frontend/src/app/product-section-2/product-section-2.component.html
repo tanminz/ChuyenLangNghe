@@ -19,7 +19,7 @@
             </span>
 
             <div class="overlay d-flex flex-column align-items-center justify-content-center">
-              <button *ngIf="product.stocked_quantity > 0" class="btn add-to-cart" (click)="addToCart($event, product)">Add to cart</button>
+              <button *ngIf="product.stocked_quantity > 0" class="btn add-to-cart" (click)="addToCart($event, product)">Thêm vào giỏ</button>
               <div class="actions d-flex justify-content-center mt-2">
                 <span class="mx-2" (click)="shareOnFacebook($event, product)">
                   <i class="fas fa-share-alt"></i> Share

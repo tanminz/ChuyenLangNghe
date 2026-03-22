@@ -166,17 +166,19 @@
 
 .price {
   font-size: 1em;
+  color: #BF2027;
+  font-weight: 600;
 }
 
 .current-price {
   font-weight: 500;
-  color: #000;
+  color: #BF2027;
 }
 
 .original-price {
   text-decoration: line-through;
   margin-left: 5px;
-  color: #888;
+  color: #BF2027;
 }
 
 .show-more-container {

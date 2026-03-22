@@ -1,54 +1,75 @@
+/* Login page - matches signup style, no scroll */
 .login-page {
   position: relative;
   min-height: 100vh;
+  height: 100vh;
   background: url('../../assets/New web images/ss_2624665379.jpg') center/cover no-repeat;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 16px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Thêm pseudo-element để tạo lớp phủ opacity 50% cho background */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .back-to-home {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 16px;
+  left: 16px;
   z-index: 100;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 6px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.95);
   color: #310002;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s, transform 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: color 0.2s, transform 0.2s;
 }
 
 .back-to-home:hover {
-  background: #fff;
   transform: translateX(-2px);
-  color: #C54121;
+  color: #BF2027;
 }
 
 .back-to-home i {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .login-shell {
-  width: min(720px, 100%);
-  max-height: calc(100vh - 40px);
-  min-height: 420px;
+  width: min(900px, 90%);
+  height: auto;
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   border-radius: 16px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.login-left {
+  background: #422C1E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-left img {
@@ -58,48 +79,50 @@
   display: block;
 }
 
-/* Right-hand frame: soft, minimal, warm card vibe */
+/* Right-hand frame - thu nhỏ padding như signup */
 .login-right {
-  padding: 28px 36px 32px;
+  padding: 16px 24px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 0 16px 16px 0;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
+  justify-content: center;
+  background: rgba(255, 250, 241, 0.98);
+  overflow: visible;
 }
 
+/* Logo 200px giống signup */
+.brand-logo {
+  width: 500px;
+  max-width: 100%;
+  margin: 0 auto 4px;
+  display: block;
+}
+
+/* Sửa chữ "Chào mừng" màu đỏ, in đậm */
 .welcome {
-  color: #A19791;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.5;
+  color: #BF2027 !important;
+  font-size: 20px;
+  font-weight: 700 !important;
   margin-bottom: 2px;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.brand-logo {
-  width: 140px;
-  max-width: 85%;
-  margin-bottom: 8px;
-}
-
+/* Title */
 h1 {
-  margin: 0 0 18px;
+  margin: 0 0 6px;
   color: #C54121;
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 700;
-  line-height: 1.25;
   letter-spacing: -0.02em;
   text-align: center;
 }
 
 .login-right .subtitle {
   color: #2d2d2d;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
-  margin-bottom: 18px;
+  margin-bottom: 6px;
   text-align: center;
 }
 
@@ -107,32 +130,32 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .social-icons button {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: #ffffff;
   padding: 0;
   cursor: pointer;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .social-icons button:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .social-icons img {
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 
@@ -141,8 +164,8 @@ h1 {
   color: #2d2d2d;
   display: flex;
   align-items: center;
-  margin: 0 0 20px;
-  font-size: 14px;
+  margin: 0 0 6px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -155,8 +178,8 @@ h1 {
 }
 
 .separator span {
-  margin: 0 14px;
-  font-size: 14px;
+  margin: 0 12px;
+  font-size: 12px;
 }
 
 .login-form {
@@ -164,20 +187,20 @@ h1 {
 }
 
 .error-box {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   background: #fef5f4;
   color: #DE725B;
   border: 1px solid rgba(222, 114, 91, 0.35);
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
 }
 
 .login-form label {
   display: block;
   font-size: 13px;
   color: #2d2d2d;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   font-weight: 600;
 }
 
@@ -187,19 +210,20 @@ h1 {
 
 .login-form input {
   width: 100%;
-  height: 40px;
-  border-radius: 12px;
+  height: 34px;
+  border-radius: 10px;
   border: none;
   background: #BA680F;
   color: #fff;
-  font-size: 14px;
-  padding: 0 16px;
-  margin-bottom: 14px;
+  font-size: 15px;
+  padding: 0 12px;
+  margin-bottom: 6px;
   transition: background 0.2s, box-shadow 0.2s;
 }
 
 .login-form input::placeholder {
   color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
 }
 
 .login-form input:focus {
@@ -216,18 +240,18 @@ h1 {
 }
 
 .password-wrap input {
-  padding-right: 44px;
+  padding-right: 38px;
 }
 
 .toggle-pass {
   position: absolute;
   top: 50%;
-  right: 14px;
+  right: 10px;
   transform: translateY(-50%);
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 15px;
+  font-size: 12px;
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -240,30 +264,30 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 4px 0 20px;
+  margin: 4px 0 12px;
 }
 
 .remember {
   display: inline-flex !important;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin: 0 !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   font-weight: 400;
   color: #2d2d2d;
 }
 
 .remember input {
-  width: 14px;
-  height: 14px;
-  min-width: 14px;
-  min-height: 14px;
+  width: 11px;
+  height: 11px;
+  min-width: 11px;
+  min-height: 11px;
   margin: 0;
   accent-color: #C54121;
 }
 
 .forgot {
-  font-size: 12px;
+  font-size: 13px;
   color: #2d2d2d;
   text-decoration: none;
   transition: color 0.2s;
@@ -276,11 +300,11 @@ h1 {
 .btn-login-main {
   width: 100%;
   max-width: 100%;
-  height: 44px;
+  height: 38px;
   display: block;
-  margin: 0 auto 24px;
+  margin: 0 auto 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #7A3F0B;
   color: #ffffff;
   font-size: 15px;
@@ -288,6 +312,7 @@ h1 {
   line-height: 1;
   cursor: pointer;
   transition: background 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .btn-login-main:hover {
@@ -295,8 +320,8 @@ h1 {
 }
 
 .signup-line {
-  margin: 0;
-  font-size: 13px;
+  margin: 6px 0 0;
+  font-size: 11px;
   color: #2d2d2d;
   text-align: center;
 }
@@ -305,6 +330,7 @@ h1 {
   color: #C54121;
   text-decoration: none;
   font-weight: 600;
+  font-size: 14px;
   transition: color 0.2s;
 }
 
@@ -312,47 +338,83 @@ h1 {
   text-decoration: underline;
 }
 
+/* Responsive - chỉ scroll trên mobile */
 @media (max-width: 768px) {
+  .login-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 14px 12px;
+  }
+  
   .login-shell {
     grid-template-columns: 1fr;
-    min-height: min(520px, calc(100vh - 40px));
-    max-height: calc(100vh - 40px);
+    width: 100%;
+    overflow: hidden;
   }
 
   .login-left {
-    max-height: 180px;
-    min-height: 160px;
+    min-height: 140px;
+    max-height: 160px;
   }
 
   .login-right {
-    padding: 22px 24px 26px;
-    border-radius: 0 0 16px 16px;
+    padding: 20px;
+    overflow: visible;
   }
 
   .brand-logo {
-    width: 120px;
+    width: 150px;
   }
 
   .welcome {
-    font-size: 12px;
+    font-size: 18px;
   }
 
   h1 {
     font-size: 20px;
-    margin-bottom: 4px;
   }
 
   .login-right .subtitle {
-    font-size: 12px;
-    margin-bottom: 16px;
+    font-size: 11px;
+    margin-bottom: 4px;
   }
 
   .login-form input {
-    height: 40px;
+    height: 36px;
+    font-size: 13px;
   }
 
   .btn-login-main {
-    height: 44px;
-    font-size: 14px;
+    height: 40px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-right {
+    padding: 16px;
+  }
+  
+  .brand-logo {
+    width: 120px;
+  }
+  
+  .welcome {
+    font-size: 16px;
+  }
+  
+  h1 {
+    font-size: 18px;
+  }
+  
+  .social-icons button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .social-icons img {
+    width: 14px;
+    height: 14px;
   }
 }

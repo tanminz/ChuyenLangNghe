@@ -5,3 +5,7 @@
   background-image: url('/assets/about-bg-texture.png');
   background-repeat: repeat;
 }
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+

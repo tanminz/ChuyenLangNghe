@@ -4,6 +4,7 @@
   padding-bottom: 60px;
   color: #310002;
   padding-top: 107px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .hero-section {
@@ -40,7 +41,7 @@
   border-radius: 12px;
   padding: 40px 36px;
   box-shadow: 0 4px 20px rgba(49, 0, 2, 0.08);
-  border: 1px solid rgba(122, 71, 38, 0.2);
+  border: 1px solid #7a472633;
 }
 
 .privacy-card {

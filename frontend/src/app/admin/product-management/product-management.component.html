@@ -191,7 +191,8 @@
                     <td>{{ product.product_dept }}</td>
                     <td>
                         <span class="badge" [ngClass]="{
-                            'bg-primary': product.type === 'nen',
+                            'bg-purple': product.type === 'lich',
+                            'bg-primary': product.type === 'tuong',
                             'bg-success': product.type === 'tre_may',
                             'bg-info': product.type === 'gom_su'
                         }">
