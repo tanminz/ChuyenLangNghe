@@ -11,7 +11,7 @@
         <div class="about-after-video-container">
             <div class="about-two-col">
                 <div class="about-col-heading">
-                    <h2 class="about-big-heading">MỖI SẢN PHẨM LÀ MỘT CÂU CHUYỆN VĂN HÓA</h2>
+                    <h2 class="about-big-heading">MỖI SẢN PHẨM LÀ MỘT CÂU CHUYỆN <span class="about-van-hoa">Văn Hóa</span></h2>
                 </div>
                 <div class="about-col-text">
                     <p class="about-after-video-text">
@@ -41,17 +41,46 @@
                     <img src="assets/grid-mats.png" alt="Dệt chiếu" class="about-gallery-img">
                 </div>
             </div>
+        <!-- Chữ chạy - dài từ đầu, ngược hướng gallery -->
+        <div class="about-marquee-wrap">
+            <div class="about-marquee-track">
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+                <span class="about-marquee-text">chuyện làng nghề</span>
+                <span class="about-marquee-sep">—</span>
+            </div>
+        </div>
     </section>
 
     <!-- Full Screen Video Section -->
     <section class="intro-video-section">
-        <div class="hat-decoration hat-left" [style.transform]="'translateY(-50%) rotate(' + hatRotation + 'deg)'">
+        <div class="hat-decoration hat-left" [style.transform]="'rotate(' + hatRotation + 'deg)'">
             <img src="assets/about-decor-rotate.png" alt="Trang trí" class="hat-img">
         </div>
         <video class="intro-fullscreen-video" autoplay muted loop playsinline preload="auto">
             <source src="assets/intro-video.mp4" type="video/mp4">
         </video>
-        <div class="hat-decoration hat-right" [style.transform]="'translateY(-50%) rotate(' + (-hatRotation) + 'deg)'">
+        <div class="hat-decoration hat-right" [style.transform]="'rotate(' + (-hatRotation) + 'deg)'">
             <img src="assets/about-decor-rotate.png" alt="Trang trí" class="hat-img">
         </div>
     </section>
@@ -64,49 +93,51 @@
         <img src="assets/about-bamboo.png" alt="" class="about-bamboo-img">
     </div>
 
-    <!-- Ảnh làng nghề đan tre mây + 3 ô thống kê -->
+    <!-- Ảnh nền + 3 thẻ dọc kiểu product card -->
     <section class="craft-heritage-section">
         <div class="craft-heritage-container">
-            <img src="assets/craft-weaving-tre-may.png" alt="Nghề đan tre mây - Làng nghề truyền thống" class="craft-heritage-image">
-            <div class="craft-stats-overlay">
-                <div class="craft-stat-item">
-                    <span class="craft-stat-number">200K</span>
-                    <span class="craft-stat-text">đồ thủ công đã tới tay khách hàng</span>
+            <img src="assets/craft-weaving-tre-may.png" alt="Làng nghề truyền thống" class="craft-heritage-bg">
+            <div class="craft-stats-grid">
+                <div class="craft-stat-card">
+                    <div class="craft-stat-header">
+                        <span class="craft-stat-number">200K</span>
+                        <span class="craft-stat-label">SẢN PHẨM</span>
+                    </div>
+                    <div class="craft-stat-image">
+                        <img src="assets/craft-card-1.png" alt="Đồ thủ công">
+                    </div>
+                    <div class="craft-stat-divider"></div>
+                    <p class="craft-stat-desc">ĐỒ THỦ CÔNG ĐÃ TỚI TAY KHÁCH HÀNG — TỪ LÀNG NGHỀ ĐẾN TỪNG GIA ĐÌNH VIỆT</p>
                 </div>
-                <div class="craft-stat-item">
-                    <span class="craft-stat-number">2K</span>
-                    <span class="craft-stat-text">nghệ nhân hợp tác đến từ mọi miền trên tổ quốc</span>
+                <div class="craft-stat-card">
+                    <div class="craft-stat-header">
+                        <span class="craft-stat-number">2K</span>
+                        <span class="craft-stat-label">NGHỆ NHÂN</span>
+                    </div>
+                    <div class="craft-stat-image">
+                        <img src="assets/craft-card-2.png" alt="Nghệ nhân">
+                    </div>
+                    <div class="craft-stat-divider"></div>
+                    <p class="craft-stat-desc">NGHỆ NHÂN HỢP TÁC ĐẾN TỪ MỌI MIỀN TRÊN TỔ QUỐC — GỐM, TRE MÂY, TRANH, ĐỒ MỸ NGHỆ</p>
                 </div>
-                <div class="craft-stat-item">
-                    <span class="craft-stat-number">7 năm</span>
-                    <span class="craft-stat-text">hoạt động gìn giữ giá trị truyền thống</span>
+                <div class="craft-stat-card">
+                    <div class="craft-stat-header">
+                        <span class="craft-stat-number">7 năm</span>
+                        <span class="craft-stat-label">HÀNH TRÌNH</span>
+                    </div>
+                    <div class="craft-stat-image">
+                        <img src="assets/craft-card-3.png" alt="Gìn giữ truyền thống">
+                    </div>
+                    <div class="craft-stat-divider"></div>
+                    <p class="craft-stat-desc">HOẠT ĐỘNG GÌN GIỮ GIÁ TRỊ TRUYỀN THỐNG — KỂ CHUYỆN LÀNG, GIỮ CHUYỆN NGHỀ</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- GIẤY CHỨNG NHẬN Section -->
-    <section class="about-certificates">
-        <div class="cert-container">
-            <h2 class="cert-title">GIẤY CHỨNG NHẬN</h2>
-            <div class="cert-gallery">
-                <div class="cert-left">
-                    <img src="assets/cert-3cards.png" alt="Chứng nhận" class="cert-main-img">
-                </div>
-                <div class="cert-right">
-                    <div class="cert-right-top">
-                        <img src="assets/cert-award1.png" alt="Lễ trao giải" class="cert-small-img">
-                        <img src="assets/cert-award2.png" alt="Trao bằng khen" class="cert-small-img">
-                    </div>
-                    <div class="cert-right-bottom">
-                        <img src="assets/cert-official.png" alt="Giấy chứng nhận chính thức" class="cert-bottom-img">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Bản đồ làng nghề Việt Nam -->
+    <app-vietnam-map mode="about"></app-vietnam-map>
 
-    <app-slogan></app-slogan>
     <app-slideshow></app-slideshow>
 </div>
 

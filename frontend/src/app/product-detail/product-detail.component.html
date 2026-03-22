@@ -9,10 +9,6 @@
         ›
       </button>
     </div>
-    <div class="thumbnail-row">
-      <img *ngFor="let image of images; let i = index" [src]="image" alt="Thumbnail" (click)="selectImage(i)"
-        [class.selected]="i === selectedImageIndex" class="thumbnail" />
-    </div>
   </div>
 
   <div class="product-info">
@@ -39,7 +35,15 @@
       <span *ngIf="getOriginalPrice() !== null" class="original-price">{{ getOriginalPrice() | currency: 'VND' }}</span>
     </div>
 
-    <p class="product-desc-brief">{{ product.product_detail || 'Nguyên liệu chọn lọc 100% tự nhiên, sản xuất thủ công theo công thức truyền thống. Đảm bảo an toàn vệ sinh thực phẩm, hương vị đậm đà chuẩn vị vùng miền.' }}</p>
+    <div class="product-info-brief">
+      <h5 class="info-brief-title">Thông tin sản phẩm</h5>
+      <ul class="info-brief-list">
+        <li><strong>Tên sản phẩm:</strong> {{ product.product_name || 'Sản phẩm' }}</li>
+        <li><strong>Loại:</strong> Sản phẩm làng nghề, thủ công truyền thống</li>
+        <li><strong>Xuất xứ:</strong> {{ product.product_dept || 'Việt Nam' }}</li>
+        <li><strong>Đặc điểm:</strong> Làm thủ công, mỗi sản phẩm có nét độc đáo riêng</li>
+      </ul>
+    </div>
 
     <div class="purchase-row">
       <div class="quantity-selector">
@@ -53,6 +57,11 @@
         <button (click)="buyNow()" class="btn btn-buy-now" [disabled]="isOutOfStock">Mua ngay</button>
         <button type="button" class="btn btn-wishlist" aria-label="Yêu thích" [disabled]="isOutOfStock">♡</button>
       </div>
+    </div>
+
+    <div class="thumbnail-row" *ngIf="images.length > 0">
+      <img *ngFor="let image of images; let i = index" [src]="image" alt="Thumbnail" (click)="selectImage(i)"
+        [class.selected]="i === selectedImageIndex" class="thumbnail" />
     </div>
 
   </div>

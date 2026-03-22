@@ -60,6 +60,7 @@ import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryMethodsComponent } from './delivery-methods/delivery-methods.component';
 import { HowToBuyComponent } from './how-to-buy/how-to-buy.component';
 import { FlipBookComponent } from './flip-book/flip-book.component';
+import { ProductDetailFormatPipe } from './pipes/product-detail-format.pipe';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import { FlipBookComponent } from './flip-book/flip-book.component';
     DeliveryComponent,
     DeliveryMethodsComponent,
     HowToBuyComponent,
-    FlipBookComponent
+    FlipBookComponent,
+    ProductDetailFormatPipe
   ],
   imports: [
     BrowserModule,

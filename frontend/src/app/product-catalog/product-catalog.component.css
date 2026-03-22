@@ -97,6 +97,54 @@
   margin-bottom: 0;
 }
 
+.sidebar-video-wrap {
+  margin-top: 1.5rem;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f5f2ee;
+  position: relative;
+}
+
+.sidebar-countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(49, 0, 2, 0.5);
+  color: #fff;
+  padding: 16px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.countdown-badge {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.countdown-timer {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+.sidebar-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+}
+
 .sidebar-crafted-image {
   margin-top: 1.5rem;
   border-radius: 4px;

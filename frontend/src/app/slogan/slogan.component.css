@@ -20,6 +20,13 @@
   font-size: 1.5rem;
   max-width: 800px;
   margin: 0 auto;
+  background-color: #FFFAF1 !important;
+  background-image: url('/assets/bg-texture.png') !important;
+  background-repeat: repeat !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  border: 1px solid rgba(212, 207, 203, 0.8);
+  color: #310002;
 }
 
 .slogan-highlight {

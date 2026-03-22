@@ -1,6 +1,61 @@
+.slideshow-section {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+.slideshow-wrapper {
+    position: relative;
+}
+
+.slideshow-section .carousel-item {
+    min-height: 100vh;
+}
+
 .banner-image {
-    max-height: 400px;
+    width: 100%;
+    height: 100vh;
     object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.slogan-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    pointer-events: none;
+}
+
+.slogan-text-box {
+    background-color: #FFFAF1;
+    background-image: url('/assets/bg-texture.png');
+    background-repeat: repeat;
+    color: #310002;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);
+    padding: 2rem 2.5rem;
+    max-width: 880px;
+    border: 1px solid rgba(212, 207, 203, 0.8);
+}
+
+.slogan-text {
+    margin: 0;
+    text-align: center;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    color: #310002;
+    font-weight: 400;
+}
+
+.slogan-highlight {
+    color: #630000;
+    font-size: 1.65rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
 }
 
 .carousel-control-prev-icon,
@@ -23,12 +78,33 @@
 
 @media (max-width: 768px) {
     .banner-image {
-        max-height: 200px !important;
+        height: 100vh;
+    }
+    .slogan-text {
+        font-size: 1.2rem;
+    }
+    .slogan-highlight {
+        font-size: 1.35rem;
+    }
+    .slogan-text-box {
+        padding: 1.2rem 1.75rem;
     }
 }
 
 @media (max-width: 576px) {
     .banner-image {
-        max-height: 100px !important;
+        height: 100vh;
+    }
+    .slogan-text {
+        font-size: 1.05rem;
+    }
+    .slogan-highlight {
+        font-size: 1.2rem;
+    }
+    .slogan-overlay {
+        padding: 0.75rem 1rem;
+    }
+    .slogan-text-box {
+        padding: 1rem 1.25rem;
     }
 }

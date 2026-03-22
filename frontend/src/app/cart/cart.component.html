@@ -3,7 +3,7 @@
         <nav class="cart-breadcrumb">Trang chủ / Giỏ hàng</nav>
         <h1 class="cart-title">Giỏ hàng của bạn</h1>
 
-        <div class="cart-layout">
+        <div class="cart-layout" *ngIf="cartItems.length > 0">
             <section class="cart-items-section">
                 <div *ngFor="let item of cartItems" class="cart-item">
                     <label class="cart-item-checkbox">
@@ -39,7 +39,7 @@
 
                 <div class="cart-section-actions">
                     <button type="button" class="btn-outline" routerLink="/">← Quay lại cửa hàng</button>
-                    <button type="button" class="btn-outline" (click)="toggleSelectAll()">Chọn tất cả</button>
+                    <button type="button" class="btn-outline" (click)="toggleSelectAll()">{{ isAllSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả' }}</button>
                 </div>
             </section>
 
@@ -76,6 +76,13 @@
                     <small *ngIf="couponMessage">{{ couponMessage }}</small>
                 </div>
             </aside>
+        </div>
+
+        <div class="cart-empty" *ngIf="cartItems.length === 0">
+            <div class="cart-empty-icon">🛒</div>
+            <h2 class="cart-empty-title">Giỏ hàng trống</h2>
+            <p class="cart-empty-text">Bạn chưa thêm sản phẩm nào vào giỏ hàng. Khám phá các sản phẩm thủ công mỹ nghệ để tìm món quà ý nghĩa nhé!</p>
+            <a routerLink="/catalog" class="btn-outline btn-empty-cta">Khám phá sản phẩm</a>
         </div>
     </div>
 </div>

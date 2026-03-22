@@ -1,14 +1,20 @@
-<div class="vietnam-map-container" id="vietnam-map">
-  <div class="section-header">
+<div class="vietnam-map-container" [class.about-mode]="mode === 'about'" id="vietnam-map">
+  <div class="map-title-bar" *ngIf="mode === 'about'">
+    <h2 class="map-title-bar-text">Khám Phá Làng Nghề Việt Nam</h2>
+    <p class="map-title-bar-subtitle">Chọn tỉnh thành trên bản đồ để xem làng nghề đặc trưng và sản phẩm thủ công</p>
+  </div>
+
+  <div class="section-header" *ngIf="mode !== 'about'">
     <h2 class="section-title">Khám Phá Đặc Sản Làng Nghề</h2>
     <p class="section-subtitle">Chọn tỉnh thành trên bản đồ để khám phá các đặc sản địa phương</p>
   </div>
 
   <div class="map-wrapper">
     <div class="map-container">
+      <span class="map-watermark" *ngIf="mode === 'about'">Việt Nam</span>
       <div class="svg-map">
         <ng-container *ngIf="useImageMap; else inlineSvgTpl">
-          <img #mapImage class="vietnam-svg" src="assets/New VN Maps (4).svg" usemap="#vn-map">
+          <img #mapImage class="vietnam-svg" src="assets/vietnam-map-craft.png" usemap="#vn-map" alt="Bản đồ Việt Nam">
           <map name="vn-map">
             <area *ngFor="let a of areasScaled"
                   [attr.alt]="a.name"
@@ -36,14 +42,7 @@
     </div>
 
     <div class="province-panel" [class.active]="selectedProvince">
-      <div *ngIf="!selectedProvince" class="panel-placeholder">
-        <div class="placeholder-icon">📍</div>
-        <h3>Chọn một tỉnh thành</h3>
-        <p>Click vào bất kỳ tỉnh thành nào trên bản đồ để xem đặc sản địa phương</p>
-      </div>
-
       <div *ngIf="selectedProvince" class="panel-content">
-        <button class="close-btn" (click)="clearSelection()" aria-label="Đóng">×</button>
         
         <div class="province-image-container">
           <img [src]="selectedProvince.image || '/assets/provinces/HCM.jpg'" [alt]="selectedProvince.name" class="province-image" (error)="onImageError($event)">
@@ -57,12 +56,29 @@
         </div>
 
         <a routerLink="/catalog" [queryParams]="{province: selectedProvince.name}" class="explore-btn">
-          <span class="explore-icon">🔍</span>
-          Khám Phá Đặc Sản {{ selectedProvince.name }}
+          <span class="explore-icon">{{ mode === 'about' ? '🛒' : '🔍' }}</span>
+          {{ mode === 'about' ? 'Xem sản phẩm' : 'Khám Phá Đặc Sản ' + selectedProvince.name }}
         </a>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Hàng sản phẩm bên dưới bản đồ -->
+  <div class="map-products-row">
+    <div class="map-products-inner">
+      <div *ngIf="isLoading" class="map-products-loading">Đang tải sản phẩm...</div>
+      <div *ngIf="!isLoading && displayProducts.length > 0" class="map-products-grid">
+        <div *ngFor="let product of displayProducts" class="map-products-item">
+          <app-product-item [product]="product"></app-product-item>
+        </div>
+      </div>
+      <div *ngIf="!isLoading && displayProducts.length === 0" class="map-products-empty">
+        <p>Chưa có sản phẩm. Chọn tỉnh trên bản đồ để xem đặc sản địa phương.</p>
+      </div>
+      <a *ngIf="displayProducts.length > 0" routerLink="/catalog" class="map-products-link">
+        Xem tất cả sản phẩm →
+      </a>
+    </div>
+  </div>
+</div>
 

@@ -43,7 +43,7 @@ export class CartComponent implements OnInit {
     this.cartService.getCartItems().subscribe((items) => {
       this.cartItems = items.map((item) => ({
         ...item,
-        product_name: item.product_name || 'Queentin',
+        product_name: item.product_name || 'Sản phẩm',
         image_1: item.image_1 || CART_PLACEHOLDER_IMAGE,
         isSelected: true,
         tempQuantity: Math.min(item.quantity, item.stocked_quantity || item.quantity),
@@ -52,8 +52,13 @@ export class CartComponent implements OnInit {
     });
   }
 
+  get isAllSelected(): boolean {
+    return this.cartItems.length > 0 && this.cartItems.every((item) => item.isSelected);
+  }
+
   toggleSelectAll(): void {
-    this.cartItems.forEach((item) => (item.isSelected = true));
+    const target = !this.isAllSelected;
+    this.cartItems.forEach((item) => (item.isSelected = target));
     this.updateTotalSelectedPrice();
   }
 

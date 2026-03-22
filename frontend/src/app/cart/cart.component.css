@@ -426,3 +426,50 @@
     margin-top: 4px;
   }
 }
+
+/* Trạng thái giỏ hàng trống */
+.cart-empty {
+  text-align: center;
+  padding: 80px 24px 100px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px dashed rgba(122, 71, 38, 0.25);
+  margin-top: 24px;
+}
+
+.cart-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.cart-empty-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #310002;
+  margin: 0 0 12px 0;
+}
+
+.cart-empty-text {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto 24px;
+}
+
+.cart-empty .btn-empty-cta {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #7A4726;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.cart-empty .btn-empty-cta:hover {
+  background: #5d361d;
+  color: #fff;
+}

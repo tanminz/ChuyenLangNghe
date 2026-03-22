@@ -107,10 +107,17 @@
         </div>
       </div>
 
-      <!-- Hình crafted by hand & poster bên dưới khung lọc -->
-      <div class="sidebar-crafted-image">
-        <img src="assets/catalog-sidebar-crafted.png" alt="Crafted by hand - rooted in nature" />
+      <!-- Video trong khung lọc -->
+      <div class="sidebar-video-wrap">
+        <video class="sidebar-video" autoplay muted loop playsinline preload="auto">
+          <source src="assets/catalog-sidebar-video.mp4" type="video/mp4" />
+        </video>
+        <div class="sidebar-countdown-overlay">
+          <span class="countdown-badge">20% sale off</span>
+          <span class="countdown-timer">{{ countdownDisplay }}</span>
+        </div>
       </div>
+      <!-- Hình crafted by hand & poster bên dưới khung lọc -->
       <div class="sidebar-crafted-image">
         <img src="assets/catalog-sidebar-wineclay.png" alt="Wine & Clay workshop" />
       </div>

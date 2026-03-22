@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ProductAPIService } from '../product-api.service';
@@ -9,6 +9,7 @@ interface ProvinceData {
   name: string;
   region: 'north' | 'central' | 'south';
   specialties: string[];
+  craftVillages?: string[];
   image?: string;
   description?: string;
 }
@@ -19,6 +20,7 @@ interface ProvinceData {
   styleUrls: ['./vietnam-map.component.css']
 })
 export class VietnamMapComponent implements OnInit, AfterViewInit {
+  @Input() mode: 'default' | 'about' = 'default';
   @ViewChild('svgHost', { static: true }) svgHost!: ElementRef<HTMLDivElement>;
   @ViewChild('mapImage', { static: false }) mapImage!: ElementRef<HTMLImageElement>;
 
@@ -33,6 +35,12 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
 
   private readonly hoverFill: string = '#9B0000';
+
+  // Chỉ các tỉnh này mới hiện panel khi click (hover vẫn hiện tên)
+  private readonly clickableProvinceIds = new Set<string>([
+    'tuyen_quang', 'ha_noi', 'bac_ninh', 'thanh_hoa', 'ha_tinh', 'thua_thien_hue', 'tp_hue',
+    'gia_lai', 'khanh_hoa', 'tp_ho_chi_minh', 'vinh_long', 'an_giang', 'lai_chau'
+  ]);
 
   // Optional label overrides for known SVG IDs
   private readonly idLabelMap: Record<string, string> = {
@@ -60,6 +68,7 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
     HY: 'Hưng Yên',
     KH: 'Khánh Hòa',
     LC: 'Lào Cai',
+    LCH: 'Lai Châu',
     LD: 'Lâm Đồng',
     LS: 'Lạng Sơn',
     NA: 'Nghệ An',
@@ -73,56 +82,64 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
     VL: 'Vĩnh Long'
   };
 
-  // Minimal seed; extend to 63 provinces later
+  // Chỉ 11 tỉnh clickable: Tuyên Quang, Hà Nội, Bắc Ninh, Thanh Hóa, Hà Tĩnh, Thừa Thiên Huế, Gia Lai, Khánh Hòa, Bình Dương (TP.HCM), Vĩnh Long, An Giang
   provinces: { [key: string]: ProvinceData } = {
-    // Using province IDs from the map (slugified names)
-    'ha_noi': { id: 'ha_noi', name: 'Hà Nội', region: 'north', specialties: ['Phở Hà Nội', 'Bún chả', 'Cốm Vòng'], image: '/assets/provinces/HCM.jpg', description: 'Thủ đô ngàn năm văn hiến với ẩm thực đậm đà bản sắc Bắc Bộ, nơi hội tụ tinh hoa văn hóa ẩm thực truyền thống Việt Nam.' },
-    'hai_phong': { id: 'hai_phong', name: 'Hải Phòng', region: 'north', specialties: ['Bánh đa cua', 'Nem cua bể'], image: '/assets/provinces/Hải Phòng.jpg', description: 'Thành phố cảng với hải sản tươi ngon, nổi tiếng với những món ăn từ cua độc đáo và hấp dẫn.' },
-    'quang_ninh': { id: 'quang_ninh', name: 'Quảng Ninh', region: 'north', specialties: ['Chả mực', 'Hải sản'], image: '/assets/provinces/HCM.jpg', description: 'Vùng biển Vịnh Hạ Long nổi tiếng với hải sản tươi sống và đặc sản chả mực thơm ngon khó quên.' },
-    'thua_thien_hue': { id: 'thua_thien_hue', name: 'Thừa Thiên Huế', region: 'central', specialties: ['Bún bò Huế', 'Mè xửng'], image: '/assets/provinces/Huế.jpg', description: 'Cố đô mang đậm dấu ấn hoàng gia với ẩm thực tinh tế, cầu kỳ và hương vị độc đáo của xứ Huế.' },
-    'tp_hue': { id: 'tp_hue', name: 'Thừa Thiên Huế', region: 'central', specialties: ['Bún bò Huế', 'Mè xửng'], image: '/assets/provinces/Huế.jpg', description: 'Cố đô mang đậm dấu ấn hoàng gia với ẩm thực tinh tế, cầu kỳ và hương vị độc đáo của xứ Huế.' },
-    'a_nang': { id: 'a_nang', name: 'Đà Nẵng', region: 'central', specialties: ['Mì Quảng', 'Bánh tráng cuốn thịt heo'], image: '/assets/provinces/Danang.jpg', description: 'Thành phố đáng sống với biển xanh cát trắng, ẩm thực đa dạng từ núi đến biển, nổi bật với Mì Quảng đậm đà.' },
-    'quang_nam': { id: 'quang_nam', name: 'Quảng Nam', region: 'central', specialties: ['Cao lầu', 'Mì Quảng'], image: '/assets/provinces/HCM.jpg', description: 'Mảnh đất di sản với phố cổ Hội An và những món ăn truyền thống độc đáo mang hương vị riêng biệt.' },
-    'quang_ngai': { id: 'quang_ngai', name: 'Quảng Ngãi', region: 'central', specialties: ['Bánh xèo', 'Mỳ Quảng'], image: '/assets/provinces/Quang Ngãi.jpg', description: 'Vùng đất Miền Trung với đặc sản giản dị nhưng đậm đà hương vị quê hương.' },
-    'khanh_hoa': { id: 'khanh_hoa', name: 'Khánh Hòa', region: 'central', specialties: ['Yến sào', 'Nem nướng Nha Trang'], image: '/assets/provinces/Khánh Hòa.jpg', description: 'Thành phố biển Nha Trang với hải sản phong phú và đặc sản yến sào quý giá nổi tiếng khắp cả nước.' },
-    'tp_ho_chi_minh': { id: 'tp_ho_chi_minh', name: 'TP. Hồ Chí Minh', region: 'south', specialties: ['Bánh mì Sài Gòn', 'Cơm tấm', 'Hủ tiếu'], image: '/assets/provinces/HCM.jpg', description: 'Thành phố sôi động nhất cả nước, nơi hội tụ ẩm thực đa dạng từ ba miền, mang đậm văn hóa ẩm thực đường phố Sài Gòn.' },
-    'lam_ong': { id: 'lam_ong', name: 'Lâm Đồng', region: 'central', specialties: ['Rau Đà Lạt', 'Atisô', 'Dâu tây'], image: '/assets/provinces/Lâm Đồng.jpg', description: 'Cao nguyên mộng mơ với khí hậu mát mẻ, nổi tiếng với rau củ quả tươi ngon và đặc sản vùng cao.' },
-    'ong_nai': { id: 'ong_nai', name: 'Đồng Nai', region: 'south', specialties: ['Bánh tráng', 'Khoai lang'], image: '/assets/provinces/Đồng Nai.jpg', description: 'Vùng đất công nghiệp phát triển với đặc sản bánh tráng nổi tiếng và nhiều đặc sản vùng đồng bằng.' },
-    'long_an': { id: 'long_an', name: 'Long An', region: 'south', specialties: ['Gạo Nàng Thơm', 'Thanh long'], image: '/assets/provinces/HCM.jpg', description: 'Vựa lúa với gạo thơm ngon và trái cây đặc sản của vùng đồng bằng sông Cửu Long.' },
-    'can_tho': { id: 'can_tho', name: 'Cần Thơ', region: 'south', specialties: ['Bánh tét lá cẩm', 'Bánh cống'], image: '/assets/provinces/Cần Thơ.jpg', description: 'Trung tâm miền Tây sông nước với chợ nổi độc đáo và ẩm thực Nam Bộ đậm đà hương vị quê nhà.' },
-    'kien_giang': { id: 'kien_giang', name: 'Kiên Giang', region: 'south', specialties: ['Nước mắm Phú Quốc', 'Hải sản'], image: '/assets/provinces/HCM.jpg', description: 'Vùng biển đảo với nước mắm Phú Quốc nổi tiếng thế giới và hải sản tươi ngon hảo hạng.' },
-    'tay_ninh': { id: 'tay_ninh', name: 'Tây Ninh', region: 'south', specialties: ['Bánh tráng tây ninh', 'Măng khô'], image: '/assets/provinces/Tây Ninh.jpg', description: 'Vùng đất giáp biên giới với đặc sản bánh tráng và các món ăn mang hương vị đồng bằng Nam Bộ.' },
-    'an_giang': { id: 'an_giang', name: 'An Giang', region: 'south', specialties: ['Cá lóc nướng trui', 'Bánh xèo'], image: '/assets/provinces/An Giang.jpg', description: 'Miền Tây sông nước với cá lóc nướng trui đặc trưng và văn hóa ẩm thực đồng bằng phong phú.' },
-    'ong_thap': { id: 'ong_thap', name: 'Đồng Tháp', region: 'south', specialties: ['Cá tai tượng', 'Cá linh'], image: '/assets/provinces/Đồng Tháp.webp', description: 'Vùng đất hoa sen với đặc sản cá đồng nổi tiếng và ẩm thực sông nước đặc sắc.' },
-    'vinh_long': { id: 'vinh_long', name: 'Vĩnh Long', region: 'south', specialties: ['Bánh tét', 'Cá tai tượng'], image: '/assets/provinces/Vĩnh Long.jpg', description: 'Mảnh đất miệt vườn với trái cây ngọt lịm và đặc sản từ sông nước miền Tây.' },
-    'ca_mau': { id: 'ca_mau', name: 'Cà Mau', region: 'south', specialties: ['Mắm cá sặc', 'Tôm sú'], image: '/assets/provinces/Cà Mau.jpg', description: 'Mũi đất cực Nam Tổ quốc với đặc sản tôm cá và mắm đậm đà hương vị biển cả.' },
-    'ninh_binh': { id: 'ninh_binh', name: 'Ninh Bình', region: 'north', specialties: ['Cơm cháy', 'Dê núi', 'Cá kèo'], image: '/assets/provinces/Ninh Bình.jpg', description: 'Cố đô Hoa Lư với danh thắng Tràng An, nổi tiếng với đặc sản cơm cháy và món dê núi thơm ngon.' },
-    'bac_ninh': { id: 'bac_ninh', name: 'Bắc Ninh', region: 'north', specialties: ['Chả cá Kinh Bắc', 'Bánh đậu xanh'], image: '/assets/provinces/Bắc Ninh.png', description: 'Miền đất võ Kinh Bắc với chả cá và bánh đậu xanh nổi tiếng cả nước.' },
-    'hung_yen': { id: 'hung_yen', name: 'Hưng Yên', region: 'north', specialties: ['Long nhãn', 'Bánh đậu xanh'], image: '/assets/provinces/Hưng Yên.jpg', description: 'Xứ sở của long nhãn thơm ngọt và nhiều đặc sản truyền thống Bắc Bộ.' },
-    'phu_tho': { id: 'phu_tho', name: 'Phú Thọ', region: 'north', specialties: ['Bánh tai', 'Khế Thanh Sơn'], image: '/assets/provinces/Phú Thọ.jpg', description: 'Đất tổ Hùng Vương với đặc sản bánh tai và khế Thanh Sơn nổi tiếng.' },
-    'thai_nguyen': { id: 'thai_nguyen', name: 'Thái Nguyên', region: 'north', specialties: ['Chè Tân Cương', 'Bánh trôi tàu'], image: '/assets/provinces/Thái Nguyên.jpg', description: 'Miền đất trà nổi tiếng với chè Tân Cương đặc sản và cách mạng.' },
-    'lao_cai': { id: 'lao_cai', name: 'Lào Cai', region: 'north', specialties: ['Thịt trâu gác bếp', 'Cá tầm'], image: '/assets/provinces/Lào Cai.webp', description: 'Vùng núi Tây Bắc với đặc sản thịt trâu gác bếp và cá tầm Sa Pa.' },
-    'gia_lai': { id: 'gia_lai', name: 'Gia Lai', region: 'central', specialties: ['Thịt bò khô', 'Rượu cần'], image: '/assets/provinces/Gia Lai.jpg', description: 'Cao nguyên Tây Nguyên với đặc sản thịt bò khô và văn hóa rượu cần độc đáo.' },
-    'ak_lak': { id: 'ak_lak', name: 'Đắk Lắk', region: 'central', specialties: ['Cà phê Buôn Ma Thuột', 'Khô cá lăng'], image: '/assets/provinces/Đắk Lắk.jpg', description: 'Thủ phủ cà phê Việt Nam với cà phê Buôn Ma Thuột nổi tiếng thế giới.' },
-    // Các tỉnh Bắc Bộ còn thiếu
-    'ien_bien': { id: 'ien_bien', name: 'Điện Biên', region: 'north', specialties: ['Thịt trâu gác bếp', 'Măng rừng'], image: '/assets/provinces/HCM.jpg', description: 'Vùng cao biên giới với lịch sử hào hùng và ẩm thực núi rừng đặc sắc.' },
-    'lai_chau': { id: 'lai_chau', name: 'Lai Châu', region: 'north', specialties: ['Măng khô', 'Cá suối'], image: '/assets/provinces/HCM.jpg', description: 'Miền núi Tây Bắc với đặc sản từ rừng núi và văn hóa dân tộc phong phú.' },
-    'tuyen_quang': { id: 'tuyen_quang', name: 'Tuyên Quang', region: 'north', specialties: ['Bánh khảo', 'Chả lụa'], image: '/assets/provinces/HCM.jpg', description: 'Miền đất cách mạng với đặc sản bánh khảo truyền thống nổi tiếng.' },
-    'cao_bang': { id: 'cao_bang', name: 'Cao Bằng', region: 'north', specialties: ['Hạt dẻ', 'Thịt trâu'], image: '/assets/provinces/HCM.jpg', description: 'Vùng núi đá vôi với thác Bản Giốc hùng vĩ và đặc sản hạt dẻ thơm bùi.' },
-    'son_la': { id: 'son_la', name: 'Sơn La', region: 'north', specialties: ['Cá suối', 'Mận Mộc Châu'], image: '/assets/provinces/HCM.jpg', description: 'Cao nguyên Mộc Châu với sữa tươi và mận ngọt đặc sản vùng núi.' },
-    'lang_son': { id: 'lang_son', name: 'Lạng Sơn', region: 'north', specialties: ['Mắc khén', 'Đào tiên'], image: '/assets/provinces/Lạng Sơn.jpg', description: 'Cửa khẩu biên giới với đặc sản mắc khén độc đáo và đào tiên ngọt lịm.' },
-    'thanh_hoa': { id: 'thanh_hoa', name: 'Thanh Hóa', region: 'north', specialties: ['Bánh trôi', 'Cá trích'], image: '/assets/provinces/HCM.jpg', description: 'Cố đô Hồ với đặc sản bánh trôi nổi tiếng và hải sản biển Sầm Sơn.' },
-    'nghe_an': { id: 'nghe_an', name: 'Nghệ An', region: 'north', specialties: ['Trà Cẩm', 'Tôm càng xanh'], image: '/assets/provinces/HCM.jpg', description: 'Quê hương Bác Hồ với đặc sản trà Cẩm và tôm càng xanh sông Lam.' },
-    'ha_tinh': { id: 'ha_tinh', name: 'Hà Tĩnh', region: 'central', specialties: ['Chả cá', 'Nghệ'], image: '/assets/provinces/Hà Tĩnh.jpeg', description: 'Vùng đất cách mạng với đặc sản chả cá Hà Tĩnh và nghệ vàng nổi tiếng.' },
-    // Các tỉnh Trung Bộ còn thiếu
-    'quang_tri': { id: 'quang_tri', name: 'Quảng Trị', region: 'central', specialties: ['Bún bò', 'Cá đục'], image: '/assets/provinces/HCM.jpg', description: 'Vùng đất anh hùng với ẩm thực đậm chất Huế và hải sản vùng cửa Việt.' },
-    // Các tỉnh Nam Bộ còn thiếu
-    'phu_quoc': { id: 'phu_quoc', name: 'Phú Quốc', region: 'south', specialties: ['Nước mắm', 'Hải sản'], image: '/assets/provinces/HCM.jpg', description: 'Đảo Ngọc với nước mắm nổi tiếng thế giới và hải sản tươi ngon hảo hạng.' },
-    'q_hoang_sa': { id: 'q_hoang_sa', name: 'Q.Đ Hoàng Sa', region: 'central', specialties: ['Hải sản'], image: '/assets/provinces/Q.Đ Hoàng Sa.jpeg', description: 'Quần đảo Hoàng Sa - chủ quyền thiêng liêng của Tổ quốc.' },
-    'q_truong_sa': { id: 'q_truong_sa', name: 'Q.Đ Trường Sa', region: 'south', specialties: ['Hải sản'], image: '/assets/provinces/HCM.jpg', description: 'Quần đảo Trường Sa - tiền đồn bảo vệ chủ quyền biển đảo Tổ quốc.' }
+    'tuyen_quang': { id: 'tuyen_quang', name: 'Tuyên Quang', region: 'north', specialties: ['Bánh khảo', 'Chả lụa'], craftVillages: ['Nón lá'], image: '/assets/provinces/TuyenQuang.png', description: 'Nghề làm nón lá ở Tuyên Quang là một nét đẹp truyền thống gắn liền với đời sống văn hóa của người dân địa phương. Những chiếc nón được làm thủ công tỉ mỉ từ lá cọ, qua nhiều công đoạn như phơi lá, là lá, khâu và tạo hình. Không chỉ là vật dụng che nắng mưa, nón lá còn thể hiện sự khéo léo, cần cù của người thợ và góp phần gìn giữ bản sắc văn hóa dân tộc qua nhiều thế hệ.' },
+    'ha_noi': { id: 'ha_noi', name: 'Hà Nội', region: 'north', specialties: ['Phở Hà Nội', 'Bún chả', 'Cốm Vòng'], craftVillages: ['Gốm Bát Tràng', 'Lụa Vạn Phúc', 'Tranh Hàng Trống', 'Đồng Đại Bái'], image: '/assets/provinces/HaNoi.png', description: 'Làng gốm Bát Tràng là "linh hồn" của nghề gốm Hà Nội, nơi từng thớ đất sét được thổi hồn thành những tác phẩm tinh xảo. Với lịch sử hàng trăm năm, gốm Bát Tràng không chỉ là đồ dùng mà còn là nét nghệ thuật đậm chất truyền thống, thu hút bất kỳ ai muốn khám phá vẻ đẹp văn hóa Việt.' },
+    'bac_ninh': { id: 'bac_ninh', name: 'Bắc Ninh', region: 'north', specialties: ['Chả cá Kinh Bắc', 'Bánh đậu xanh'], craftVillages: ['Tranh Đông Hồ', 'Gỗ Đồng Kỵ', 'Đúc đồng Đại Bái'], image: '/assets/provinces/BacNinh.png', description: 'Làng gốm Phù Lãng là một trong những làng gốm cổ nổi tiếng ở Bắc Ninh, mang đậm vẻ đẹp mộc mạc và truyền thống. Gốm Phù Lãng gây ấn tượng với màu men nâu trầm ấm, bề mặt sần đặc trưng và kỹ thuật đắp nổi độc đáo, tạo nên những sản phẩm vừa giản dị vừa đầy tính nghệ thuật.' },
+    'thanh_hoa': { id: 'thanh_hoa', name: 'Thanh Hóa', region: 'north', specialties: ['Bánh trôi', 'Cá trích'], craftVillages: ['Chiếu cói Nga Sơn', 'Mây tre đan', 'Đồ gỗ'], image: '/assets/provinces/ThanhHoa.png', description: 'Nghề làm tượng ở Thanh Hóa gắn liền với làng nghề làng đá Nhồi, nơi nổi tiếng với các sản phẩm điêu khắc đá tinh xảo. Từ những khối đá thô, người thợ khéo léo tạo nên tượng Phật, linh vật và đồ mỹ nghệ mang vẻ đẹp mạnh mẽ nhưng vẫn đầy hồn Việt, thể hiện tay nghề lâu đời và sự tỉ mỉ đáng kinh ngạc.' },
+    'ha_tinh': { id: 'ha_tinh', name: 'Hà Tĩnh', region: 'central', specialties: ['Chả cá', 'Nghệ'], craftVillages: ['Nón lá', 'Mây tre đan', 'Chiếu cói'], image: 'assets/provinces/HaTinh.png', description: 'Nghề thủ công từ tre, nứa ở Hà Tĩnh gắn với nhiều làng nghề truyền thống như làng mây tre đan Thái Yên. Từ những nguyên liệu giản dị, người dân khéo léo tạo nên rổ, rá, giỏ và đồ mỹ nghệ tinh tế, vừa gần gũi đời sống vừa mang nét đẹp mộc mạc của văn hóa làng quê Việt.' },
+    'thua_thien_hue': { id: 'thua_thien_hue', name: 'Thừa Thiên Huế', region: 'central', specialties: ['Bún bò Huế', 'Mè xửng'], craftVillages: ['Nón lá Huế', 'Đồ đồng Phường Đúc', 'Gốm Phước Tích'], image: 'assets/provinces/Hue.png', description: 'Nghề đan tre ở Huế nổi bật với làng nghề Bao La. Người thợ từ tre, nứa tạo nên giỏ, khay, đèn trang trí tinh xảo. Sản phẩm vừa bền đẹp, vừa mang nét thanh nhã và tinh tế đặc trưng của văn hóa xứ Huế. Nghề này không chỉ giữ gìn truyền thống mà còn thu hút du khách đến trải nghiệm và tìm hiểu.' },
+    'tp_hue': { id: 'tp_hue', name: 'Thừa Thiên Huế', region: 'central', specialties: ['Bún bò Huế', 'Mè xửng'], craftVillages: ['Nón lá Huế', 'Đồ đồng Phường Đúc', 'Gốm Phước Tích'], image: 'assets/provinces/Hue.png', description: 'Nghề đan tre ở Huế nổi bật với làng nghề Bao La. Người thợ từ tre, nứa tạo nên giỏ, khay, đèn trang trí tinh xảo. Sản phẩm vừa bền đẹp, vừa mang nét thanh nhã và tinh tế đặc trưng của văn hóa xứ Huế. Nghề này không chỉ giữ gìn truyền thống mà còn thu hút du khách đến trải nghiệm và tìm hiểu.' },
+    'gia_lai': { id: 'gia_lai', name: 'Gia Lai', region: 'central', specialties: ['Thịt bò khô', 'Rượu cần'], image: 'assets/provinces/GiaLai.png', description: 'Nghề làm rổ tre ở Gia Lai là một nghề truyền thống gắn liền với đời sống nông thôn. Từ tre tự nhiên, người thợ khéo léo đan thành những chiếc rổ chắc chắn, tiện dụng để chứa nông sản và đồ gia dụng. Sản phẩm vừa mang tính thực tiễn cao, vừa thể hiện nét tinh xảo và khéo léo đặc trưng của người dân Tây Nguyên.' },
+    'khanh_hoa': { id: 'khanh_hoa', name: 'Khánh Hòa', region: 'central', specialties: ['Yến sào', 'Nem nướng Nha Trang'], image: 'assets/provinces/KhanhHoa.png', description: 'Nghề gốm ở Ninh Thuận và Khánh Hòa nổi bật với các làng nghề truyền thống ven biển. Người thợ khéo léo tạo ra các sản phẩm như bình, lọ, bát đĩa với men màu rực rỡ và họa tiết độc đáo. Gốm ở đây vừa phục vụ sinh hoạt, vừa mang giá trị nghệ thuật, phản ánh đời sống và văn hóa đặc trưng của miền Nam Trung Bộ.' },
+    'tp_ho_chi_minh': { id: 'tp_ho_chi_minh', name: 'TP. Hồ Chí Minh', region: 'south', specialties: ['Bánh mì Sài Gòn', 'Cơm tấm', 'Hủ tiếu'], craftVillages: ['Sơn mài', 'Đồ thủ công mỹ nghệ', 'Gốm sứ'], image: 'assets/provinces/TPHCM.png', description: 'Nghề thủ công từ tre, nứa ở Bình Dương - TP.HCM rất phát triển, đặc biệt ở các làng nghề như Phú Chánh. Người thợ dùng tre, nứa để đan giỏ, rá, thúng, đồ trang trí tinh xảo. Sản phẩm vừa bền chắc, vừa mang nét mộc mạc, gần gũi, thể hiện sự khéo léo và sáng tạo của người dân địa phương.' },
+    'vinh_long': { id: 'vinh_long', name: 'Vĩnh Long', region: 'south', specialties: ['Bánh tét', 'Cá tai tượng'], image: 'assets/provinces/VinhLong.png', description: 'Làng gốm Vũng Liêm là điểm nổi bật của nghề gốm ở Vĩnh Long. Người thợ từ đất sét tạo nên các sản phẩm như bình, lọ, bát đĩa với men màu tự nhiên và hoa văn giản dị nhưng tinh xảo. Gốm Vĩnh Long vừa phục vụ sinh hoạt hàng ngày, vừa mang giá trị nghệ thuật và phản ánh văn hóa đặc trưng của miền Tây sông nước.' },
+    'an_giang': { id: 'an_giang', name: 'An Giang', region: 'south', specialties: ['Cá lóc nướng trui', 'Bánh xèo'], image: 'assets/provinces/AnGiang.png', description: 'Làng gốm Chợ Mới là một trong những điểm nổi bật của nghề gốm ở An Giang. Người thợ từ đất sét tạo ra các sản phẩm như bình, lọ, bát đĩa với men màu tự nhiên và họa tiết giản dị nhưng tinh tế. Gốm An Giang vừa phục vụ nhu cầu sinh hoạt, vừa mang giá trị nghệ thuật và phản ánh nét văn hóa đặc trưng miền Tây sông nước.' },
+    'lai_chau': { id: 'lai_chau', name: 'Lai Châu', region: 'north', specialties: ['Măng khô', 'Cá suối'], craftVillages: ['Dệt thổ cẩm'], image: 'assets/provinces/LaiChau.png', description: 'Nghề dệt ở Lai Châu là một trong những nét văn hóa truyền thống đặc sắc của các dân tộc Tây Bắc. Người thợ sử dụng khung cửi thủ công để dệt nên các sản phẩm như vải, khăn, áo thổ cẩm với hoa văn sặc sỡ, tinh xảo. Sản phẩm dệt Lai Châu không chỉ phục vụ đời sống hàng ngày mà còn thể hiện sự khéo léo, sáng tạo và bản sắc văn hóa lâu đời của người dân địa phương.' }
   };
 
   private provinceNameById: Record<string, string> = {};
+
+  private readonly craftVillagesByName: Record<string, string[]> = {
+    'Hà Nội': ['Gốm Bát Tràng', 'Lụa Vạn Phúc', 'Tranh Hàng Trống', 'Đồng Đại Bái'],
+    'Bắc Ninh': ['Tranh Đông Hồ', 'Gỗ Đồng Kỵ', 'Đúc đồng Đại Bái'],
+    'Hưng Yên': ['Tương Bần', 'Long nhãn lồng'],
+    'Ninh Bình': ['Chiếu cói Kim Sơn', 'Đá mỹ nghệ Ninh Vân', 'Thêu ren Văn Lâm'],
+    'Thanh Hóa': ['Chiếu cói Nga Sơn', 'Mây tre đan', 'Đồ gỗ'],
+    'Nghệ An': ['Chiếu cói', 'Mây tre đan', 'Rượu Kim Sơn'],
+    'Hà Tĩnh': ['Nón lá', 'Mây tre đan', 'Chiếu cói'],
+    'Thừa Thiên Huế': ['Nón lá Huế', 'Đồ đồng Phường Đúc', 'Gốm Phước Tích'],
+    'TP Huế': ['Nón lá Huế', 'Đồ đồng Phường Đúc', 'Gốm Phước Tích'],
+    'Quảng Nam': ['Gốm Thanh Hà', 'Lụa Mã Châu', 'Mộc Kim Bồng'],
+    'Quảng Ngãi': ['Gốm', 'Đan lát', 'Chiếu cói'],
+    'Đà Nẵng': ['Đồ mây tre', 'Đá mỹ nghệ'],
+    'Khánh Hòa': ['Yến sào', 'Đồ mây tre'],
+    'Lâm Đồng': ['Dệt thổ cẩm', 'Đồ gỗ Tây Nguyên', 'Đồ mây tre'],
+    'Đồng Nai': ['Gốm', 'Mây tre đan', 'Đồ gỗ'],
+    'TP. Hồ Chí Minh': ['Sơn mài', 'Đồ thủ công mỹ nghệ', 'Gốm sứ'],
+    'Tây Ninh': ['Bánh tráng phơi sương', 'Đan lát', 'Đồ gỗ mỹ nghệ'],
+    'Bình Dương': ['Sơn mài', 'Đồ gỗ mỹ nghệ'],
+    'Long An': ['Đan lát', 'Chiếu cói'],
+    'Đồng Tháp': ['Chiếu cói', 'Đan lát', 'Đồ gỗ'],
+    'An Giang': ['Lụa Châu Đốc', 'Đan lát'],
+    'Tiền Giang': ['Khảm sừng', 'Đồ gỗ'],
+    'Vĩnh Long': ['Gốm', 'Đan lát'],
+    'Cần Thơ': ['Đan lát', 'Chiếu cói'],
+    'Hậu Giang': ['Đan lát', 'Đồ gỗ'],
+    'Kiên Giang': ['Đan lát', 'Gốm'],
+    'Cà Mau': ['Đan lát', 'Đồ mây tre'],
+    'Hải Phòng': ['Gốm', 'Đan lát'],
+    'Quảng Ninh': ['Than đá mỹ nghệ', 'Đồ gỗ'],
+    'Lạng Sơn': ['Đồ gỗ', 'Đan lát'],
+    'Thái Nguyên': ['Chè', 'Đồ thủ công'],
+    'Tuyên Quang': ['Nón lá'],
+    'Phú Thọ': ['Gỗ mỹ nghệ', 'Đan lát'],
+    'Lào Cai': ['Thổ cẩm', 'Đồ bạc'],
+    'Điện Biên': ['Thổ cẩm', 'Đồ thủ công'],
+    'Gia Lai': ['Dệt thổ cẩm', 'Đồ gỗ'],
+    'Đắk Lắk': ['Dệt thổ cẩm', 'Đồ gỗ', 'Đồng']
+  };
 
   constructor(
     private productService: ProductAPIService,
@@ -134,6 +151,10 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadProvinceMeta();
     this.loadAllProducts();
+    if (this.provinces['bac_ninh']) {
+      this.selectedProvince = this.provinces['bac_ninh'];
+      this.onProvinceClick('bac_ninh');
+    }
   }
 
   private loadProvinceMeta(): void {
@@ -145,28 +166,11 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
             const code = (item.name || '').toUpperCase();
             const full = this.codeToFullName[code] || item.name;
             map[item.id] = full;
-            // Create base province entries if missing so click panel shows friendly name
-            if (!this.provinces[item.id]) {
-              this.provinces[item.id] = {
-                id: item.id,
-                name: full,
-                region: 'north',
-                specialties: []
-              };
-            } else {
-              this.provinces[item.id].name = full;
-            }
-            // Assign default image if not explicitly provided
-            if (!this.provinces[item.id].image) {
-              this.provinces[item.id].image = this.buildDefaultProvinceImage(full);
-            }
           }
         });
         this.provinceNameById = map;
       },
-      error: () => {
-        // ignore if not found; component still works via fallback
-      }
+      error: () => {}
     });
   }
 
@@ -174,47 +178,45 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
   svgSafeHtml: SafeHtml | null = null;
   useImageMap: boolean = true;
 
-  // Image map base data (can be extended or generated)
+  // Image map base data - id phải khớp với key trong provinces
   areasBase: Array<{ id?: string; name: string; coords: number[] }> = [
-    // Bắc bộ
-    { name: 'Điện Biên', coords: [43,42,70,56,103,64,118,75,104,116,92,129] },
-    { name: 'Lai Châu', coords: [88,44,64,31,56,42,50,42,134,85,132,64,107,31] },
-    { name: 'Lào Cai', coords: [116,29,139,49,147,27,183,73,176,100,150,97,136,86] },
-    { name: 'Tuyên Quang', coords: [212,13,199,22,211,49,208,81,196,94,156,32,178,14,193,2] },
-    { name: 'Cao Bằng', coords: [269,29,204,12,200,29,222,41,252,48] },
-    { name: 'Sơn La', coords: [177,106,114,72,102,128,120,134,142,123,170,134,180,129,181,126] },
-    { name: 'Thái Nguyên', coords: [237,87,243,46,207,34,209,92,228,100] },
-    { name: 'Lạng Sơn', coords: [299,87,268,58,244,45,238,80,241,92,268,91,289,100] },
-    { name: 'Phú Thọ', coords: [219,101,179,83,179,138,211,154,224,145,188,108] },
-    { name: 'Ninh Bình', coords: [213,152,239,173,257,155,223,132] },
-    { name: 'Hà Nội', coords: [188,107,225,141,233,123,224,97] },
-    { name: 'Bắc Ninh', coords: [287,93,273,110,235,119,226,104,234,89] },
-    { name: 'Quảng Ninh', coords: [262,114,292,137,340,89,302,84] },
-    { name: 'Hải Phòng', coords: [241,130,264,137,277,122,264,114,231,119] },
-    { name: 'Hưng Yên', coords: [262,160,229,140,229,124,264,140] },
-    { name: 'Thanh Hóa', coords: [216,201,234,168,188,140,155,135,152,152,180,168,198,190] },
-    { name: 'Nghệ An', coords: [221,208,180,173,147,180,130,203,196,236,218,236] },
-    { name: 'Hà Tĩnh', coords: [198,262,262,274,221,231,188,239] },
-    // Trung bộ
-    { name: 'Quảng Trị', coords: [277,348,302,325,257,272,203,264] },
-    { name: 'TP Huế', coords: [333,348,292,325,279,348,297,358,310,363] },
-    { name: 'Đà Nẵng', coords: [366,394,340,366,330,350,284,373,305,399,333,411] },
-    { name: 'Quảng Ngãi', coords: [328,409,302,404,297,462,381,422,368,394] },
-    { name: 'Gia Lai', coords: [389,470,378,424,297,462,307,488,338,488,356,508] },
-    { name: 'Đắk Lắk', coords: [358,505,340,490,310,490,300,513,330,546,361,541,394,510,386,472] },
-    { name: 'Khánh Hòa', coords: [371,592,353,574,363,541,394,508,383,564] },
-    { name: 'Lâm Đồng', coords: [287,543,307,627,328,617,371,594,353,574,363,543,325,546,305,521] },
-    { name: 'Đồng Nai', coords: [310,622,290,549,251,556,251,584,269,584,279,599,269,617,279,625,292,617] },
-    { name: 'TP Hồ Chí Minh', coords: [295,617,279,625,269,615,277,597,264,579,246,584,249,607,262,632,279,643,312,625] },
-    { name: 'Tây Ninh', coords: [231,630,267,635,249,599,246,589,254,574,234,566,226,582,239,604,206,607] },
-    { name: 'Đồng Tháp', coords: [277,640,229,627,203,604,190,610,213,648,241,635,274,648] },
-    { name: 'Vĩnh Long', coords: [257,681,211,645,241,637,269,643,262,663] },
-    { name: 'Cần Thơ', coords: [257,678,229,660,208,637,190,643,208,658,201,673,226,691] },
-    { name: 'An Giang', coords: [198,683,211,658,193,640,208,637,188,607,173,627,157,632,168,648,190,655,173,663,173,676] },
-    { name: 'Cà Mau', coords: [198,683,175,673,168,724,188,724,229,691,206,678] },
-    { name: 'Phú Quốc', coords: [124,625,122,650,127,663,140,660,152,630] },
-    { name: 'Q.Đ Hoàng Sa', coords: [460,284,574,310,579,350,549,386,488,394,457,363,450,330] },
-    { name: 'Q.Đ Trường Sa', coords: [424,734,480,709,533,670,582,617,607,579,678,541,754,554,782,653,744,744,693,782,635,792,493,790,429,777] }
+    { id: 'ien_bien', name: 'Điện Biên', coords: [43,42,70,56,103,64,118,75,104,116,92,129] },
+    { id: 'lai_chau', name: 'Lai Châu', coords: [88,44,64,31,56,42,50,42,134,85,132,64,107,31] },
+    { id: 'lao_cai', name: 'Lào Cai', coords: [116,29,139,49,147,27,183,73,176,100,150,97,136,86] },
+    { id: 'tuyen_quang', name: 'Tuyên Quang', coords: [212,13,199,22,211,49,208,81,196,94,156,32,178,14,193,2] },
+    { id: 'cao_bang', name: 'Cao Bằng', coords: [269,29,204,12,200,29,222,41,252,48] },
+    { id: 'son_la', name: 'Sơn La', coords: [177,106,114,72,102,128,120,134,142,123,170,134,180,129,181,126] },
+    { id: 'thai_nguyen', name: 'Thái Nguyên', coords: [237,87,243,46,207,34,209,92,228,100] },
+    { id: 'lang_son', name: 'Lạng Sơn', coords: [299,87,268,58,244,45,238,80,241,92,268,91,289,100] },
+    { id: 'phu_tho', name: 'Phú Thọ', coords: [219,101,179,83,179,138,211,154,224,145,188,108] },
+    { id: 'ninh_binh', name: 'Ninh Bình', coords: [213,152,239,173,257,155,223,132] },
+    { id: 'ha_noi', name: 'Hà Nội', coords: [188,107,225,141,233,123,224,97] },
+    { id: 'bac_ninh', name: 'Bắc Ninh', coords: [287,93,273,110,235,119,226,104,234,89] },
+    { id: 'quang_ninh', name: 'Quảng Ninh', coords: [262,114,292,137,340,89,302,84] },
+    { id: 'hai_phong', name: 'Hải Phòng', coords: [241,130,264,137,277,122,264,114,231,119] },
+    { id: 'hung_yen', name: 'Hưng Yên', coords: [262,160,229,140,229,124,264,140] },
+    { id: 'thanh_hoa', name: 'Thanh Hóa', coords: [216,201,234,168,188,140,155,135,152,152,180,168,198,190] },
+    { id: 'nghe_an', name: 'Nghệ An', coords: [221,208,180,173,147,180,130,203,196,236,218,236] },
+    { id: 'ha_tinh', name: 'Hà Tĩnh', coords: [198,262,262,274,221,231,188,239] },
+    { id: 'quang_tri', name: 'Quảng Trị', coords: [277,348,302,325,257,272,203,264] },
+    { id: 'tp_hue', name: 'TP Huế', coords: [333,348,292,325,279,348,297,358,310,363] },
+    { id: 'a_nang', name: 'Đà Nẵng', coords: [366,394,340,366,330,350,284,373,305,399,333,411] },
+    { id: 'quang_ngai', name: 'Quảng Ngãi', coords: [328,409,302,404,297,462,381,422,368,394] },
+    { id: 'gia_lai', name: 'Gia Lai', coords: [389,470,378,424,297,462,307,488,338,488,356,508] },
+    { id: 'ak_lak', name: 'Đắk Lắk', coords: [358,505,340,490,310,490,300,513,330,546,361,541,394,510,386,472] },
+    { id: 'khanh_hoa', name: 'Khánh Hòa', coords: [371,592,353,574,363,541,394,508,383,564] },
+    { id: 'lam_ong', name: 'Lâm Đồng', coords: [287,543,307,627,328,617,371,594,353,574,363,543,325,546,305,521] },
+    { id: 'ong_nai', name: 'Đồng Nai', coords: [310,622,290,549,251,556,251,584,269,584,279,599,269,617,279,625,292,617] },
+    { id: 'tp_ho_chi_minh', name: 'TP Hồ Chí Minh', coords: [295,617,279,625,269,615,277,597,264,579,246,584,249,607,262,632,279,643,312,625] },
+    { id: 'tay_ninh', name: 'Tây Ninh', coords: [231,630,267,635,249,599,246,589,254,574,234,566,226,582,239,604,206,607] },
+    { id: 'ong_thap', name: 'Đồng Tháp', coords: [277,640,229,627,203,604,190,610,213,648,241,635,274,648] },
+    { id: 'vinh_long', name: 'Vĩnh Long', coords: [257,681,211,645,241,637,269,643,262,663] },
+    { id: 'can_tho', name: 'Cần Thơ', coords: [257,678,229,660,208,637,190,643,208,658,201,673,226,691] },
+    { id: 'an_giang', name: 'An Giang', coords: [198,683,211,658,193,640,208,637,188,607,173,627,157,632,168,648,190,655,173,663,173,676] },
+    { id: 'ca_mau', name: 'Cà Mau', coords: [198,683,175,673,168,724,188,724,229,691,206,678] },
+    { id: 'phu_quoc', name: 'Phú Quốc', coords: [124,625,122,650,127,663,140,660,152,630] },
+    { id: 'q_hoang_sa', name: 'Q.Đ Hoàng Sa', coords: [460,284,574,310,579,350,549,386,488,394,457,363,450,330] },
+    { id: 'q_truong_sa', name: 'Q.Đ Trường Sa', coords: [424,734,480,709,533,670,582,617,607,579,678,541,754,554,782,653,744,744,693,782,635,792,493,790,429,777] }
   ];
   areasScaled: Array<{ id: string; name: string; coordsStr: string }> = [];
 
@@ -336,13 +338,9 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
       };
       const onActivate = () => {
-        if (!this.provinces[provinceId]) {
-          this.provinces[provinceId] = { id: provinceId, name: label, region: 'north', specialties: [] };
-        }
-        if (!this.provinces[provinceId].image) {
-          this.provinces[provinceId].image = this.buildDefaultProvinceImage(label);
-        }
-        this.onProvinceClick(provinceId);
+        const resolvedId = this.resolveSvgIdToProvinceId(provinceId, label) || provinceId;
+        if (!this.clickableProvinceIds.has(resolvedId) || !this.provinces[resolvedId]) return;
+        this.onProvinceClick(resolvedId);
         this.cdr.detectChanges();
       };
 
@@ -414,13 +412,8 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
         if (!el) return;
         const idx = Array.from(svgDoc.querySelectorAll(selector)).indexOf(el as any);
         const { id, label } = this.extractProvinceIdentity(el, idx >= 0 ? idx : 0);
-        const provinceId = id || `AUTO_${idx}`;
-        if (!this.provinces[provinceId]) {
-          this.provinces[provinceId] = { id: provinceId, name: label, region: 'north', specialties: [] };
-        }
-        if (!this.provinces[provinceId].image) {
-          this.provinces[provinceId].image = this.buildDefaultProvinceImage(label);
-        }
+        const provinceId = this.resolveSvgIdToProvinceId(id, label) || id || `AUTO_${idx}`;
+        if (!this.clickableProvinceIds.has(provinceId) || !this.provinces[provinceId]) return;
         this.onProvinceClick(provinceId);
         this.cdr.detectChanges();
       }, true);
@@ -466,13 +459,28 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
   }
 
   onAreaClick(area: { id: string; name: string }): void {
-    if (!this.provinces[area.id]) {
-      this.provinces[area.id] = { id: area.id, name: area.name, region: 'north', specialties: [] };
-    }
-    if (!this.provinces[area.id].image) {
-      this.provinces[area.id].image = this.buildDefaultProvinceImage(area.name);
-    }
+    if (!this.clickableProvinceIds.has(area.id)) return;
+    const p = this.provinces[area.id];
+    if (!p) return;
     this.onProvinceClick(area.id);
+  }
+
+  private resolveSvgIdToProvinceId(svgId: string, label: string): string | null {
+    const codeMap: Record<string, string> = {
+      TQ: 'tuyen_quang', HN: 'ha_noi', BN: 'bac_ninh', TH: 'thanh_hoa', HT: 'ha_tinh',
+      GL: 'gia_lai', KH: 'khanh_hoa', HCM: 'tp_ho_chi_minh', VL: 'vinh_long', AG: 'an_giang',
+      LCH: 'lai_chau'
+    };
+    const nameMap: Record<string, string> = {
+      'Tuyên Quang': 'tuyen_quang', 'Hà Nội': 'ha_noi', 'Bắc Ninh': 'bac_ninh', 'Thanh Hóa': 'thanh_hoa',
+      'Hà Tĩnh': 'ha_tinh', 'Thừa Thiên Huế': 'thua_thien_hue', 'TP Huế': 'tp_hue', 'Gia Lai': 'gia_lai',
+      'Khánh Hòa': 'khanh_hoa', 'TP Hồ Chí Minh': 'tp_ho_chi_minh', 'TP. Hồ Chí Minh': 'tp_ho_chi_minh',
+      'Vĩnh Long': 'vinh_long', 'An Giang': 'an_giang', 'Lai Châu': 'lai_chau'
+    };
+    if (svgId && codeMap[svgId.toUpperCase()]) return codeMap[svgId.toUpperCase()];
+    if (label && nameMap[label]) return nameMap[label];
+    const sid = label ? this.slugify(label) : '';
+    return sid && this.clickableProvinceIds.has(sid) ? sid : null;
   }
 
   private slugify(name: string): string {
@@ -552,10 +560,11 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // Always align image to the full province name on click
-    const desiredSrc = this.buildDefaultProvinceImage(province.name);
-    if (this.provinces[provinceId].image !== desiredSrc) {
-      this.provinces[provinceId].image = desiredSrc;
+    // Only override image when province has default/fallback; keep custom images
+    const currentImg = this.provinces[provinceId].image;
+    const isDefaultFallback = !currentImg || currentImg.includes('HCM.jpg');
+    if (isDefaultFallback) {
+      this.provinces[provinceId].image = this.buildDefaultProvinceImage(province.name);
     }
 
     // Clear any fallback progress attributes on current image element
@@ -586,6 +595,13 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
   clearSelection(): void {
     this.selectedProvince = null;
     this.filteredProducts = [];
+  }
+
+  get displayProducts(): Product[] {
+    if (this.selectedProvince && this.filteredProducts.length > 0) {
+      return this.filteredProducts.slice(0, 6);
+    }
+    return this.products.slice(0, 6);
   }
 
   getProvinceName(provinceId: string): string {
@@ -625,10 +641,9 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    console.error('Image failed to load after all fallbacks:', target.src);
     target.removeAttribute('data-base-index');
     target.removeAttribute('data-ext-index');
-    target.src = '/assets/default-image.png';
+    target.src = '/assets/provinces/HCM.jpg';
   }
 
   private buildDefaultProvinceImage(name: string): string {
@@ -640,19 +655,22 @@ export class VietnamMapComponent implements OnInit, AfterViewInit {
 
   private generateProvinceFilenameCandidates(name: string): string[] {
     const aliases: Record<string, string[]> = {
-      'tp ho chi minh': ['HCM', 'TP HCM', 'TP. HCM', 'Ho Chi Minh', 'TP Hồ Chí Minh', 'TP. Hồ Chí Minh', 'HoChiMinh'],
+      'tp ho chi minh': ['TPHCM', 'HCM', 'TP HCM', 'TP. HCM', 'Ho Chi Minh', 'TP Hồ Chí Minh', 'TP. Hồ Chí Minh', 'HoChiMinh'],
       'ha noi': ['Hà Nội', 'Hanoi'],
       'hai phong': ['Hải Phòng', 'Haiphong'],
       'da nang': ['Đà Nẵng', 'Danang', 'DaNang'],
       'can tho': ['Cần Thơ', 'CanTho'],
-      'tp hue': ['Thừa Thiên Huế', 'TP Huế', 'TP. Huế', 'Huế', 'Hue'],
-      'thua thien hue': ['TP Huế', 'TP. Huế', 'Huế', 'Hue'],
+      'vinh long': ['VinhLong', 'Vĩnh Long', 'Vinh Long'],
+      'tp hue': ['Hue', 'Thừa Thiên Huế', 'TP Huế', 'TP. Huế', 'Huế'],
+      'thua thien hue': ['Hue', 'TP Huế', 'TP. Huế', 'Huế'],
       'quang ngai': ['Quảng Ngãi', 'Quang Ngãi', 'Quảng Ngai', 'QuangNgai'],
-      'khanh hoa': ['Khánh Hòa', 'Khanh Hòa', 'KhanhHoa'],
+      'khanh hoa': ['KhanhHoa', 'Khánh Hòa', 'Khanh Hòa'],
+      'gia lai': ['GiaLai', 'Gia Lai'],
       'binh dinh': ['Bình Định', 'BinhDinh'],
       'ba ria  vung tau': ['Bà Rịa - Vũng Tàu', 'Ba Ria Vung Tau', 'Vũng Tàu', 'Vung Tau', 'VungTau'],
       'lang son': ['Lạng Sơn', 'Lang Sơn', 'Lang Son', 'LangSon'],
-      'ha tinh': ['Hà Tĩnh', 'Ha Tĩnh', 'Ha Tinh', 'HaTinh'],
+      'ha tinh': ['HaTinh', 'Hà Tĩnh', 'Ha Tĩnh', 'Ha Tinh'],
+      'lai chau': ['LaiChau', 'Lai Châu', 'Lai Chau'],
       'q hoang sa': ['Q.Đ Hoàng Sa', 'QĐ Hoàng Sa', 'Q.D Hoang Sa', 'Hoàng Sa', 'Hoang Sa'],
     };
 
