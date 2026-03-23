@@ -1,7 +1,7 @@
 /* Dashboard - Clean professional layout, màu web #7A4726 */
 .dashboard {
   padding: 24px 28px 40px;
-  background: #F5F5F5;
+  background: #f6f0e8;
   min-height: 100vh;
   font-family: 'Montserrat', sans-serif;
 }
@@ -17,15 +17,17 @@
 }
 
 .welcome-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #2d2d2d;
+  font-family: 'UTM Candlescript Pro', 'Montserrat', sans-serif;
+  font-size: 2.1rem;
+  line-height: 1.15;
+  font-weight: 400;
+  color: #24140c;
   margin: 0 0 6px 0;
 }
 
 .date-range {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #5a4a41;
 }
 
 .header-actions {
@@ -41,7 +43,7 @@
   padding: 10px 18px;
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 0.9rem;
   font-weight: 500;
   color: #374151;
@@ -95,49 +97,27 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #BF2027, #d13a3a);
-  border-radius: 16px;
-  border: 1px solid rgba(122, 71, 38, 0.12);
-  box-shadow: 0 8px 20px rgba(191, 32, 39, 0.35);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-.stat-card::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -40%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.2),
-    transparent
-  );
-  transform: rotate(25deg);
-  transition: 0.6s;
-}
-
-.stat-card:hover::before {
-  left: 100%;
+  background: linear-gradient(135deg, #dc5a63, #c9444d);
+  border-radius: 6px;
+  border: 1px solid rgba(201, 68, 77, 0.4);
+  box-shadow: 0 4px 12px rgba(201, 68, 77, 0.28);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(191, 32, 39, 0.45);
+  background: linear-gradient(135deg, #cf4c55, #b73c45);
+  box-shadow: 0 6px 14px rgba(201, 68, 77, 0.34);
 }
 .stat-featured {
-  background: linear-gradient(135deg, #BF2027, #d13a3a);
+  background: linear-gradient(135deg, #dc5a63, #c9444d);
   color: white;
-  box-shadow: 0 10px 26px rgba(191, 32, 39, 0.45);
-  border: 1px solid rgba(191, 32, 39, 0.35);
+  box-shadow: 0 4px 12px rgba(201, 68, 77, 0.28);
+  border: 1px solid rgba(201, 68, 77, 0.4);
 }
 
 .stat-featured:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 18px 36px rgba(191, 32, 39, 0.55);
+  background: linear-gradient(135deg, #cf4c55, #b73c45);
+  box-shadow: 0 6px 14px rgba(201, 68, 77, 0.34);
 }
 
 .stat-card-inner {
@@ -176,19 +156,9 @@
   transition: all 0.3s ease;
 }
 
-.stat-card:hover .stat-value {
-  color: #fffacd;        
-  transform: scale(1.05);
-}
-
-.stat-card:hover .stat-meta {
-  color: #fff5e6;         
-}
-
-.stat-card:hover .stat-icon {
-  opacity: 0.45;
-  transform: scale(1.15);
-}
+.stat-card:hover .stat-value { color: #fff; }
+.stat-card:hover .stat-meta { color: rgba(255,255,255,0.92); }
+.stat-card:hover .stat-icon { opacity: 0.35; }
 
 .stat-featured .stat-value {
   color: white;
@@ -208,7 +178,7 @@
   gap: 10px;
   padding: 14px 20px;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s;
 }
@@ -231,18 +201,18 @@
 .metric-num {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #2d2d2d;
+  color: #24140c;
 }
 
 .metric-text {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: #5a4a41;
 }
 
 /* Chart Card */
 .card-chart {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   margin-bottom: 24px;
   overflow: hidden;
@@ -260,7 +230,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2d2d2d;
+  color: #24140c;
 }
 
 .card-chart-header i {
@@ -284,7 +254,7 @@
 
 .card-table {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
@@ -301,7 +271,7 @@
   margin: 0 0 4px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2d2d2d;
+  color: #24140c;
 }
 
 .card-table-header p {
@@ -319,7 +289,7 @@
   padding: 0 8px;
   background: #7A4726;
   color: #fff;
-  border-radius: 20px;
+  border-radius: 4px;
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -338,14 +308,14 @@
   text-align: left;
   padding: 14px 24px;
   font-weight: 600;
-  color: #6b7280;
+  color: #4f3f36;
   background: #f9fafb;
 }
 
 .data-table td {
   padding: 14px 24px;
   border-top: 1px solid #f3f4f6;
-  color: #374151;
+  color: #2f2019;
 }
 
 .data-table tbody tr:hover {
@@ -355,7 +325,7 @@
 .status-badge {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -430,7 +400,7 @@ code {
 .top-item {
   padding: 16px;
   background: #f9fafb;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid #f3f4f6;
 }
 
@@ -457,13 +427,13 @@ code {
 
 .top-name {
   font-weight: 600;
-  color: #2d2d2d;
+  color: #24140c;
   margin-bottom: 4px;
 }
 
 .top-meta {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: #5a4a41;
   margin-bottom: 10px;
 }
 
@@ -490,8 +460,8 @@ code {
 }
 
 .action-btn {
-  background: #fff4ed;
-  border-radius: 14px;
+  background: #fff;
+  border-radius: 6px;
   border: 1px solid rgba(122, 71, 38, 0.15);
   padding: 20px 16px;
   text-align: center;
@@ -522,9 +492,8 @@ code {
 }
 
 .action-btn:hover {
-  background: linear-gradient(135deg, #BF2027, #d13a3a);
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 12px 26px rgba(191, 32, 39, 0.25);
+  background: #7A4726;
+  box-shadow: 0 2px 8px rgba(49, 0, 2, 0.16);
 }
 
 .action-btn:hover i,

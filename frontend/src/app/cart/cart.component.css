@@ -1,5 +1,8 @@
 /* Cart page - bố cục và màu sắc đồng bộ với trang web */
 .cart-page {
+  --web-brown: #7A4726;
+  --web-brown-dark: #5e3419;
+  --web-brown-soft: rgba(122, 71, 38, 0.12);
   min-height: calc(100vh - 180px);
   padding: 140px 20px 60px;
   background: #FFFAF1;
@@ -29,7 +32,7 @@
 }
 
 .cart-breadcrumb a:hover {
-  color: #BF2027;
+  color: var(--web-brown-dark);
 }
 
 .cart-title {
@@ -135,7 +138,7 @@
 }
 
 .cart-item-name:hover {
-  color: #BF2027;
+  color: var(--web-brown-dark);
 }
 
 .cart-item-price {
@@ -191,7 +194,7 @@
 }
 
 .quantity-selector button:hover:not(:disabled) {
-  background: #BF2027;
+  background: var(--web-brown);
   color: #FFFFFF;
 }
 
@@ -232,13 +235,13 @@
 }
 
 .btn-link:hover {
-  background: rgba(122, 71, 38, 0.1);
-  color: #BF2027;
+  background: var(--web-brown-soft);
+  color: var(--web-brown-dark);
 }
 
 .btn-remove:hover {
-  background: rgba(191, 32, 39, 0.1);
-  color: #BF2027;
+  background: rgba(122, 71, 38, 0.15);
+  color: var(--web-brown-dark);
 }
 
 .cart-item-total {
@@ -269,10 +272,10 @@
 
 .btn-outline:hover {
   transform: translateY(-2px);
-  background: #BF2027;
-  border-color: #BF2027;
+  background: var(--web-brown);
+  border-color: var(--web-brown);
   color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(191, 32, 39, 0.25);
+  box-shadow: 0 4px 12px rgba(122, 71, 38, 0.25);
 }
 
 /* Sidebar tổng hợp */
@@ -354,7 +357,7 @@
   font-size: 1rem;
   font-weight: 700;
   color: #FFFFFF;
-  background: linear-gradient(135deg, #BF2027, #9a1a20);
+  background: linear-gradient(135deg, var(--web-brown), var(--web-brown-dark));
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -364,8 +367,8 @@
 }
 
 .btn-checkout:hover {
-  background: linear-gradient(135deg, #9a1a20, #7a1500);
-  box-shadow: 0 6px 20px rgba(191, 32, 39, 0.4);
+  background: linear-gradient(135deg, var(--web-brown-dark), #4a2814);
+  box-shadow: 0 6px 20px rgba(122, 71, 38, 0.35);
   transform: translateY(-2px);
 }
 
@@ -412,7 +415,7 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: #FFFFFF;
-  background: linear-gradient(135deg, #BF2027, #9a1a20);
+  background: linear-gradient(135deg, var(--web-brown), var(--web-brown-dark));
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -420,7 +423,7 @@
 }
 
 .btn-coupon:hover:not(:disabled) {
-  background: linear-gradient(135deg, #9a1a20, #7a1500);
+  background: linear-gradient(135deg, var(--web-brown-dark), #4a2814);
   transform: translateX(2px);
 }
 
@@ -580,18 +583,18 @@
 .cart-empty .btn-empty-cta {
   display: inline-block;
   padding: 14px 32px;
-  background: linear-gradient(135deg, #BF2027, #9a1a20);
+  background: linear-gradient(135deg, var(--web-brown), var(--web-brown-dark));
   color: #fff;
   text-decoration: none;
   border-radius: 40px;
   font-weight: 700;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(191, 32, 39, 0.2);
+  box-shadow: 0 2px 8px rgba(122, 71, 38, 0.2);
 }
 
 .cart-empty .btn-empty-cta:hover {
-  background: linear-gradient(135deg, #9a1a20, #7a1500);
+  background: linear-gradient(135deg, var(--web-brown-dark), #4a2814);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(191, 32, 39, 0.3);
+  box-shadow: 0 6px 20px rgba(122, 71, 38, 0.3);
   color: #fff;
 }

@@ -1,9 +1,15 @@
 .coupon-page {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   font-family: var(--admin-font, 'Montserrat', sans-serif);
   font-size: var(--admin-font-size-base, 0.9375rem);
   color: var(--admin-color-text, #310002);
+}
+
+@media (min-width: 1400px) {
+  .coupon-page {
+    max-width: 1320px;
+  }
 }
 
 .coupon-header {

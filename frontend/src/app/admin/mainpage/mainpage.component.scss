@@ -1,31 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 .admin-dashboard {
-  background: #fdf9f5;
+  background: #f6f0e8;
   min-height: 100vh;
   padding: 24px 24px 40px;
   font-family: 'Montserrat', sans-serif;
 }
 
 .hero-banner {
-  background: linear-gradient(135deg, #7A4726 0%, #5e3419 100%);
-  border-radius: 22px;
+  background: #6f4226;
+  border-radius: 6px;
   padding: 36px 32px 30px;
   color: #fff9f5;
-  box-shadow: 0 12px 30px rgba(122, 71, 38, 0.25);
+  box-shadow: 0 2px 8px rgba(122, 71, 38, 0.16);
   position: relative;
   overflow: hidden;
 }
 
-.hero-banner::after {
-  content: "";
-  position: absolute;
-  right: -80px;
-  top: -80px;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
-  border-radius: 50%;}
+.hero-banner::after { content: none; }
 .hero-content {
   max-width: 780px;
 }
@@ -52,36 +44,18 @@
 }
 
 .metric-card {
-  background: linear-gradient(135deg, #BF2027, #d13a3a);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #dc5a63, #c9444d);
+  border-radius: 6px;
   padding: 18px 20px;
   color: #fff;
-  box-shadow: 0 8px 22px rgba(191, 32, 39, 0.35);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.metric-card::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -40%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
-  transform: rotate(25deg);
-  transition: 0.6s;
-}
-
-.metric-card:hover::before {
-  left: 100%;
+  box-shadow: 0 4px 12px rgba(201, 68, 77, 0.28);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
 }
 
 .metric-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 14px 30px rgba(191, 32, 39, 0.45);
+  background: linear-gradient(135deg, #cf4c55, #b73c45);
+  box-shadow: 0 6px 14px rgba(201, 68, 77, 0.34);
 }
 
 .metric-label {
@@ -89,7 +63,7 @@
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  opacity: 0.85;
+  opacity: 0.96;
 }
 
 .metric-value {
@@ -113,8 +87,10 @@
 }
 
 .welcome-section {
-  background: #ffffff;
-  border-radius: 14px;
+  background-color: #f8f6f2;
+  background-image: url('/assets/bg-texture.png');
+  background-repeat: repeat;
+  border-radius: 6px;
   padding: 18px 24px;
   box-shadow: 0 2px 12px rgba(49, 0, 2, 0.06);
   border: 1px solid rgba(122, 71, 38, 0.12);
@@ -122,8 +98,12 @@
 }
 
 .welcome-message {
-  font-weight: 700;
-  color: #310002;
+  font-family: 'UTM Candlescript Pro', 'Montserrat', sans-serif;
+  font-size: 2.35rem;
+  line-height: 1.15;
+  font-weight: 400;
+  color: #24140c;
+  margin: 0;
 }
 
 .btn-custom-primary {
@@ -131,7 +111,7 @@
   border: none;
   color: #fff;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 10px 20px;
 }
 
@@ -141,7 +121,7 @@
 }
 
 .btn-custom-outline {
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid #7A4726;
   color: #7A4726;
   font-weight: 600;
@@ -156,9 +136,9 @@
 
 .section-card {
   background: #ffffff;
-  border-radius: 14px;
+  border-radius: 6px;
   border: 1px solid rgba(122, 71, 38, 0.12);
-  box-shadow: 0 2px 12px rgba(49, 0, 2, 0.06);
+  box-shadow: 0 2px 10px rgba(49, 0, 2, 0.08);
   padding: 0;
   overflow: hidden;
   display: flex;
@@ -166,7 +146,7 @@
 }
 
 .section-heading {
-  background: linear-gradient(135deg, #7A4726, #5e3419);
+  background: #7A4726;
   padding: 18px 22px;
   display: flex;
   align-items: flex-start;
@@ -197,10 +177,10 @@
   gap: 16px;
   align-items: center;
   padding: 14px 18px;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid rgba(122, 71, 38, 0.1);
   margin-bottom: 10px;
-  color: #310002;
+  color: #24140c;
   background: #fff;
   transition: all 0.2s;
 }
@@ -225,8 +205,8 @@
 .activity-icon {
   width: 42px;
   height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #7A4726, #BA680F);
+  border-radius: 6px;
+  background: #7A4726;
   color: #fff;
   display: flex;
   align-items: center;
@@ -243,7 +223,7 @@
 
 .activity-name {
   font-weight: 600;
-  color: #310002;
+  color: #24140c;
 }
 
 .activity-time {
@@ -263,7 +243,7 @@
 
 .btn-pagination {
   border: 1px solid #c21e1e;
-  border-radius: 999px;
+  border-radius: 4px;
   padding: 6px 18px;
   color: #c21e1e;
   background: transparent;
@@ -284,7 +264,7 @@
 .menu-intro {
   background: rgba(122, 71, 38, 0.06);
   border: 1px solid rgba(122, 71, 38, 0.15);
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 18px 20px;
   margin-bottom: 16px;
   color: #310002;
@@ -304,13 +284,13 @@
 
 .menu-card {
   border: 1px solid rgba(122, 71, 38, 0.12);
-  border-radius: 14px;
+  border-radius: 6px;
   box-shadow: 0 2px 8px rgba(49, 0, 2, 0.04);
   overflow: hidden;
 }
 
 .menu-header {
-  background: linear-gradient(135deg, #7A4726, #5e3419);
+  background: #7A4726;
   color: #ffffff;
   padding: 14px 20px;
   display: flex;
