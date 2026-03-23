@@ -83,16 +83,16 @@ async function createDatabase() {
       console.log(`- ${colName}: OK`);
     }
 
-    const userJsonPath = path.join(__dirname, 'EYECONIC.User.json');
+    const userJsonPath = path.join(__dirname, 'ChuyenLangNghe.User.json');
     let users = [];
 
     if (fs.existsSync(userJsonPath)) {
       const userData = JSON.parse(fs.readFileSync(userJsonPath, 'utf-8'));
       users = convertIds(userData);
-      console.log(`\nImport user tu EYECONIC.User.json: ${users.length}`);
+      console.log(`\nImport user tu ChuyenLangNghe.User.json: ${users.length}`);
     } else {
       users = await buildFallbackUsers();
-      console.log('\nKhong tim thay EYECONIC.User.json -> dung user mock mac dinh');
+      console.log('\nKhong tim thay ChuyenLangNghe.User.json -> dung user mock mac dinh');
     }
 
     const userInsertResult = await db.collection('User').insertMany(users);

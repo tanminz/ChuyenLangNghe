@@ -386,21 +386,55 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
     doc.fontSize(14).text('Chi tiet don hang:');
     doc.moveDown();
 
-    const columnWidths = [50, 200, 70, 100, 100];
+    doc.fontSize(11);
+    doc.lineGap(5);
+
+    const columnWidths = [40, 275, 50, 65, 65];
     const tableStartX = 50;
     const tableStartY = doc.y;
     const header = ['STT', 'Ten san pham', 'So luong', 'Don gia', 'Thanh tien'];
+    const minRowHeight = 22;
+
+    function getCellHeight(text, colIdx) {
+      return doc.heightOfString(String(text), { width: columnWidths[colIdx] }) || minRowHeight;
+    }
+
+    const rowHeights = [];
+
+    const rowPadding = 6;
+    const headerHeights = header.map((text, i) => getCellHeight(text, i));
+    rowHeights.push(Math.max(minRowHeight, ...headerHeights) + rowPadding);
+
+    itemsWithNames.forEach((item, index) => {
+      const qtyStr = String(item.quantity);
+      const unitStr = `${item.unit_price.toLocaleString()} VND`;
+      const totalStr = `${(item.quantity * item.unit_price).toLocaleString()} VND`;
+      const cellHeights = [
+        getCellHeight(index + 1, 0),
+        getCellHeight(item.name, 1),
+        getCellHeight(qtyStr, 2),
+        getCellHeight(unitStr, 3),
+        getCellHeight(totalStr, 4)
+      ];
+      rowHeights.push(Math.max(minRowHeight, ...cellHeights) + rowPadding);
+    });
+
+    const rowYs = [tableStartY];
+    for (let i = 0; i < rowHeights.length; i++) {
+      rowYs.push(rowYs[i] + rowHeights[i]);
+    }
+    const tableBottomY = rowYs[rowYs.length - 1];
+    const tableWidth = columnWidths.reduce((sum, width) => sum + width, 0);
 
     header.forEach((text, i) => {
-      doc.text(text, tableStartX + columnWidths.slice(0, i).reduce((sum, w) => sum + w, 0), tableStartY, {
+      doc.text(text, tableStartX + columnWidths.slice(0, i).reduce((sum, w) => sum + w, 0), rowYs[0], {
         width: columnWidths[i],
-        align: i === 0 ? 'left' : 'center'
+        align: i <= 1 ? 'left' : 'center'
       });
     });
 
-    const rowStartY = tableStartY + 20;
     itemsWithNames.forEach((item, index) => {
-      const rowY = rowStartY + index * 20;
+      const rowY = rowYs[index + 1];
       const row = [
         index + 1,
         item.name,
@@ -412,25 +446,21 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
       row.forEach((text, i) => {
         doc.text(text, tableStartX + columnWidths.slice(0, i).reduce((sum, w) => sum + w, 0), rowY, {
           width: columnWidths[i],
-          align: i === 0 ? 'left' : 'center'
+          align: i <= 1 ? 'left' : 'center'
         });
       });
     });
 
-    const totalRows = itemsWithNames.length + 1;
-    const tableWidth = columnWidths.reduce((sum, width) => sum + width, 0);
-
-    for (let i = 0; i <= totalRows; i += 1) {
-      const y = tableStartY + i * 20;
+    rowYs.forEach((y) => {
       doc.moveTo(tableStartX, y).lineTo(tableStartX + tableWidth, y).stroke();
-    }
+    });
 
     let currentX = tableStartX;
     columnWidths.forEach((w) => {
-      doc.moveTo(currentX, tableStartY).lineTo(currentX, tableStartY + totalRows * 20).stroke();
+      doc.moveTo(currentX, tableStartY).lineTo(currentX, tableBottomY).stroke();
       currentX += w;
     });
-    doc.moveTo(currentX, tableStartY).lineTo(currentX, tableStartY + totalRows * 20).stroke();
+    doc.moveTo(currentX, tableStartY).lineTo(currentX, tableBottomY).stroke();
 
     doc.moveDown(2);
     doc.fontSize(12)

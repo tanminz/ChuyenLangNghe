@@ -25,7 +25,7 @@ Thumbs.db
 desktop.ini
 
 # Sensitive
-**/EYECONIC.User.json
+**/ChuyenLangNghe.User.json
 
 # Large files (>100MB GitHub limit)
 frontend/src/assets/banner-uhd.mp4
