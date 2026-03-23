@@ -1,10 +1,9 @@
 export const environment = {
     production: true,
-    apiUrl: '',
+    apiUrl: 'https://doan-chuyenlangnghe-6.onrender.com',
     support: {
         zalo: {
             id: 'YOUR_PHONE_NUMBER'
         }
-    },
-    openAiApiKey: 'YOUR_APIKEY'
+    }
 };

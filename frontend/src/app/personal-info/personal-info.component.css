@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-
+/* Personal info - đồng bộ màu sắc và bố cục trang web */
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +9,7 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 140px 20px 60px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Manrope', sans-serif;
   background: #FFFAF1;
 }
 
@@ -26,9 +25,12 @@
 }
 
 .title span.gray {
-  color: #BF2027;
+  color: #310002;
 }
 
+.title span.blue {
+  color: #7A4726;
+}
 
 .description {
   color: #310002;
@@ -401,7 +403,7 @@
   gap: 10px;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #BF2027;
+  color: #422C1E;
   margin: 0 0 20px 0;
 }
 
@@ -584,23 +586,4 @@
     flex-direction: row;
     width: 100%;
   }
-}
-@media (min-width: 992px) {
-
-  .avatar-card {
-    margin-right: 16px;
-  }
-
-  .info-card {
-    margin-left: 16px;
-  }
-
-  .col-lg-4 {
-    padding-right: 12px;
-  }
-
-  .col-lg-8 {
-    padding-left: 12px;
-  }
-
 }

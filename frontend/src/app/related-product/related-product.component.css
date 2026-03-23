@@ -85,9 +85,17 @@
   border-color: rgba(186, 104, 15, 0.25);
 }
 
+::ng-deep app-product-item .product-image {
+  height: 200px;
+}
+
 ::ng-deep app-product-item .product-image img {
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   border-radius: 4px;
+  aspect-ratio: 1/1;
+  min-width: 100%;
+  min-height: 100%;
 }

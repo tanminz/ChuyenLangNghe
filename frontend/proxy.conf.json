@@ -52,5 +52,17 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+  "/ai": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/health": {
+    "target": "http://localhost:3002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }

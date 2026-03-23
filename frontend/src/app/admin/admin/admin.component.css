@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
-
+/* Admin layout - đồng bộ màu sắc trang web */
 .admin-container {
   display: flex;
   flex-wrap: wrap;
   min-height: 100vh;
   background-color: #FFFAF1;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 .app-nav {

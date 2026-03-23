@@ -228,19 +228,21 @@
     padding: 0;
     gap: 15px;
     width: 245px;
+    height: 345px;
 }
 
 .product-image {
     width: 245px;
+    height: 245px;
     border-radius: 8px;
     overflow: hidden;
 }
 
 .product-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    vertical-align: top;
 }
 
 .product-body {
@@ -250,6 +252,7 @@
     padding: 0;
     gap: 10px;
     width: 245px;
+    height: 85px;
 }
 
 .product-body h3 {

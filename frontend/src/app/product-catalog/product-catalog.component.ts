@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Product } from '../../interface/Product';
 import { ProductAPIService } from '../product-api.service';
 import { ActivatedRoute } from '@angular/router';
@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './product-catalog.component.html',
   styleUrls: ['./product-catalog.component.css']
 })
-export class ProductCatalogComponent implements OnInit, OnDestroy {
+export class ProductCatalogComponent implements OnInit {
   categories: { name: string; image: string; filterKey: string }[] = [];
   selectedCategory: string = 'Tất cả';
   products: Product[] = [];
@@ -39,8 +39,8 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
     return 100000;
   }
   
-  // Pagination: 1 trang = 4 hàng sản phẩm (grid 3 cột → 12 sản phẩm/trang)
-  readonly rowsPerPage: number = 4;
+  // Pagination: 1 trang = 5 hàng sản phẩm (grid 3 cột → 15 sản phẩm/trang)
+  readonly rowsPerPage: number = 5;
   readonly colsPerRow: number = 3;
   get itemsPerPage(): number {
     return this.rowsPerPage * this.colsPerRow;
@@ -55,10 +55,6 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
   provinceSearchQuery: string = '';
   showProvinceSuggestions: boolean = false;
 
-  // Countdown 20% sale
-  countdownDisplay: string = '';
-  private countdownInterval: any;
-
   constructor(
     private productService: ProductAPIService,
     private route: ActivatedRoute
@@ -67,7 +63,6 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeCategories();
     this.loadProducts();
-    this.startCountdown();
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['search'] || '';
       const provinceParam = params['province'] || '';
@@ -99,8 +94,7 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
   initializeCategories(): void {
     this.categories = [
       { name: 'Tất cả', image: '/assets/Mẫu.jpg', filterKey: 'Tất cả' },
-      { name: 'Lịch', image: '/assets/Mẫu.jpg', filterKey: 'Lịch' },
-      { name: 'Tượng', image: '/assets/Mẫu.jpg', filterKey: 'Tượng' },
+      { name: 'Nến', image: '/assets/Mẫu.jpg', filterKey: 'Nến' },
       { name: 'Tre mây', image: '/assets/Mẫu.jpg', filterKey: 'Tre mây' },
       { name: 'Gốm sứ', image: '/assets/Mẫu.jpg', filterKey: 'Gốm sứ' },
     ];
@@ -179,8 +173,7 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
     } else {
       // Map category names to type values
       const categoryToTypeMap: { [key: string]: string } = {
-        'Lịch': 'lich',
-        'Tượng': 'tuong',
+        'Nến': 'nen',
         'Tre mây': 'tre_may',
         'Gốm sứ': 'gom_su'
       };
@@ -454,8 +447,7 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
   applyCategoryFilter(categoryType: string): void {
     // Map category types to category names
     const categoryTypeMap: { [key: string]: string } = {
-      'lich': 'Lịch',
-      'tuong': 'Tượng',
+      'nen': 'Nến',
       'tre_may': 'Tre mây',
       'gom_su': 'Gốm sứ'
     };
@@ -560,31 +552,5 @@ export class ProductCatalogComponent implements OnInit, OnDestroy {
 
   getEndRange(): number {
     return Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
-  }
-
-  private startCountdown(): void {
-    const update = () => {
-      const now = new Date();
-      const end = new Date(now);
-      end.setDate(end.getDate() + 7);
-      end.setHours(23, 59, 59, 999);
-      const diff = end.getTime() - now.getTime();
-      if (diff <= 0) {
-        this.countdownDisplay = 'Hết hạn';
-        if (this.countdownInterval) clearInterval(this.countdownInterval);
-        return;
-      }
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((diff % (1000 * 60)) / 1000);
-      this.countdownDisplay = `${d}d ${h}h ${m}m ${s}s`;
-    };
-    update();
-    this.countdownInterval = setInterval(update, 1000);
-  }
-
-  ngOnDestroy(): void {
-    if (this.countdownInterval) clearInterval(this.countdownInterval);
   }
 }

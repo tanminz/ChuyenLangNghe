@@ -2,27 +2,12 @@
 .signup-page {
   position: relative;
   min-height: 100vh;
-  height: 100vh;
   background: url('../../assets/New web images/ss_2624665379.jpg') center/cover no-repeat;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Manrope', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  overflow: hidden;
-}
-
-/* Thêm pseudo-element để tạo lớp phủ opacity 50% cho background */
-.signup-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  z-index: 0;
+  padding: 14px 12px;
 }
 
 .back-to-home {
@@ -54,25 +39,25 @@
 }
 
 .signup-shell {
-  width: min(900px, 90%);
-  height: auto;
+  width: min(760px, 100%);
+  max-height: calc(100vh - 24px);
+  min-height: 0;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   border-radius: 16px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* Left: form - thu nhỏ padding tối đa */
+/* Left: form - balanced size, fits without scroll */
 .signup-left {
-  padding: 16px 24px 20px;
+  padding: 16px 26px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
   background: rgba(255, 250, 241, 0.98);
-  overflow: visible;
 }
 
 .signup-form-wrap {
@@ -81,28 +66,24 @@
   margin: 0 auto;
 }
 
-/* Logo 200px */
+.welcome {
+  color: #2d2d2d;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
 .brand-logo {
-  width: 300px;
-  max-width: 100%;
-  margin: 0 auto 4px;
+  width: 88px;
+  max-width: 85%;
+  margin: 0 auto 8px;
   display: block;
 }
 
-/* Sửa chữ "Chào mừng" */
-.welcome {
-  color: #BF2027 !important;
-  font-size: 20px;
-  font-weight: 700 !important;
-  margin-bottom: 2px;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Top: title, social icons, separator - thu nhỏ margin */
+/* Top: title, social icons, separator */
 .signup-title {
-  margin: 0 0 6px;
+  margin: 0 0 14px;
   color: #C54121;
   font-size: 23px;
   font-weight: 700;
@@ -114,8 +95,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .social-icons button {
@@ -127,28 +108,28 @@
   padding: 0;
   cursor: pointer;
   transition: box-shadow 0.2s;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .social-icons button:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .social-icons img {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
 .separator-text {
-  font-size: 12px;
+  font-size: 14px;
   color: #2d2d2d;
   font-weight: 400;
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 14px;
 }
 
 .signup-form {
@@ -156,24 +137,24 @@
 }
 
 .error-box {
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   background: #fef5f4;
   color: #DE725B;
   border: 1px solid rgba(222, 114, 91, 0.35);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 12px;
+  padding: 9px 13px;
+  border-radius: 11px;
+  font-size: 13px;
 }
 
 .field-group {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .field-group label {
   display: block;
-  font-size: 15px;
+  font-size: 13px;
   color: #2d2d2d;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   font-weight: 600;
 }
 
@@ -181,51 +162,50 @@
   color: #DE725B;
 }
 
-/* Input text boxes - thu nhỏ chiều cao */
+/* Input text boxes */
 .signup-form input {
   width: 100%;
-  height: 34px;
-  border-radius: 10px;
+  height: 38px;
+  border-radius: 11px;
   border: none;
   background: #BA680F;
   color: #fff;
-  font-size: 15px;
-  padding: 0 12px;
+  font-size: 14px;
+  padding: 0 14px;
   transition: background 0.2s;
 }
 
 .signup-form input::placeholder {
   color: rgba(255, 255, 255, 0.85);
-  font-size: 13px;
 }
 
 .field-group .hint {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   color: #A19791;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .field-error {
   font-size: 12px;
   color: #DE725B;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .name-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .checkbox-group {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .checkbox-opt {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   font-weight: 400;
   color: #6b7c93;
@@ -233,10 +213,8 @@
 }
 
 .checkbox-opt input {
-  margin-top: 1px;
+  margin-top: 2px;
   accent-color: #C54121;
-  width: 11px;
-  height: 11px;
 }
 
 .terms-checkbox {
@@ -245,24 +223,23 @@
 }
 
 .terms-checkbox .checkbox-opt {
-  font-size: 13px;
+  font-size: 12px;
   color: #2d2d2d;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .terms-checkbox .checkbox-opt input {
-  width: 11px;
-  height: 11px;
-  min-width: 11px;
-  min-height: 11px;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
   margin-top: 0;
   flex-shrink: 0;
 }
 
 .terms-link {
-  color: #0066cc !important;
+  color: #0066CC !important;
   text-decoration: none;
-  font-size: 13px;
 }
 
 .terms-link:hover {
@@ -274,27 +251,32 @@
 }
 
 .password-wrap input {
-  padding-right: 38px;
+  padding-right: 42px;
+}
+
+.signup-form input[type="text"],
+.signup-form input[type="email"] {
+  margin-bottom: 0;
 }
 
 .toggle-pass {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 13px;
   transform: translateY(-50%);
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 12px;
+  font-size: 15px;
   cursor: pointer;
 }
 
-/* Create account button */
+/* Create account button - darker reddish-brown */
 .btn-signup-main {
   width: 100%;
-  height: 38px;
+  height: 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 11px;
   background: #7A3F0B;
   color: #ffffff;
   font-size: 15px;
@@ -302,7 +284,6 @@
   cursor: pointer;
   transition: background 0.2s;
   font-family: 'Manrope', sans-serif;
-  margin-top: 6px;
 }
 
 .btn-signup-main:hover:not(:disabled) {
@@ -315,8 +296,8 @@
 }
 
 .login-line {
-  margin: 6px 0 0;
-  font-size: 11px;
+  margin: 10px 0 0;
+  font-size: 13px;
   color: #2d2d2d;
   text-align: center;
 }
@@ -325,7 +306,6 @@
   color: #C54121;
   text-decoration: none;
   font-weight: 600;
-  font-size: 13px;
 }
 
 .login-line a:hover {
@@ -335,9 +315,6 @@
 /* Right: pottery image */
 .signup-right {
   background: #422C1E;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .signup-right img {
@@ -348,45 +325,32 @@
   display: block;
 }
 
-/* Responsive - chỉ scroll trên mobile */
 @media (max-width: 768px) {
-  .signup-page {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-    padding: 14px 12px;
-  }
-  
   .signup-shell {
     grid-template-columns: 1fr;
-    width: 100%;
-    overflow: hidden;
+    min-height: min(560px, calc(100vh - 32px));
+    max-height: calc(100vh - 32px);
   }
 
   .signup-left {
-    padding: 20px;
-    overflow: visible;
+    padding: 16px 20px 20px;
   }
 
   .signup-right {
-    min-height: 120px;
+    min-height: 160px;
   }
 
   .brand-logo {
-    width: 150px;
+    width: 72px;
+    margin-bottom: 8px;
   }
-}
 
-@media (max-width: 480px) {
-  .signup-left {
-    padding: 16px;
+  .signup-title {
+    font-size: 20px;
+    margin-bottom: 14px;
   }
-  
-  .brand-logo {
-    width: 120px;
-  }
-  
+
   .name-row {
-    gap: 6px;
+    grid-template-columns: 1fr;
   }
 }

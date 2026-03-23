@@ -9,6 +9,22 @@ const { checkCouponAvailability, evaluateCouponDiscount, computeItemsSummary } =
 
 const router = express.Router();
 
+const normalizeImageValue = (value, productId, req) => {
+  if (!value || typeof value !== 'string') {
+    return productId ? `${req.protocol}://${req.get('host')}/products/${productId}/image/1` : '';
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  if (value.startsWith('/assets/') || value.startsWith('assets/')) {
+    return value;
+  }
+
+  return productId ? `${req.protocol}://${req.get('host')}/products/${productId}/image/1` : '';
+};
+
 router.get('/me', requireAuth, async (req, res) => {
   const { orderCollection } = getCollections();
   const page = parseInt(req.query.page, 10) || 1;
@@ -81,9 +97,17 @@ router.get('/me', requireAuth, async (req, res) => {
       { $project: { products: 0 } }
     ]).toArray();
 
+    const normalizedOrders = orders.map((order) => ({
+      ...order,
+      selectedItems: (order.selectedItems || []).map((item) => ({
+        ...item,
+        image_1: normalizeImageValue(item.image_1, item._id, req)
+      }))
+    }));
+
     const total = await orderCollection.countDocuments(filter);
     return res.status(200).json({
-      orders,
+      orders: normalizedOrders,
       total,
       page,
       pages: Math.ceil(total / limit)
@@ -229,6 +253,23 @@ router.post('/', requireAuth, async (req, res) => {
       return res.status(400).json({ message: 'Invalid totalPrice.' });
     }
 
+    const productObjectIds = selectedItems.map((item) => new ObjectId(item._id));
+    const products = await productCollection.find(
+      { _id: { $in: productObjectIds } },
+      { projection: { stocked_quantity: 1 } }
+    ).toArray();
+    const productMap = new Map(products.map((product) => [product._id.toString(), product]));
+
+    for (const item of selectedItems) {
+      const product = productMap.get(String(item._id));
+      if (!product) {
+        return res.status(404).json({ message: `Product not found: ${item._id}` });
+      }
+      if (product.stocked_quantity < item.quantity) {
+        return res.status(400).json({ message: `Insufficient stock for product ID: ${item._id}` });
+      }
+    }
+
     const result = await orderCollection.insertOne({
       userId,
       selectedItems,
@@ -243,17 +284,14 @@ router.post('/', requireAuth, async (req, res) => {
       status: 'in_progress'
     });
 
-    for (const item of selectedItems) {
-      const productId = new ObjectId(item._id);
-      const product = await productCollection.findOne({ _id: productId });
-      if (!product) {
-        return res.status(404).json({ message: `Product not found: ${item._id}` });
-      }
-      if (product.stocked_quantity < item.quantity) {
-        return res.status(400).json({ message: `Insufficient stock for product ID: ${item._id}` });
-      }
-      await productCollection.updateOne({ _id: productId }, { $inc: { stocked_quantity: -item.quantity } });
-    }
+    await productCollection.bulkWrite(
+      selectedItems.map((item) => ({
+        updateOne: {
+          filter: { _id: new ObjectId(item._id) },
+          update: { $inc: { stocked_quantity: -item.quantity } }
+        }
+      }))
+    );
 
     if (appliedCoupon) {
       await couponCollection.updateOne(
@@ -345,19 +383,16 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
       doc.font(fontPath);
     }
 
-    // Logo hóa đơn: ưu tiên env → logo header web → file trong backend/src/assets
-    const repoRoot = path.join(__dirname, '..', '..', '..');
-    const headerLogoPath = path.join(repoRoot, 'frontend', 'src', 'assets', 'New web images', 'logowebfinal.png');
     const logoCandidates = [
-      process.env.INVOICE_LOGO_PATH && String(process.env.INVOICE_LOGO_PATH).trim(),
-      headerLogoPath
-    ].filter(Boolean);
+      path.join(process.cwd(), 'Logo.png'),
+      path.join(process.cwd(), 'logo.png')
+    ];
 
     let logoDrawn = false;
     for (const logoPath of logoCandidates) {
       if (fs.existsSync(logoPath)) {
         try {
-          doc.image(logoPath, 50, 28, { fit: [120, 48] });
+          doc.image(logoPath, 50, 30, { width: 100 });
           logoDrawn = true;
           break;
         } catch {
@@ -367,11 +402,10 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
     }
 
     if (!logoDrawn) {
-      doc.fontSize(14).fillColor('#7A4726').text('Chuyen Lang Nghe', 50, 38);
-      doc.fillColor('#000000');
+      doc.fontSize(16).text('LOGO', 50, 30);
     }
 
-    doc.fontSize(20).text('Chuyen Lang Nghe - Hoa don ban hang', 50, 90, { align: 'center', width: 495 });
+    doc.fontSize(20).text('Hoa don ban hang', 150, 50, { align: 'center' });
     doc.moveDown();
 
     doc.fontSize(12)

@@ -6,6 +6,16 @@ const { requireAuth, requireRoleAction } = require('../middlewares/auth');
 
 const router = express.Router();
 
+const isAcceptedImageValue = (value) => (
+  typeof value === 'string' &&
+  (
+    value.startsWith('data:image/') ||
+    /^https?:\/\//i.test(value) ||
+    value.startsWith('/assets/') ||
+    value.startsWith('assets/')
+  )
+);
+
 router.post('/signup', async (req, res) => {
   const { userCollection } = getCollections();
   const { profileName, email, password, gender, birthMonth, birthDay, birthYear, marketing, role = 'user' } = req.body;
@@ -94,7 +104,25 @@ router.get('/logout', (req, res) => {
 
 router.get('/profile', requireAuth, async (req, res) => {
   const { userCollection } = getCollections();
-  const user = await userCollection.findOne({ _id: new ObjectId(req.session.userId) });
+  const user = await userCollection.findOne(
+    { _id: new ObjectId(req.session.userId) },
+    {
+      projection: {
+        email: 1,
+        profileName: 1,
+        gender: 1,
+        birthDate: 1,
+        phone: 1,
+        address: 1,
+        marketing: 1,
+        role: 1,
+        action: 1,
+        avatar: 1,
+        memberPoints: 1,
+        memberTier: 1
+      }
+    }
+  );
 
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
@@ -153,8 +181,8 @@ router.patch('/profile', requireAuth, async (req, res) => {
     }
 
     if (updateData.avatar) {
-      if (typeof updateData.avatar !== 'string' || !updateData.avatar.startsWith('data:image/')) {
-        return res.status(400).json({ message: 'Invalid avatar format. Must be Base64 data URL.' });
+      if (!isAcceptedImageValue(updateData.avatar)) {
+        return res.status(400).json({ message: 'Invalid avatar format. Must be a valid image URL or Base64 data URL.' });
       }
       if (updateData.avatar.length > 2_000_000) {
         return res.status(413).json({ message: 'Avatar image too large.' });
@@ -214,7 +242,11 @@ router.get('/user-management', requireRoleAction('admin', ['edit all', 'account 
 
   try {
     const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
-    const users = await userCollection.find(filter).skip(skip).limit(parseInt(limit, 10)).toArray();
+    const users = await userCollection.find(filter, {
+      projection: {
+        password: 0
+      }
+    }).skip(skip).limit(parseInt(limit, 10)).toArray();
     const total = await userCollection.countDocuments(filter);
 
     return res.status(200).json({

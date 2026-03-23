@@ -5,6 +5,5 @@ export const environment = {
         zalo: {
             id: '0792098518'
         }
-    },
-    openAiApiKey: 'YOUR_APIKEY'
+    }
 };

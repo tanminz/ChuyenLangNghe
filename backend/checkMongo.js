@@ -7,7 +7,7 @@ async function checkMongoDB() {
     await client.connect();
     console.log('✅ Connected to MongoDB');
     
-    const db = client.db(process.env.DB_NAME || 'chuyenlangnghe');
+    const db = client.db(process.env.DB_NAME || 'dacsan3mien');
     
     // List all collections
     const collections = await db.listCollections().toArray();

@@ -349,8 +349,7 @@ export class ProductManagementComponent implements OnInit {
 
   getTypeLabel(type: string): string {
     const typeLabels: { [key: string]: string } = {
-      'lich': 'Lịch',
-      'tuong': 'Tượng',
+      'nen': 'Nến',
       'tre_may': 'Tre mây',
       'gom_su': 'Gốm sứ'
     };

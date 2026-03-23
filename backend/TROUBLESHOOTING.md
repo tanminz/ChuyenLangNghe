@@ -177,7 +177,7 @@ app.use(cors({
 ### Sử dụng MongoDB Compass:
 
 1. Connect: `mongodb://localhost:27017`
-2. Database: `chuyenlangnghe`
+2. Database: `dacsan3mien`
 3. Collection: `Blog`
 4. Kiểm tra có documents không
 
@@ -185,7 +185,7 @@ app.use(cors({
 
 ```bash
 mongo
-use chuyenlangnghe
+use dacsan3mien
 db.Blog.find().pretty()
 db.Blog.countDocuments()
 ```
