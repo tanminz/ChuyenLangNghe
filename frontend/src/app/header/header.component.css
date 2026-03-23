@@ -74,7 +74,7 @@
 }
 
 .nav-link {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 25px;
@@ -109,7 +109,7 @@
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   color: #FFFFFF;
   transition: all 0.3s ease;
@@ -166,7 +166,7 @@
 }
 
 .btn-login {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 14px;
   padding: 8px 20px;
@@ -185,7 +185,7 @@
 }
 
 .btn-admin {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 14px;
   padding: 8px 16px;

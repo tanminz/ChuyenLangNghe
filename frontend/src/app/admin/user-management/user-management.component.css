@@ -12,17 +12,18 @@
     padding: 10px 16px;
     border: 1px solid rgba(122, 71, 38, 0.2);
     border-right: none;
-    border-radius: 999px 0 0 999px;
+    border-radius: 4px 0 0 4px;
     box-shadow: none;
-    font-size: 14px;
+    font-size: var(--admin-font-size-base, 0.9375rem);
 }
 
 .btn-search {
-    background: #7A4726;
+    background: var(--admin-color-primary, #7A4726);
     color: #fff;
-    font-weight: 600;
+    font-weight: var(--admin-font-weight-semibold, 600);
+    font-size: var(--admin-font-size-sm, 0.8125rem);
     padding: 10px 22px;
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 4px 4px 0;
     border: none;
     transition: background 0.2s;
 }
@@ -33,22 +34,22 @@
 }
 
 .btn-primary {
-    background-color: #7A4726 !important;
-    border-color: #7A4726 !important;
+    background-color: var(--admin-color-primary, #7A4726) !important;
+    border-color: var(--admin-color-primary, #7A4726) !important;
 }
 
 .btn-primary:hover {
-    background-color: #5e3419 !important;
-    border-color: #5e3419 !important;
+    background-color: var(--admin-color-primary-dark, #5e3419) !important;
+    border-color: var(--admin-color-primary-dark, #5e3419) !important;
 }
 
 .btn-outline-secondary {
-    color: #7A4726;
-    border-color: #7A4726;
+    color: var(--admin-color-primary, #7A4726);
+    border-color: var(--admin-color-primary, #7A4726);
 }
 
 .btn-outline-secondary:hover {
-    background-color: #7A4726;
+    background-color: var(--admin-color-primary, #7A4726);
     color: #fff;
 }
 
@@ -57,7 +58,8 @@
     border-collapse: separate;
     border-spacing: 0;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(122, 71, 38, 0.12);
     overflow: hidden;
 }
 
@@ -99,17 +101,17 @@
 }
 
 .pagination .page-link {
-    color: #6a1b9a;
+    color: var(--admin-color-primary, #7A4726);
 }
 
 .pagination .page-link:hover {
-    background-color: #f1f1f1;
-    color: #4a148c;
+    background-color: rgba(122, 71, 38, 0.08);
+    color: var(--admin-color-primary-dark, #5e3419);
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #6a1b9a;
-    border-color: #6a1b9a;
+    background-color: var(--admin-color-primary, #7A4726);
+    border-color: var(--admin-color-primary, #7A4726);
     color: #fff;
 }
 

@@ -6,6 +6,17 @@ const { requireRoleAction } = require('../middlewares/auth');
 const { persistImageMaybe } = require('../utils/image-storage');
 const { slugify } = require('../utils/slug');
 
+/** Remap slug → image path để sửa ảnh lặp / sai bài. Chỉ override khi slug khớp. */
+let slugToImageRemap = {};
+try {
+  slugToImageRemap = require('../../blogSlugToImageRemap');
+} catch (_) {}
+
+function applyImageRemap(blog) {
+  if (!blog?.slug || !slugToImageRemap[blog.slug]) return blog;
+  return { ...blog, image: slugToImageRemap[blog.slug] };
+}
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -16,11 +27,13 @@ router.get('/', async (req, res) => {
 
   try {
     const filter = { published: true };
-    const blogs = await blogCollection.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+    // Thứ tự cố định khớp layout trang /blog (featured + các cột). Sort theo createdAt khiến ảnh/tiêu đề lệch nhau.
+    const blogs = await blogCollection.find(filter).sort({ _id: 1 }).skip(skip).limit(limit).toArray();
     const total = await blogCollection.countDocuments(filter);
+    const blogsWithRemap = blogs.map(applyImageRemap);
 
     return res.status(200).json({
-      blogs,
+      blogs: blogsWithRemap,
       total,
       page,
       pages: Math.ceil(total / limit)
@@ -65,7 +78,7 @@ router.get('/:id', async (req, res) => {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-    return res.status(200).json(blog);
+    return res.status(200).json(applyImageRemap(blog));
   } catch {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
@@ -73,11 +86,14 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (req, res) => {
   const { blogCollection } = getCollections();
-  const { title, description, content, image, author, published, slug } = req.body;
+  const { title, description, content, image, author, published, slug, section } = req.body;
 
   if (!title || !content) {
     return res.status(400).json({ message: 'Title and content are required.' });
   }
+
+  const validSections = ['featured_center', 'featured', 'latest', 'artisan', 'craft_village'];
+  const sectionValue = validSections.includes(section) ? section : 'craft_village';
 
   try {
     const now = new Date();
@@ -90,6 +106,7 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (
       slug: slugValue || null,
       author: author || 'Admin',
       published: published !== undefined ? published : true,
+      section: sectionValue,
       createdAt: now,
       updatedAt: now
     });
@@ -115,7 +132,7 @@ router.post('/', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (
 
 router.patch('/:id', requireRoleAction('admin', ['edit all', 'sales ctrl']), async (req, res) => {
   const { blogCollection } = getCollections();
-  const { image, title, slug, ...updateData } = req.body;
+  const { image, title, slug, section, ...updateData } = req.body;
 
   try {
     const blogId = new ObjectId(req.params.id);
@@ -126,6 +143,8 @@ router.patch('/:id', requireRoleAction('admin', ['edit all', 'sales ctrl']), asy
 
     const setData = { ...updateData };
     if (typeof title === 'string') setData.title = title;
+    const validSections = ['featured_center', 'featured', 'latest', 'artisan', 'craft_village'];
+    if (validSections.includes(section)) setData.section = section;
     if (typeof slug === 'string' && slug.trim()) {
       setData.slug = slugify(slug);
     } else if (typeof title === 'string' && !existing.slug) {

@@ -1,6 +1,16 @@
-import { Component } from '@angular/core';
-import { OpenAiService } from '../services/openai.service';
-import { debounceTime, Subject } from 'rxjs';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { finalize } from 'rxjs';
+import { ChatResponse, OpenAiService } from '../services/openai.service';
+
+type ChatRole = 'user' | 'assistant';
+
+interface ChatMessage {
+  role: ChatRole;
+  content: string;
+  createdAt: Date;
+  read?: boolean;
+  sources?: string[];
+}
 
 @Component({
   selector: 'app-chat',
@@ -8,29 +18,22 @@ import { debounceTime, Subject } from 'rxjs';
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent {
+  @ViewChild('messageList') private messageList?: ElementRef<HTMLDivElement>;
+  @ViewChild('chatInput') private chatInput?: ElementRef<HTMLInputElement>;
+
   isChatOpen = false;
   userMessage = '';
   unreadMessages = 1;
   isSending = false;
-  messages: { role: string; content: string; read?: boolean }[] = [];
-
-  private messageSubject = new Subject<string>();
-  private maxMessagesToSend = 10;
+  messages: ChatMessage[] = [];
 
   private assistantGreetings = [
-    'Xin chào, tôi là Trợ lý ảo. Rất vui được hỗ trợ bạn.',
-    'Chào bạn, tôi có thể giúp gì cho bạn hôm nay?',
-    'Xin chào! Bạn cần hỗ trợ gì?',
-    'Chào mừng bạn! Tôi sẵn sàng hỗ trợ mọi câu hỏi của bạn.',
-    'Hi! Bạn cần tìm hiểu gì? Tôi ở đây để giúp bạn.',
-    'Xin chào, tôi là Trợ lý của ĐẶC SẢN 3 MIỀN. Rất hân hạnh được phục vụ bạn.',
+    'Xin chào, tôi là trợ lý AI của Chuyện Làng Nghề. Tôi có thể hỗ trợ về sản phẩm, bài viết, ưu đãi và cách đặt hàng.',
+    'Chào bạn, tôi có thể giúp bạn tìm sản phẩm thủ công, thông tin làng nghề hoặc khuyến mãi hiện có.',
+    'Xin chào. Bạn muốn tìm hiểu sản phẩm, bài viết hay cần hỗ trợ mua hàng?',
   ];
 
-  constructor(private openAiService: OpenAiService) {
-    this.messageSubject.pipe(debounceTime(1000)).subscribe((message) => {
-      this.sendMessageToOpenAi(message);
-    });
-
+  constructor(private readonly openAiService: OpenAiService) {
     this.setRandomGreeting();
   }
 
@@ -39,6 +42,7 @@ export class ChatComponent {
 
     if (this.isChatOpen) {
       this.markMessagesAsRead();
+      this.scrollToBottom();
     }
   }
 
@@ -46,70 +50,36 @@ export class ChatComponent {
     if (this.userMessage.trim() === '' || this.isSending) return;
 
     const messageToSend = this.userMessage.trim();
-    
-    // Set sending state
+    this.clearComposer();
     this.isSending = true;
-    
-    // Add user message
-    this.messages.push({ role: 'user', content: messageToSend, read: true });
+    this.pushMessage({
+      role: 'user',
+      content: messageToSend,
+      createdAt: new Date(),
+      read: true
+    });
 
-    // Clear input immediately for better UX
-    this.userMessage = '';
+    const payload = this.messages
+      .filter((message) => message.role === 'user' || message.role === 'assistant')
+      .map((message) => ({
+        role: message.role,
+        content: message.content
+      }));
 
-    // Send message for processing
-    this.messageSubject.next(messageToSend);
-  }
-
-  private sendMessageToOpenAi(message: string): void {
-    // Simulate response delay
-    setTimeout(() => {
-      const response = this.getResponseForMessage(message.toLowerCase());
-      this.messages.push({ role: 'assistant', content: response, read: false });
-      if (!this.isChatOpen) {
-        this.unreadMessages++;
-      }
-      
-      // Reset sending state
-      this.isSending = false;
-    }, 1000);
-  }
-
-  private getResponseForMessage(message: string): string {
-    // Simple keyword-based responses
-    if (message.includes('xin chào') || message.includes('hello') || message.includes('chào')) {
-      return 'Xin chào! Tôi là trợ lý của ĐẶC SẢN 3 MIỀN. Tôi có thể giúp bạn tìm hiểu về sản phẩm, đặt hàng hoặc hỗ trợ khác. Bạn cần gì ạ?';
-    }
-    
-    if (message.includes('sản phẩm') || message.includes('mua') || message.includes('giá')) {
-      return 'Chúng tôi có rất nhiều đặc sản từ 3 miền Bắc - Trung - Nam như thịt trâu gác bếp, chè xanh, kẹo lạc... Bạn có thể xem danh mục sản phẩm hoặc cho tôi biết bạn quan tâm đến sản phẩm nào nhé!';
-    }
-    
-    if (message.includes('đặt hàng') || message.includes('mua hàng')) {
-      return 'Để đặt hàng, bạn có thể:\n1. Chọn sản phẩm từ danh mục\n2. Thêm vào giỏ hàng\n3. Thanh toán khi nhận hàng hoặc qua Internet Banking, Momo\n4. Chúng tôi sẽ giao hàng tận nơi cho bạn!';
-    }
-    
-    if (message.includes('vận chuyển') || message.includes('giao hàng')) {
-      return 'Chúng tôi giao hàng toàn quốc với phí vận chuyển hợp lý. Đơn hàng trên 500.000đ sẽ được miễn phí vận chuyển. Thời gian giao hàng từ 2-5 ngày làm việc.';
-    }
-    
-    if (message.includes('liên hệ') || message.includes('hotline') || message.includes('điện thoại')) {
-      return 'Bạn có thể liên hệ với chúng tôi qua:\n📞 Hotline: 1900-xxxx\n📧 Email: info@chuyenlangnghe.vn\n💬 Chat trực tiếp như này\n🌐 Website: chuyenlangnghe.vn';
-    }
-    
-    if (message.includes('cảm ơn') || message.includes('thank')) {
-      return 'Không có gì ạ! Rất vui được hỗ trợ bạn. Nếu cần thêm thông tin gì, bạn cứ hỏi tôi nhé! 😊';
-    }
-    
-    if (message.includes('giờ mở cửa') || message.includes('giờ làm việc')) {
-      return 'Chúng tôi hoạt động 24/7 online! Bạn có thể đặt hàng bất cứ lúc nào. Đội ngũ chăm sóc khách hàng sẽ phản hồi trong giờ hành chính (8:00-17:00).';
-    }
-    
-    if (message.includes('khuyến mãi') || message.includes('giảm giá') || message.includes('sale')) {
-      return 'Hiện tại chúng tôi đang có nhiều chương trình khuyến mãi hấp dẫn:\n🎉 Giảm giá lên đến 50% cho các sản phẩm đặc biệt\n🎁 Miễn phí vận chuyển cho đơn hàng trên 500k\n🎊 Tặng kèm quà cho khách hàng VIP';
-    }
-    
-    // Default response
-    return 'Cảm ơn bạn đã liên hệ! Tôi hiểu bạn đang tìm hiểu về "ĐẶC SẢN 3 MIỀN". Bạn có thể hỏi tôi về:\n• Sản phẩm và giá cả\n• Cách đặt hàng\n• Chính sách vận chuyển\n• Thông tin liên hệ\n• Khuyến mãi hiện tại\nHoặc bất kỳ câu hỏi nào khác, tôi sẵn sàng hỗ trợ! 😊';
+    this.openAiService
+      .sendMessage(payload)
+      .pipe(finalize(() => (this.isSending = false)))
+      .subscribe({
+        next: (response) => this.handleAssistantResponse(response),
+        error: () => {
+          this.pushMessage({
+            role: 'assistant',
+            content: 'Hiện chưa kết nối được trợ lý AI từ hệ thống. Bạn thử lại sau ít phút.',
+            createdAt: new Date(),
+            read: this.isChatOpen
+          });
+        }
+      });
   }
 
   private markMessagesAsRead(): void {
@@ -124,19 +94,80 @@ export class ChatComponent {
   private setRandomGreeting(): void {
     const randomIndex = Math.floor(Math.random() * this.assistantGreetings.length);
     const randomGreeting = this.assistantGreetings[randomIndex];
-    this.messages.push({ role: 'assistant', content: randomGreeting, read: false });
+    this.messages.push({
+      role: 'assistant',
+      content: randomGreeting,
+      createdAt: new Date(),
+      read: false
+    });
+  }
+
+  private clearComposer(): void {
+    this.userMessage = '';
+
+    if (this.chatInput?.nativeElement) {
+      this.chatInput.nativeElement.value = '';
+    }
   }
 
   formatMessage(content: string): string {
-    // Convert line breaks to HTML
-    return content.replace(/\n/g, '<br>');
+    return this.escapeHtml(content).replace(/\n/g, '<br>');
   }
 
-  getCurrentTime(): string {
-    const now = new Date();
-    return now.toLocaleTimeString('vi-VN', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+  formatTime(date: Date): string {
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
+  }
+
+  trackByMessage(index: number): number {
+    return index;
+  }
+
+  private handleAssistantResponse(response: ChatResponse): void {
+    const sources = [
+      ...(response.sources?.products ?? []),
+      ...(response.sources?.blogs ?? []),
+      ...(response.sources?.coupons ?? [])
+    ];
+
+    this.pushMessage({
+      role: 'assistant',
+      content: response.answer || 'Tôi chưa có câu trả lời phù hợp cho nội dung này.',
+      createdAt: new Date(),
+      read: this.isChatOpen,
+      sources: sources.slice(0, 3)
+    });
+  }
+
+  private pushMessage(message: ChatMessage): void {
+    this.messages.push(message);
+
+    if (message.role === 'assistant' && !this.isChatOpen) {
+      this.unreadMessages += 1;
+    }
+
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      const container = this.messageList?.nativeElement;
+      if (!container) {
+        return;
+      }
+
+      container.scrollTop = container.scrollHeight;
+    });
+  }
+
+  private escapeHtml(content: string): string {
+    return content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

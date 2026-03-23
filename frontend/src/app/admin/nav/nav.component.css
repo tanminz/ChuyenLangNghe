@@ -35,8 +35,8 @@
 }
 
 .nav-link {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: var(--admin-font-size-base, 0.9375rem);
+  font-weight: var(--admin-font-weight-medium, 500);
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   padding: 12px 20px;
@@ -52,7 +52,7 @@
   padding-left: 2rem;
   padding-top: 10px;
   padding-bottom: 10px;
-  font-size: 14px;
+  font-size: var(--admin-font-size-sm, 0.8125rem);
 }
 
 .collapse .nav-link:hover {

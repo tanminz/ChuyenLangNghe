@@ -118,7 +118,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadHomeProducts(): void {
     this.isProductsLoading = true;
-    this.productService.getProductsCachedForCatalog(100).subscribe({
+    this.productService.getProducts(1, 100, '', '', 'all').subscribe({
       next: data => {
         const all = (data.products || []).map((p: any) => new Product(
           p._id ?? '',

@@ -8,6 +8,8 @@
     "db:create": "node create_db.js",
     "db:seed:blogs": "node seed_blogs.js",
     "db:seed:contacts": "node seed_contacts.js",
+    "db:seed:products": "node seed_products.js",
+    "fix:blog-images": "node fix_blog_images.js",
     "db:check": "node checkMongo.js",
     "test:smoke": "node smoke_test_all_endpoints.js",
     "test": "echo \"Error: no test specified\" && exit 1",

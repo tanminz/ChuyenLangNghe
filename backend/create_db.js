@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { sampleBlogs } = require('./seed_blogs');
 const { sampleContacts } = require('./seed_contacts');
+const { sampleProducts } = require('./seed_products');
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
 const dbName = process.env.DB_NAME || 'chuyenlangnghe';
@@ -95,15 +96,16 @@ async function createDatabase() {
       console.log('\nKhong tim thay ChuyenLangNghe.User.json -> dung user mock mac dinh');
     }
 
+    const now = new Date();
     const userInsertResult = await db.collection('User').insertMany(users);
     await db.collection('Blog').insertMany(sampleBlogs);
     await db.collection('Feedback').insertMany(sampleContacts);
+    const productsWithTime = sampleProducts.map(p => ({ ...p, createdAt: now, updatedAt: now }));
+    await db.collection('Product').insertMany(productsWithTime);
 
     const adminIndex = Math.max(users.findIndex((u) => u.email === 'admin@uel.edu.vn'), 0);
     const adminUser = users[adminIndex] || users[0];
     const adminUserId = normalizeObjectId(adminUser?._id || userInsertResult.insertedIds[adminIndex]);
-
-    const now = new Date();
 
     await db.collection('Coupon').insertMany([
       {
@@ -140,9 +142,8 @@ async function createDatabase() {
       }
     ]);
 
-    console.log(`\nSeed xong: User(${users.length}), Blog(${sampleBlogs.length}), Feedback(${sampleContacts.length}), Coupon(2)`);
-    console.log('Product/Order/Cart/ProductReview khong seed mock. Hay import du lieu that sau khi tao DB.');
-    console.log(`Collections de trong: Product(0), Order(0), Cart(0), ProductReview(0).`);
+    console.log(`\nSeed xong: User(${users.length}), Blog(${sampleBlogs.length}), Feedback(${sampleContacts.length}), Product(${sampleProducts.length}), Coupon(2)`);
+    console.log(`Collections de trong: Order(0), Cart(0), ProductReview(0).`);
     console.log(`\nDB san sang: ${dbName}`);
     console.log('Tai khoan mac dinh (neu dung fallback): admin@uel.edu.vn / user@uel.edu.vn - mat khau 112233\n');
   } catch (err) {

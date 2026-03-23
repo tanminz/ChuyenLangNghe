@@ -12,7 +12,7 @@ export class QrComponent implements OnInit, OnChanges {
   @Output() paymentSuccess = new EventEmitter<void>();
 
   activeTab: 'momo' | 'internet_banking' = 'momo';
-  selectedBank: 'vietcombank' | 'bidv' | null = null;
+  selectedBank: 'vietcombank' = 'vietcombank';
   countdown: number = 300;
   panelOpen = false;
 
@@ -51,7 +51,7 @@ export class QrComponent implements OnInit, OnChanges {
 
   switchTab(tab: 'momo' | 'internet_banking'): void {
     this.activeTab = tab;
-    if (tab === 'internet_banking' && !this.selectedBank) {
+    if (tab === 'internet_banking') {
       this.selectedBank = 'vietcombank';
     }
   }

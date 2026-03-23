@@ -2,15 +2,18 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    font-family: var(--admin-font, 'Montserrat', sans-serif);
+    font-size: var(--admin-font-size-base, 0.9375rem);
+    color: var(--admin-color-text, #310002);
 }
 
 .order-management h2 {
-    font-size: 1.8rem;
-    font-weight: 800;
+    font-size: var(--admin-font-size-2xl, 1.25rem);
+    font-weight: var(--admin-font-weight-bold, 700);
     text-align: center;
     margin-bottom: 20px;
-    color: #7A4726;
-    text-transform: uppercase;
+    color: var(--admin-color-primary, #7A4726);
+    letter-spacing: 0.2px;
 }
 
 .order-controls {
@@ -26,12 +29,24 @@
     margin-right: 10px;
 }
 
+.order-controls .d-flex.align-items-center {
+    gap: 10px;
+    align-items: stretch !important;
+}
+
+.order-controls .d-flex.align-items-center .form-select,
+.order-controls .d-flex.align-items-center .form-control,
+.order-controls .d-flex.align-items-center .btn-secondary {
+    height: 42px;
+    margin-right: 0;
+}
+
 .order-controls .form-select.status-filter {
     display: flex;
     align-items: center;
     padding: 5px 10px;
     gap: 5px;
-    font-size: 14px;
+    font-size: var(--admin-font-size-sm, 0.8125rem);
 }
 
 .table {
@@ -47,7 +62,7 @@
 }
 
 .table-light {
-    background-color: #f8f9fa;
+    background-color: #f9fafb;
 }
 
 .table td .action-buttons {
@@ -60,12 +75,12 @@
 .table td .btn {
     width: 80px;
     margin: 2px;
-    font-size: 10px;
+    font-size: var(--admin-font-size-xs, 0.75rem);
 }
 
 .table td .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+    background-color: #b45309;
+    border-color: #b45309;
 }
 
 .table td .btn-success {
@@ -79,7 +94,7 @@
     justify-content: center;
     gap: 8px;
     font-size: 14px;
-    color: #333;
+    color: var(--admin-color-text, #310002);
 }
 
 .table td .status-icon {
@@ -116,8 +131,11 @@
     border: none !important;
     color: white !important;
     font-weight: 600 !important;
-    padding: 8px 20px !important;
-    border-radius: 8px !important;
+    padding: 0 20px !important;
+    border-radius: 4px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s !important;
 }
 
@@ -127,7 +145,7 @@
 }
 
 .btn-secondary:focus {
-    box-shadow: 0 0 0 2px rgba(122, 71, 38, 0.3) !important;
+    box-shadow: 0 0 0 2px rgba(122, 71, 38, 0.2) !important;
     outline: none !important;
 }
 

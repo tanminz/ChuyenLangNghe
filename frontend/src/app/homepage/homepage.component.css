@@ -138,7 +138,7 @@
 }
 
 .intro-content .section-title {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 26px;
     line-height: 1.3;
@@ -148,7 +148,7 @@
 }
 
 .intro-content .section-description {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 1.6;
@@ -196,7 +196,7 @@
 }
 
 .section-title {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 26px;
     line-height: 1.3;
@@ -234,6 +234,7 @@
     width: 245px;
     border-radius: 8px;
     overflow: hidden;
+    position: relative;
 }
 
 .product-image img {
@@ -241,6 +242,32 @@
     height: auto;
     display: block;
     vertical-align: top;
+}
+
+.product-image .img-primary,
+.product-image .img-secondary {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.product-image .img-primary {
+    opacity: 1;
+}
+
+.product-image .img-secondary {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+.product-card.has-secondary-image:hover .product-image .img-primary {
+    opacity: 0;
+}
+
+.product-card.has-secondary-image:hover .product-image .img-secondary {
+    opacity: 1;
 }
 
 .product-body {
@@ -253,7 +280,7 @@
 }
 
 .product-body h3 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 15px;
     line-height: 1.4;
@@ -264,7 +291,7 @@
 }
 
 .product-price {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 16px;
     line-height: 1.4;
@@ -310,7 +337,7 @@
 }
 
 .series-kicker {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 24px;
     line-height: 1.3;
@@ -328,7 +355,7 @@
 }
 
 .series-desc {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
@@ -394,7 +421,7 @@
 }
 
 .series-content .section-kicker {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 22px;
     line-height: 1.3;
@@ -413,7 +440,7 @@
 }
 
 .series-content .section-description {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 1.6;
@@ -485,7 +512,7 @@
 }
 
 .stat-item h3 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 36px;
     line-height: 1.2;
@@ -496,7 +523,7 @@
 }
 
 .stat-item .stat-title {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 15px;
     line-height: 1.4;
@@ -507,7 +534,7 @@
 }
 
 .stat-item .stat-desc {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 1.5;
@@ -562,7 +589,7 @@
 }
 
 .news-body h3 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 16px;
     line-height: 1.4;
@@ -573,7 +600,7 @@
 }
 
 .news-body p {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 1.5;
@@ -588,7 +615,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 14px;
     line-height: 25px;
@@ -669,7 +696,7 @@
 }
 
 .video-content h3 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 16px;
     line-height: 1.4;
@@ -677,7 +704,7 @@
 }
 
 .video-content p {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 25px;
@@ -715,7 +742,7 @@
 }
 
 .keepers .section-description {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 25px;
@@ -747,7 +774,7 @@
 }
 
 .connect-content .section-title {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 26px;
     line-height: 58px;
@@ -757,7 +784,7 @@
 }
 
 .connect-content .section-description {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 25px;
@@ -783,7 +810,7 @@
     width: 100%;
     border: none;
     outline: none;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 25px;
@@ -827,7 +854,7 @@
     gap: 10px;
     height: 44px;
     border-radius: 8px;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 14px;
     line-height: 25px;

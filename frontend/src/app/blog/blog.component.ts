@@ -11,7 +11,49 @@ export interface BlogDisplayItem {
   desc: string;
   fullContent: string;
   description?: string;
+  /** Phân mục: featured_center | featured | latest | artisan | craft_village */
+  section?: string;
 }
+
+/** Thứ tự slug: Center hero → Left (Tin nổi bật) → Right (Tin mới nhất) */
+const BLOG_LAYOUT_SLUG_ORDER: string[] = [
+  'doi-tay-nhuom-mau',        // [0] center featured
+  'gom-chu-dau',              // [1-4] left column
+  'giua-lang-va-pho',
+  'son-mai-tuong-binh-hiep',
+  'hanh-trinh-non-la',
+  'nguoi-giu-lua-lo-gom',     // [5-8] right column
+  'tro-ve-de-tiep-noi',
+  'khong-hoan-hao',
+  'bat-trang-700-nam'
+];
+
+/** Chuyện nghệ nhân: bài viết về con người, nghệ nhân cụ thể */
+const ARTISAN_SLUGS: string[] = [
+  'doi-tay-nhuom-mau',        // bà Lê Thị Hòa - Vạn Phúc
+  'nguoi-giu-lua-lo-gom',     // ông Trần Minh - Bát Tràng
+  'mot-doi-mot-nghe',         // nghệ nhân một đời một nghề
+  'tro-ve-de-tiep-noi',       // bạn trẻ trở về làng
+  'son-mai-tuong-binh-hiep',  // gia đình ông ba đời sơn mài
+  'giu-nghe-hay-giu-ky-uc'    // nghệ nhân giữ nghề
+];
+
+/** Chuyện làng nghề: bài về làng, nghề, quy trình (không trùng ARTISAN_SLUGS) */
+const CRAFT_VILLAGE_SLUGS: string[] = [
+  'bat-trang-700-nam',        // làng gốm Bát Tràng
+  'gom-chu-dau',              // làng gốm Chu Đậu
+  'tu-dat-thanh-hinh',        // quy trình từ đất thành hình
+  'khong-hoan-hao',           // triết lý thủ công
+  'hanh-trinh-non-la',        // hành trình nón lá
+  'giua-lang-va-pho',         // làng và phố
+  'lang-chieu-coi-nga-son',   // làng chiếu cói Nga Sơn
+  'lang-duc-dong-dai-bai',    // làng đúc đồng Đại Bái
+  'lang-may-tre-dan-phu-vinh' // làng mây tre đan Phú Vinh
+];
+
+/** Slug bắt đầu bằng prefix này → Chuyện làng nghề (bắt mọi biến thể dài) */
+const CRAFT_VILLAGE_SLUG_PREFIXES = ['lang-chieu-coi-nga-son', 'lang-duc-dong-dai-bai', 'lang-may-tre-dan-phu-vinh'];
+
 
 @Component({
   selector: 'app-blog',
@@ -100,6 +142,20 @@ export class BlogComponent implements OnInit {
     private blogApi: BlogAPIService
   ) {}
 
+  /** Placeholder khi ảnh lỗi/404 */
+  readonly placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200"%3E%3Crect fill="%23e8ddd0" width="400" height="200"/%3E%3Ctext x="200" y="105" text-anchor="middle" fill="%237A4726" font-size="14" font-family="sans-serif"%3EKhông có ảnh%3C/text%3E%3C/svg%3E';
+
+  trackByBlogId(_i: number, item: { id: string; image?: string }): string {
+    return item.id + '|' + (item.image ?? '');
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== this.placeholderImage) {
+      img.src = this.placeholderImage;
+    }
+  }
+
   private formatBlogDate(d: string | Date | undefined): string {
     if (!d) return '';
     const date = typeof d === 'string' ? new Date(d) : d;
@@ -118,28 +174,126 @@ export class BlogComponent implements OnInit {
       date: this.formatBlogDate(b.updatedAt || b.createdAt),
       desc: b.description || '',
       fullContent: b.content || b.fullContent || '',
-      description: b.description || ''
+      description: b.description || '',
+      section: b.section
     };
+  }
+
+  /** Giữ đúng cặp ảnh–tiêu đề dù API đổi cách sort */
+  private sortBlogsForLayout(items: BlogDisplayItem[]): BlogDisplayItem[] {
+    return [...items].sort((a, b) => {
+      const ia = BLOG_LAYOUT_SLUG_ORDER.indexOf(a.id);
+      const ib = BLOG_LAYOUT_SLUG_ORDER.indexOf(b.id);
+      if (ia === -1 && ib === -1) return a.title.localeCompare(b.title);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  }
+
+  private filterBySlugs(items: BlogDisplayItem[], slugs: string[]): BlogDisplayItem[] {
+    const set = new Set(slugs);
+    return items.filter(b => set.has(b.id)).sort((a, b) => {
+      const ia = slugs.indexOf(a.id);
+      const ib = slugs.indexOf(b.id);
+      return ia - ib;
+    });
+  }
+
+  /** Lọc theo section (từ admin). Nếu không có section thì fallback theo slug. */
+  private filterBySection(items: BlogDisplayItem[], section: string, fallbackSlugs: string[]): BlogDisplayItem[] {
+    const bySection = items.filter(b => b.section === section);
+    if (bySection.length > 0) return bySection;
+    return this.filterBySlugs(items, fallbackSlugs);
+  }
+
+  /** Chuẩn hóa bỏ dấu để so sánh (tránh lỗi Unicode) */
+  private normalizeForMatch(s: string): string {
+    return (s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd');
+  }
+
+  /** Tiêu đề/desc chứa từ khóa làng nghề → luôn ở Chuyện làng nghề */
+  private isCraftVillageByTitle(title: string, desc?: string): boolean {
+    const text = [title, desc].filter(Boolean).join(' ');
+    if (!text.trim()) return false;
+    const t = this.normalizeForMatch(text);
+    return t.includes('chieu coi nga son') || (t.includes('chieu coi') && t.includes('nga son'))
+      || t.includes('duc dong dai bai') || t.includes('dai bai')
+      || t.includes('may tre dan phu vinh') || (t.includes('phu vinh') && t.includes('tre'));
+  }
+
+  /** Slug thuộc Chuyện làng nghề (khớp chính xác hoặc prefix) */
+  private isCraftVillageSlug(slug: string): boolean {
+    if (!slug) return false;
+    if (CRAFT_VILLAGE_SLUGS.includes(slug)) return true;
+    return CRAFT_VILLAGE_SLUG_PREFIXES.some(p => slug.startsWith(p));
+  }
+
+  private isLayoutSlug(slug: string): boolean {
+    return BLOG_LAYOUT_SLUG_ORDER.includes(slug);
+  }
+
+  /** Chuyện làng nghề: gộp theo section + slugs + match tiêu đề/desc */
+  private filterCraftVillage(items: BlogDisplayItem[]): BlogDisplayItem[] {
+    const bySection = items.filter(
+      b => b.section === 'craft_village' && !this.isLayoutSlug(b.id) && !ARTISAN_SLUGS.includes(b.id)
+    );
+    const bySlug = items.filter(b => this.isCraftVillageSlug(b.id));
+    const byTitle = items.filter(b => this.isCraftVillageByTitle(b.title || '', b.desc || b.description));
+    const merged: BlogDisplayItem[] = [];
+    const seen = new Set<string>();
+    [...bySection, ...bySlug, ...byTitle].forEach(b => {
+      if (!seen.has(b.id)) {
+        seen.add(b.id);
+        merged.push(b);
+      }
+    });
+    return merged.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+  }
+
+  /** Chuyện nghệ nhân: loại bỏ bài đã nằm trong craftVillageIds (tính từ filterCraftVillage) */
+  private filterArtisan(items: BlogDisplayItem[], craftVillageIds: Set<string>): BlogDisplayItem[] {
+    const exclude = (b: BlogDisplayItem) => craftVillageIds.has(b.id);
+    const bySection = items.filter(b => b.section === 'artisan').filter(b => !exclude(b));
+    const bySlug = this.filterBySlugs(items, ARTISAN_SLUGS).filter(b => !exclude(b));
+    const merged: BlogDisplayItem[] = [];
+    const seen = new Set<string>();
+    [...bySection, ...bySlug].forEach(b => {
+      if (!seen.has(b.id)) {
+        seen.add(b.id);
+        merged.push(b);
+      }
+    });
+    return merged;
   }
 
   private loadBlogsFromAPI(): void {
     this.blogApi.getBlogs(1, 50).subscribe({
       next: (res: { blogs?: any[] }) => {
         const list = res.blogs || [];
-        this.apiBlogs = list.map((b: any) => this.mapApiBlogToItem(b));
+        const mapped = list.map((b: any) => this.mapApiBlogToItem(b));
+        this.apiBlogs = this.sortBlogsForLayout(mapped);
         if (this.apiBlogs.length > 0) {
+          // featured_center: 1 bài chính
+          const centerList = this.filterBySection(this.apiBlogs, 'featured_center', BLOG_LAYOUT_SLUG_ORDER.slice(0, 1));
+          const center = centerList[0] || this.apiBlogs[0];
           this.featuredBlog = {
-            id: this.apiBlogs[0].id,
-            title: this.apiBlogs[0].title,
-            description: this.apiBlogs[0].desc || this.apiBlogs[0].description || '',
-            image: this.apiBlogs[0].image,
-            date: this.apiBlogs[0].date,
-            fullContent: this.apiBlogs[0].fullContent || ''
+            id: center.id,
+            title: center.title,
+            description: center.desc || center.description || '',
+            image: center.image,
+            date: center.date,
+            fullContent: center.fullContent || ''
           };
-          this.featuredSmall = this.apiBlogs.slice(1, 5);
-          this.latestNews = this.apiBlogs.slice(5, 9);
-          this.artisanStories = this.apiBlogs.slice(9, 13);
-          this.craftVillageStories = this.apiBlogs.slice(13, 17);
+          // featured (cột trái), latest (cột phải) - dùng section hoặc fallback theo thứ tự
+          this.featuredSmall = this.filterBySection(this.apiBlogs, 'featured', BLOG_LAYOUT_SLUG_ORDER.slice(1, 5));
+          this.latestNews = this.filterBySection(this.apiBlogs, 'latest', BLOG_LAYOUT_SLUG_ORDER.slice(5, 9));
+          // Tính Chuyện làng nghề trước, rồi loại trừ khỏi Chuyện nghệ nhân (tránh bài Đại Bái/Nga Sơn/Phú Vinh bị đưa nhầm)
+          this.craftVillageStories = this.filterCraftVillage(this.apiBlogs);
+          const craftIds = new Set(this.craftVillageStories.map(b => b.id));
+          this.artisanStories = this.filterArtisan(this.apiBlogs, craftIds);
         }
         this.loading = false;
         this.resolveActiveBlogDetail();

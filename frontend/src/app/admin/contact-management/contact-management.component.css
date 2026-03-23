@@ -1,16 +1,21 @@
 .contact-management {
     padding: 20px;
+    font-family: var(--admin-font, 'Montserrat', sans-serif);
+    font-size: var(--admin-font-size-base, 0.9375rem);
+    color: var(--admin-color-text, #310002);
 }
 
 .contact-management h2 {
-    color: #8b0000;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-size: var(--admin-font-size-2xl, 1.25rem);
+    font-weight: var(--admin-font-weight-bold, 700);
+    color: var(--admin-color-primary, #7A4726);
+    letter-spacing: 0.2px;
 }
 
 .card {
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(122, 71, 38, 0.12);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(49, 0, 2, 0.04);
 }
 
 .table {
@@ -18,12 +23,13 @@
 }
 
 .table-hover tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(122, 71, 38, 0.03);
 }
 
 .badge {
     padding: 0.35rem 0.65rem;
-    font-size: 0.875rem;
+    font-size: var(--admin-font-size-xs, 0.75rem);
+    font-weight: var(--admin-font-weight-medium, 500);
 }
 
 .pagination-controls {
@@ -31,7 +37,7 @@
 }
 
 .text-center.py-5 {
-    color: #6c757d;
+    color: var(--admin-color-muted, #5c524a);
 }
 
 .fa-spinner {
@@ -64,9 +70,9 @@
 
 .alert-light {
     background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    border: 1px solid rgba(122, 71, 38, 0.12);
     padding: 1rem;
-    border-radius: 0.25rem;
+    border-radius: 4px;
     white-space: pre-wrap;
     word-wrap: break-word;
 }

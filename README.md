@@ -1,65 +1,141 @@
-Giới thiệu
-Chào mừng bạn đến với dự án website Chuyện Làng Nghề được xây dựng bằng Angular Framework kết nối đến MongoDB. Dự án bao gồm một backend Node.js sử dụng MongoDB làm cơ sở dữ liệu và một frontend được xây dựng bằng Angular. Các file JSON được dùng để import dữ liệu cấu hình hệ thống.
+# Chuyen Lang Nghe
 
-Thông tin đăng nhập
-*Tài khoản admin của website: admin@uel.edu.vn
-*Tài khoản user của website: user@uel.edu.vn                                                                     
-Các tài khoản khác có thể thay phần local-part, password giữ nguyên
-*Mật khẩu: 112233
+Website thuong mai cho san pham thu cong lang nghe Viet Nam.
 
-Cấu hình môi trường
-*Yêu cầu hệ thống
-- Node.js phiên bản 14.x trở lên
-- MongoDB cài đặt local hoặc sử dụng dịch vụ MongoDB Atlas
-- Angular CLI phiên bản 14.x trở lên
-- Git LFS dùng để quản lý file media dung lượng lớn: chạy git lfs install trước khi git clone.
+Du an gom:
+- `frontend`: Angular
+- `backend`: Node.js + Express + MongoDB
+- AI chatbox: route `POST /ai/chat` (Gemini + du lieu san pham/blog/coupon trong DB)
 
-*Cài đặt các gói phụ thuộc
-Trước tiên, cần cài đặt các gói phụ thuộc cho cả frontend và backend. Đảm bảo rằng máy tính của bạn đã cài Node.js và npm (Node Package Manager).
+## 1) Yeu cau moi truong
 
-*Cài đặt gói cho backend (Node.js)
-Mở terminal hoặc command prompt và điều hướng đến thư mục backend của dự án.
-Chạy lệnh sau để cài đặt các package:
-	cd backend
-	npm install
+- Node.js 18+
+- npm 9+
+- MongoDB local hoac Atlas
 
-*Cài đặt gói cho frontend (Angular)
-Điều hướng đến thư mục frontend của dự án.
-Chạy lệnh sau:
-	cd frontend
-	npm install
+## 2) Cai dat
 
-*Cấu hình MongoDB
-Trong file backend/.env, thiết lập chuỗi kết nối MongoDB phù hợp với môi trường của bạn. Ví dụ:
+### Backend
+
+```bash
+cd backend
+npm install
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+## 3) Cau hinh `.env` backend
+
+Tao file `backend/.env` (hoac cap nhat neu da co):
+
+```env
+PORT=3002
 MONGODB_URI=mongodb://127.0.0.1:27017
 DB_NAME=chuyenlangnghe
-JWT_SECRET=<tuy_chon>
-Nếu sử dụng MongoDB Atlas, thay localhost bằng URI của Atlas.
+SESSION_SECRET=change_me
+JWT_SECRET=change_me
 
-Cách chạy ứng dụng
-1. Chạy backend (Node.js)
-- Di chuyển đến thư mục backend và chạy lệnh:
-	node index.js
-- Server mặc định chạy tại địa chỉ: http://localhost:3000/
+# Cho phep frontend chay 4200/4201
+CORS_ORIGIN=http://localhost:4200,http://localhost:4201
 
-2. Chạy frontend (Angular)
-- Di chuyển đến thư mục frontend và chạy lệnh:
-	ng serve
-- Ứng dụng hiển thị tại địa chỉ: http://localhost:4200/
+# Optional: Upload
+FILESTACK_API_KEY=
+FILESTACK_STORE_LOCATION=S3
+FILESTACK_STORE_PATH=products/
 
-*Import dữ liệu mẫu
-Dự án hỗ trợ import dữ liệu từ các file JSON mẫu trong thư mục GROUP 5_ DATA của drive nhóm. Đảm bảo rằng bạn đã có các file JSON cần thiết và import chúng vào MongoDB. Bạn có thể sử dụng các công cụ như mongoimport hoặc viết mã để tự động nhập dữ liệu từ file JSON vào cơ sở dữ liệu.
+# AI chatbox (Gemini)
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
+GEMINI_API_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+```
 
-*Công nghệ sử dụng
-Backend: Node.js, Express, Mongoose, JWT, bcrypt, multer, dotenv, cors
-Frontend: Angular, RxJS, Bootstrap, FontAwesome, ngx-cookie-service, ngx-spinner
+Luu y:
+- Khong commit `.env` len git.
+- Neu lo key thi regen key moi.
 
-*Lỗi thường gặp
-Không kết nối được MongoDB: Kiểm tra MONGO_URI trong file .env, đảm bảo MongoDB đang chạy.
-Lỗi CORS: Dùng proxy.conf.json trong Angular hoặc bật middleware cors trong Express.
-Git clone báo “file should have been a pointer”: Cài đặt Git LFS bằng lệnh git lfs install trước khi clone repo.
-Thiếu phụ thuộc khi chạy ng serve: Vào thư mục frontend, chạy npm install để cài lại gói.
+## 4) Chay du an
 
-Liên hệ
-Hy vọng bạn sẽ thành công khi triển khai dự án này. Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ qua hotline: 0792 098 510.
-Chúc bạn làm việc hiệu quả!
+### Chay backend
+
+```bash
+cd backend
+npm run dev
+```
+
+Mac dinh backend: `http://localhost:3002`.
+
+### Chay frontend
+
+```bash
+cd frontend
+npm start
+```
+
+Mac dinh frontend: `http://localhost:4200`.
+
+Neu bao `Port 4200 is already in use`, chon `Y` de chay `4201`.
+
+## 5) Kiem tra nhanh
+
+### Health backend
+
+Mo trinh duyet:
+- `http://localhost:3002/health` (neu route nay co bat trong backend)
+
+### Kiem tra AI chat API
+
+Gui request mau:
+
+```bash
+curl -X POST http://localhost:3002/ai/chat \
+  -H "Content-Type: application/json" \
+  -d "{\"message\":\"xin chao\",\"history\":[]}"
+```
+
+Neu thanh cong se tra JSON co `answer` va `sources`.
+
+## 6) Seed du lieu (neu can)
+
+```bash
+cd backend
+npm run db:create
+```
+
+Scripts co san:
+- `npm run db:seed:products`
+- `npm run db:seed:blogs`
+- `npm run db:seed:contacts`
+- `npm run db:check`
+
+## 7) Proxy frontend
+
+Angular dang dung proxy:
+- `frontend/src/proxy.conf.json`
+
+Cac route nhu `/products`, `/user`, `/orders`, `/blogs`, `/coupons`, `/ai` duoc proxy ve backend `3002`.
+
+## 8) Tai khoan mau
+
+- Admin: `admin@uel.edu.vn`
+- User: `user@uel.edu.vn`
+- Password: `112233`
+
+Co the thay local-part email, password giu nguyen theo seed hien tai.
+
+## 9) Loi thuong gap
+
+- **Chatbox bao khong ket noi duoc AI**
+  - Kiem tra `GEMINI_API_KEY` trong `backend/.env`
+  - Kiem tra backend da restart sau khi sua `.env`
+  - Kiem tra frontend da restart de nap proxy moi
+
+- **CORS loi khi frontend chay 4201**
+  - Dat `CORS_ORIGIN=http://localhost:4200,http://localhost:4201`
+
+- **MongoDB khong ket noi**
+  - Kiem tra `MONGODB_URI`, `DB_NAME`, va dich vu MongoDB dang chay

@@ -46,6 +46,18 @@
                         <option [value]="false">Nháp</option>
                     </select>
                 </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="section" class="form-label">Phân mục hiển thị</label>
+                    <select id="section" formControlName="section" class="form-control">
+                        <option value="featured_center">Tin nổi bật chính (giữa)</option>
+                        <option value="featured">Tin nổi bật (cột trái)</option>
+                        <option value="latest">Tin mới nhất (cột phải)</option>
+                        <option value="artisan">Chuyện nghệ nhân</option>
+                        <option value="craft_village">Chuyện làng nghề</option>
+                    </select>
+                    <small class="text-muted">Chọn vị trí bài viết sẽ hiển thị trên trang blog</small>
+                </div>
             </div>
             
             <!-- Progress Bar -->
@@ -106,6 +118,7 @@
                     <th>#</th>
                     <th>Tiêu đề</th>
                     <th>Tác giả</th>
+                    <th>Phân mục</th>
                     <th>Mô tả</th>
                     <th>Trạng thái</th>
                     <th>Ngày tạo</th>
@@ -124,6 +137,10 @@
                     </td>
                     <td>{{ blog.author || 'Admin' }}</td>
                     <td>
+                        <span class="badge bg-info" *ngIf="blog.section">{{ getSectionLabel(blog.section) }}</span>
+                        <span class="text-muted" *ngIf="!blog.section">—</span>
+                    </td>
+                    <td>
                         {{ blog.description | slice:0:50 }}<span *ngIf="blog.description && blog.description.length > 50">...</span>
                     </td>
                     <td>
@@ -140,7 +157,7 @@
                     </td>
                 </tr>
                 <tr *ngIf="blogs.length === 0">
-                    <td colspan="7" class="text-center">Không có blog nào</td>
+                    <td colspan="8" class="text-center">Không có blog nào</td>
                 </tr>
             </tbody>
         </table>

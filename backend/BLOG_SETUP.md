@@ -16,10 +16,10 @@ Server is listening on port 3002
 
 ### 2. Test API (Tùy chọn)
 
-Chạy smoke test để kiểm tra API có hoạt động không:
+Chạy script test để kiểm tra API có hoạt động không:
 
 ```bash
-npm run test:smoke
+node test_blog_api.js
 ```
 
 ### 3. Khởi động Frontend
@@ -69,7 +69,7 @@ ng serve
 
 3. **Test API trực tiếp**
    ```bash
-   npm run test:smoke
+   node test_blog_api.js
    ```
 
 ## 📝 API Endpoints

@@ -8,7 +8,7 @@
   background-image: url('/assets/about-bg-texture.png');
   background-repeat: repeat;
   background-size: auto;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   overflow-x: hidden;
 }
 
@@ -61,7 +61,7 @@
   line-height: 1.25;
   letter-spacing: 0.02em;
   margin: 0;
-  font-family: 'Manrope', system-ui, sans-serif;
+  font-family: 'Montserrat', system-ui, sans-serif;
 }
 
 .about-van-hoa {
@@ -82,7 +82,7 @@
   color: #000000;
   line-height: 1.65;
   margin: 0 0 14px 0;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .about-after-video-text:last-of-type {
@@ -503,7 +503,7 @@
   letter-spacing: 1px;
   margin-bottom: 32px;
   text-align: center;
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .cert-gallery {

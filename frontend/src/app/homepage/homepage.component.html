@@ -56,10 +56,19 @@
         <div class="product-row" *ngFor="let row of getProductRows()">
           <article
             class="product-card reveal-el reveal-stagger"
+            [class.has-secondary-image]="!!product.image_2"
             *ngFor="let product of row"
             (click)="viewProductDetail(product)">
             <div class="product-image">
-              <img [src]="product.image_1" [alt]="product.product_name" />
+              <img
+                class="img-primary"
+                [src]="product.image_1"
+                [alt]="product.product_name" />
+              <img
+                *ngIf="product.image_2"
+                class="img-secondary"
+                [src]="product.image_2"
+                [alt]="product.product_name + ' - góc nhìn 2'" />
             </div>
             <div class="product-body">
               <h3>{{ product.product_name }}</h3>

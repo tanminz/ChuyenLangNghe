@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 @font-face {
   font-family: 'UTM Candlescript Pro';
@@ -26,7 +26,7 @@
 
 html,
 body {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: var(--font-body);
   line-height: var(--line-body);
   background-color: #FFFAF1 !important;
@@ -42,7 +42,7 @@ body {
 
 /* Remove Bootstrap default button styles */
 .btn {
-  font-family: 'Manrope', sans-serif !important;
+  font-family: 'Montserrat', sans-serif !important;
   border: none !important;
   box-shadow: none !important;
   text-transform: none !important;

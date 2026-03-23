@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Blog } from '../../../interface/Blog';
+import { Blog, BlogSection } from '../../../interface/Blog';
 import { BlogAPIService } from '../../blog-api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -36,7 +36,8 @@ export class BlogManagementComponent implements OnInit {
       content: ['', Validators.required],
       image: [''],
       author: ['Admin'],
-      published: [true]
+      published: [true],
+      section: ['craft_village']
     });
   }
 
@@ -149,7 +150,10 @@ export class BlogManagementComponent implements OnInit {
     }
     this.isEditing = true;
     this.selectedBlog = blog;
-    this.blogForm.patchValue(blog);
+    this.blogForm.patchValue({
+      ...blog,
+      section: blog.section || 'craft_village'
+    });
     this.blogImage = blog.image || '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -195,7 +199,8 @@ export class BlogManagementComponent implements OnInit {
     this.selectedBlog = null;
     this.blogForm.reset({
       author: 'Admin',
-      published: true
+      published: true,
+      section: 'craft_village'
     });
     this.blogImage = '';
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -224,5 +229,16 @@ export class BlogManagementComponent implements OnInit {
   formatDate(date: any): string {
     if (!date) return '';
     return new Date(date).toLocaleDateString('vi-VN');
+  }
+
+  getSectionLabel(s: BlogSection | string): string {
+    const labels: Record<string, string> = {
+      featured_center: 'Tin nổi bật chính',
+      featured: 'Tin nổi bật',
+      latest: 'Tin mới nhất',
+      artisan: 'Chuyện nghệ nhân',
+      craft_village: 'Chuyện làng nghề'
+    };
+    return labels[s] || s;
   }
 }

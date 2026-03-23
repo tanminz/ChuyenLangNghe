@@ -42,14 +42,9 @@
           <div *ngIf="activeTab === 'internet_banking'" class="qr-bank-layout">
             <div class="qr-instructions">
               <div class="qr-badge">Ngân hàng</div>
-              <div class="qr-bank-picker" role="group" aria-label="Chọn ngân hàng">
-                <label class="qr-bank-option" [class.active]="selectedBank === 'vietcombank'">
-                  <input class="visually-hidden" type="radio" id="vietcombank" name="bank" value="vietcombank" [(ngModel)]="selectedBank" />
+              <div class="qr-bank-picker" role="group" aria-label="Ngân hàng hỗ trợ">
+                <label class="qr-bank-option active">
                   Vietcombank
-                </label>
-                <label class="qr-bank-option" [class.active]="selectedBank === 'bidv'">
-                  <input class="visually-hidden" type="radio" id="bidv" name="bank" value="bidv" [(ngModel)]="selectedBank" />
-                  BIDV
                 </label>
               </div>
               <div class="qr-steps">
@@ -59,8 +54,7 @@
             </div>
             <div class="qr-code-wrap">
               <div class="qr-code-frame">
-                <img *ngIf="selectedBank === 'vietcombank'" src="assets/Vietcombank.jpg" alt="Vietcombank QR" class="qr-code-img" />
-                <img *ngIf="selectedBank === 'bidv'" src="assets/BIDV.jpg" alt="BIDV QR" class="qr-code-img" />
+                <img src="assets/Vietcombank.jpg" alt="Vietcombank QR" class="qr-code-img" />
               </div>
               <div class="qr-note">Chỉ chuyển khoản đúng thông tin hiển thị trong mã QR.</div>
             </div>
