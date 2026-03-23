@@ -14,7 +14,7 @@
 .sidebar {
   width: 250px;
   height: 100vh;
-  background: #6b3f22;
+  background: #734322;
   padding: 0;
 }
 
@@ -45,7 +45,7 @@
 
 .nav-link:hover {
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .collapse .nav-link {
