@@ -1,6 +1,46 @@
 {
   "rewrites": [
     {
+      "source": "/products/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/products/:path*"
+    },
+    {
+      "source": "/user/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/user/:path*"
+    },
+    {
+      "source": "/orders/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/orders/:path*"
+    },
+    {
+      "source": "/feedback/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/feedback/:path*"
+    },
+    {
+      "source": "/cart/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/cart/:path*"
+    },
+    {
+      "source": "/blogs/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/blogs/:path*"
+    },
+    {
+      "source": "/dashboard/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/dashboard/:path*"
+    },
+    {
+      "source": "/coupons/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/coupons/:path*"
+    },
+    {
+      "source": "/ai/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/ai/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://backend-two-fawn-31.vercel.app/uploads/:path*"
+    },
+    {
       "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }
