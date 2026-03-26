@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ChatResponse, OpenAiService } from '../services/openai.service';
 
 type ChatRole = 'user' | 'assistant';
@@ -22,6 +24,7 @@ export class ChatComponent {
   @ViewChild('chatInput') private chatInput?: ElementRef<HTMLInputElement>;
 
   isChatOpen = false;
+  isChatAllowed = true;
   userMessage = '';
   unreadMessages = 1;
   isSending = false;
@@ -33,8 +36,31 @@ export class ChatComponent {
     'Xin chào. Bạn muốn tìm hiểu sản phẩm, bài viết hay cần hỗ trợ mua hàng?',
   ];
 
-  constructor(private readonly openAiService: OpenAiService) {
+  constructor(
+    private readonly openAiService: OpenAiService,
+    private readonly router: Router
+  ) {
     this.setRandomGreeting();
+    this.updateChatAllowed(this.router.url);
+
+    // Tự đóng/ẩn chat khi chuyển sang trang thanh toán để nút "Kiểm tra" không bị che.
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        const url = (e as NavigationEnd).urlAfterRedirects ?? e.url;
+        this.updateChatAllowed(url);
+      });
+  }
+
+  private updateChatAllowed(url: string): void {
+    const normalized = url?.toLowerCase?.() ?? '';
+    const allowed = !normalized.startsWith('/payment') && !normalized.startsWith('/qr');
+    this.isChatAllowed = allowed;
+
+    // Nếu đang mở chat mà vừa điều hướng tới trang bị ẩn, tắt luôn để tránh che UI.
+    if (!allowed) {
+      this.isChatOpen = false;
+    }
   }
 
   toggleChat(): void {

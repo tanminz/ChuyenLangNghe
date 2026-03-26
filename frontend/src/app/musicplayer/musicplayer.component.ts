@@ -15,6 +15,12 @@ export class MusicplayerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.audio = document.getElementById('background-music') as HTMLAudioElement;
+    // Tắt hẳn âm thanh nền theo yêu cầu demo.
+    if (this.audio) {
+      this.audio.muted = true;
+      this.audio.pause();
+      this.audio.currentTime = 0;
+    }
 
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -35,8 +41,7 @@ export class MusicplayerComponent implements OnInit, OnDestroy {
 
   private startAudio(): void {
     if (this.audio.paused) {
-      this.audio.muted = false;
-      this.audio.play().catch(() => { });
+      // Không auto-play để tránh phát âm thanh.
     }
   }
 
@@ -48,12 +53,6 @@ export class MusicplayerComponent implements OnInit, OnDestroy {
   }
 
   private shouldPlayMusic(url: string): boolean {
-    if (url === '/' || url.startsWith('/product')) {
-      return true;
-    }
-    if (url === '/catalog') {
-      return true;
-    }
-    return false;
+    return false; // luôn tắt
   }
 }

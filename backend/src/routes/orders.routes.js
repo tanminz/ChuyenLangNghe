@@ -7,6 +7,22 @@ const { getCollections } = require('../config/database');
 const { requireAuth, requireRoleAction } = require('../middlewares/auth');
 const { checkCouponAvailability, evaluateCouponDiscount, computeItemsSummary } = require('../utils/coupon');
 
+/** Font có đủ glyph tiếng Việt cho PDFKit (Helvetica mặc định sẽ lỗi dấu). */
+function resolveInvoiceFontPath() {
+  const fontsDir = path.join(__dirname, '..', '..', 'fonts');
+  const candidates = [
+    path.join(fontsDir, 'NotoSans-Regular.ttf'),
+    path.join(fontsDir, 'Montserrat-Regular.otf'),
+    path.join(process.cwd(), 'fonts', 'Roboto-Regular.ttf')
+  ];
+  for (const fontPath of candidates) {
+    if (fs.existsSync(fontPath)) {
+      return fontPath;
+    }
+  }
+  return null;
+}
+
 const router = express.Router();
 
 router.get('/me', requireAuth, async (req, res) => {
@@ -340,9 +356,9 @@ router.get('/:orderId/invoice', requireAuth, async (req, res) => {
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
-    const fontPath = path.join(process.cwd(), 'fonts', 'Roboto-Regular.ttf');
-    if (fs.existsSync(fontPath)) {
-      doc.font(fontPath);
+    const invoiceFontPath = resolveInvoiceFontPath();
+    if (invoiceFontPath) {
+      doc.font(invoiceFontPath);
     }
 
     // Logo hóa đơn: ưu tiên env → logo header web → file trong backend/src/assets
